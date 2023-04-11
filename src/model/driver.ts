@@ -1,17 +1,16 @@
-import { object, string, date } from "yup";
+import { object, string, date } from "yup"
 
-interface Driver {
-    identification: String;
-    name: String;
-    lastName: String;
-    email: String;
-    phone: String;
-    createdOn: Date;
-    modifiedOn: Date;
+class Driver {
+    identification: String
+    name: String
+    lastName: String
+    email: String
+    phone: String
+    createdOn: Date
+    modifiedOn: Date
 }
 
-
-export default object({
+/*export default object({
     identification: string().max(64).required(),
     name: string().max(128).required(),
     lastName: string().max(128).required(),
@@ -19,4 +18,6 @@ export default object({
     phone: string().max(64).required(),
     createdOn: date(),
     modifiedOn: date(),
-})
+})*/
+
+export default Driver

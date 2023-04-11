@@ -1,4 +1,4 @@
-export default class ErrorResponse {
+class ErrorResponse {
     public code: string
     public message: string
     public details: string
@@ -8,3 +8,5 @@ export default class ErrorResponse {
         this.message = error.message
     }
 }
+
+export default ErrorResponse
