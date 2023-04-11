@@ -1,11 +1,13 @@
-import ErrorResponse from "./errorResponse";
+import ErrorResponse from "./errorResponse"
 
-export default class Response<T> {
+class Response<T> {
     public success: boolean
     public result: T
     public error: ErrorResponse
 
     public constructor(init?: Partial<Response<T>>) {
-        Object.assign(this, init);
+        Object.assign(this, init)
     }
 }
+
+export default Response
