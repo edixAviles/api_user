@@ -1,4 +1,4 @@
-class DriverDto {
+interface DriverInput {
     identification: String
     name: String
     lastName: String
@@ -6,4 +6,4 @@ class DriverDto {
     phone: String
 }
 
-export default DriverDto
+export default DriverInput

@@ -1,13 +1,11 @@
-import { object, string, date } from "yup"
+import BaseModel from "../../../core/domain/baseModel"
 
-class Driver {
+class Driver extends BaseModel {
     identification: String
     name: String
     lastName: String
     email: String
     phone: String
-    createdOn: Date
-    modifiedOn: Date
 }
 
 /*export default object({
