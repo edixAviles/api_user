@@ -1,4 +1,4 @@
-import Driver from "../../domain/driver/driver"
+import Driver from "../../domain/driver/driver.entity"
 import Repository from "../../../core/domain/repository"
 
 // El repo es para las operaciones puras y duras en BD

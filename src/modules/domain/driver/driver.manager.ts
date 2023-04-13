@@ -1,4 +1,4 @@
-import Driver from "./driver"
+import Driver from "./driver.entity"
 import DriverInput from "../../domain.shared/driver/driver.input"
 import DriverRepository from "../../core/driver/driverRepository"
 
