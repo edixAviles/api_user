@@ -4,21 +4,16 @@ import cors from "cors"
 import v1Router from "./versions/v1Router"
 import { isProduction } from "./config"
 
-const port = process.env.PORT || 3000
 const origin = {
     origin: isProduction ? "https://whitelabel.com" : "*",
 }
 
-const app = express()
+const router = express()
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(cors(origin))
+router.use(bodyParser.json())
+router.use(bodyParser.urlencoded({ extended: true }))
+router.use(cors(origin))
 
-app.use("/api/v1", v1Router)
+router.use("/api/v1", v1Router)
 
-app.listen(port, () => {
-    console.log(`Server listening on ${port}`)
-})
-
-export default app
+export default router

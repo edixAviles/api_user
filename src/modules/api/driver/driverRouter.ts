@@ -1,4 +1,6 @@
-import { express, Request, Response } from "express"
+import express from "express"
+import { Request, Response } from "express"
+
 import DriverAppService from "../../application/driver/driver.appService"
 import DriverInput from "../../domain.shared/driver/driver.input"
 
