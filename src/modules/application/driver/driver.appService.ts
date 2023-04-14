@@ -12,9 +12,9 @@ class DriverAppService {
     registerDriver(driverInput: DriverInput): Response<DriverDto> {
         const response = new ResponseManager<DriverDto>()
 
-        const driver = this.driverManager.insert(driverInput)
-        const driverDto = mapper.map(driver, Driver, DriverDto);
-        return response.onSuccess(driverDto)
+        const entity = this.driverManager.insert(driverInput)
+        const dto = mapper.map(entity, Driver, DriverDto);
+        return response.onSuccess(dto)
     }
 }
 

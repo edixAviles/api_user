@@ -1,7 +1,6 @@
-import { AnySchema } from "yup"
 import { Request, Response, NextFunction } from "express"
 
-const validateRequest = (schema: AnySchema) => async (req: Request, res: Response, next: NextFunction) => {
+const validateRequest = (schema: any) => async (req: Request, res: Response, next: NextFunction) => {
     try {
         await schema.validate({
             body: req.body,
