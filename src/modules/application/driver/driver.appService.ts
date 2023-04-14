@@ -7,7 +7,7 @@ import ResponseManager from "../../../core/response/responseManager"
 import { mapper } from "../../../core/mappings/mapper"
 
 class DriverAppService {
-    private driverManager: DriverManager
+    private driverManager = new DriverManager()
 
     registerDriver(driverInput: DriverInput): Response<DriverDto> {
         const response = new ResponseManager<DriverDto>()
