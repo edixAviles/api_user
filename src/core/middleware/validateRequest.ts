@@ -10,7 +10,7 @@ const validateRequest = (schema: any) => async (req: Request, res: Response, nex
 
         next()
     } catch (e) {
-        res.status(500).send()
+        res.status(500).send(e.errors)
     }
 }
 
