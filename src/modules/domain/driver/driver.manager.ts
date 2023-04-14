@@ -7,7 +7,7 @@ class DriverManager {
     private driverRepository: DriverRepository
 
     insert(driverInput: DriverInput): Driver {
-        const driver = new Driver(driverInput) // Hacer un constructor para Driver
+        const driver = new Driver(driverInput)
         const entity = this.driverRepository.save(driver)
         return entity
     }
