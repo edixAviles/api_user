@@ -1,6 +1,11 @@
 import { createMap } from "@automapper/core"
 import { mapper } from "./mapper"
-import Driver from "../../modules/domain/driver/driver.entity"
-import DriverDto from "../../modules/dto/driver/driver.dto"
+import Driver from "../../modules/driver/domain/driver.entity"
+import DriverDto from "../../modules/driver/shared/driver.dto"
 
-createMap(mapper, Driver, DriverDto)
+const runMappers = () => {
+    createMap(mapper, Driver, DriverDto)
+    console.log("Mappers initialized")
+}
+
+export default runMappers
