@@ -4,8 +4,6 @@ import { Request, Response } from "express"
 import DriverAppService from "../application/driver.application"
 import DriverInput from "../shared/driver.input"
 
-//import validateRequest from "../../../core/middleware/validateRequest"
-
 const driverApi = express.Router()
 const driverAppService = new DriverAppService()
 
