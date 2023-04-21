@@ -9,7 +9,7 @@ const listenRequests = () => {
     const port = process.env.PORT || 3000
 
     const origin = {
-        origin: isProduction ? "https://whitelabel.com" : "*",
+        origin: isProduction ? "test.com" : "*",
     }
 
     const router = express()

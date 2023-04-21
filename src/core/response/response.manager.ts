@@ -1,16 +1,20 @@
 import Response from "./response"
-import ErrorResponse from "./errorResponse"
+import ErrorResponse from "./error.response"
 
 class ResponseManager<T> {
-    onSuccess(response: T): Response<T> {
+    success: boolean
+
+    onSuccess(response: T, statusCode: number): Response<T> {
         return new Response<T>({
+            statusCode: statusCode,
             success: true,
             result: response
         })
     }
 
-    onError(error: ErrorResponse): Response<T> {
+    onError(error: ErrorResponse, statusCode: number): Response<T> {
         return new Response<T>({
+            statusCode: statusCode,
             success: false,
             error: error
         })

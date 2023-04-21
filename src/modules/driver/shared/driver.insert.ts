@@ -1,4 +1,4 @@
-interface DriverInput {
+interface DriverInsert {
     identification: String
     name: String
     lastName: String
@@ -6,4 +6,4 @@ interface DriverInput {
     phone: String
 }
 
-export default DriverInput
+export default DriverInsert
