@@ -15,7 +15,7 @@ const connectDatabase = () => {
     mongoose.connect(uri, options).then(() => {
         console.log("Mongo running in cloud")
     }).catch(err => {
-        console.log(err)
+        console.error(err)
     })
 }
 

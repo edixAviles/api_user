@@ -1,20 +1,7 @@
 import { AutoMap } from "@automapper/classes"
 import BaseModel from "../../../core/domain/base.model"
-import DriverInput from "../shared/driver.input"
 
-class Driver extends BaseModel {
-    constructor(driverInput?: DriverInput) {
-        super()
-
-        if (driverInput) {
-            this.identification = driverInput.identification
-            this.name = driverInput.name
-            this.lastName = driverInput.lastName
-            this.email = driverInput.email
-            this.phone = driverInput.phone
-        }
-    }
-
+class Driver extends BaseModel {       
     @AutoMap()
     identification: String
 
@@ -26,7 +13,7 @@ class Driver extends BaseModel {
 
     @AutoMap()
     email: String
-    
+
     @AutoMap()
     phone: String
 }

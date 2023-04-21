@@ -1,6 +1,7 @@
-import ErrorResponse from "./errorResponse"
+import ErrorResponse from "./error.response"
 
 class Response<T> {
+    public statusCode: number
     public success: boolean
     public result: T
     public error: ErrorResponse
