@@ -4,7 +4,7 @@ import {
     password,
     cluster,
     database
-} from "./config"
+} from "./credentials"
 
 const connectDatabase = () => {
     const uri = `mongodb+srv://${username}:${password}@${cluster}/${database}?retryWrites=true&w=majority`
