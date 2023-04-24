@@ -2,19 +2,19 @@ import { AutoMap } from "@automapper/classes"
 
 class DriverDto {
     @AutoMap()
-    identification: String
+    identification: string
 
     @AutoMap()
-    name: String
+    name: string
 
     @AutoMap()
-    lastName: String
+    lastName: string
 
     @AutoMap()
-    email: String
+    email: string
 
     @AutoMap()
-    phone: String
+    phone: string
 }
 
 export default DriverDto

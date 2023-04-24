@@ -3,6 +3,8 @@ import DriverRepository from "./driver.repository"
 import DriverInsert from "../shared/driver.insert"
 import DriverUpdate from "../shared/driver.update"
 import { ObjectId } from "mongodb"
+import DriverException from "../shared/exception/driver.exception"
+import DriverErrorCodes from "../shared/exception/driver.error.codes"
 
 /**
  * This class, performs operations between the CRUD methods from the Repository
@@ -12,6 +14,10 @@ class DriverManager {
 
     async get(id: ObjectId): Promise<Driver> {
         const entity = await this.driverRepository.get(id)
+        if (!entity) {
+            throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorEntityNotFound))
+        }
+
         return entity
     }
 
@@ -28,6 +34,11 @@ class DriverManager {
     }
 
     async update(driverUpdate: DriverUpdate): Promise<Driver> {
+        const findEntity = await this.driverRepository.get(driverUpdate._id)
+        if (!findEntity) {
+            throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorEntityNotFound))
+        }
+
         const driver = new Driver()
         driver._id = driverUpdate._id
         driver.identification = driverUpdate.identification
@@ -41,6 +52,11 @@ class DriverManager {
     }
 
     async delete(id: ObjectId): Promise<void> {
+        const entity = await this.driverRepository.get(id)
+        if (!entity) {
+            throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorEntityNotFound))
+        }
+        
         await this.driverRepository.delete(id)
     }
 }
