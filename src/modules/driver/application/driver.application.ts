@@ -4,12 +4,12 @@ import DriverManager from "../infrastructure/driver.manager"
 import DriverInsert from "../shared/driver.insert"
 import DriverUpdate from "../shared/driver.update"
 
-import statusCodes from "../../../core/api/statusCodes"
 import Response from "../../../core/response/response"
 import ResponseManager from "../../../core/response/response.manager"
 import { mapper } from "../../../core/mappings/mapper"
-import DriverException from "../shared/driver.exception"
+import DriverErrorCodes from "../shared/exception/driver.error.codes"
 import { ObjectId } from "mongodb"
+import DriverException from "../shared/exception/driver.exception"
 
 class DriverAppService {
     private driverManager = new DriverManager()
@@ -21,9 +21,9 @@ class DriverAppService {
             const entity = await this.driverManager.get(id)
 
             const dto = mapper.map(entity, Driver, DriverDto)
-            return response.onSuccess(dto, statusCodes.OK)
+            return response.onSuccess(dto)
         } catch (exception) {
-            return response.onError(DriverException.getErrorException(exception), statusCodes.INTERNAL_SERVER_ERROR)
+            return response.onError(DriverErrorCodes.getErrorException(exception))
         }
     }
 
@@ -34,9 +34,9 @@ class DriverAppService {
             const entity = await this.driverManager.insert(driverInsert)
 
             const dto = mapper.map(entity, Driver, DriverDto)
-            return response.onSuccess(dto, statusCodes.CREATED)
+            return response.onSuccess(dto)
         } catch (exception) {
-            return response.onError(DriverException.getErrorException(exception), statusCodes.INTERNAL_SERVER_ERROR)
+            return response.onError(DriverErrorCodes.getErrorException(exception))
         }
     }
 
@@ -44,15 +44,15 @@ class DriverAppService {
         const response = new ResponseManager<DriverDto>()
         try {
             if (!driverUpdate._id) {
-                return response.onError(DriverException.getError(DriverException.ErrorIdNotProvided), statusCodes.FORBIDDEN)
+                throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorIdNotProvided))
             }
 
             const entity = await this.driverManager.update(driverUpdate)
 
             const dto = mapper.map(entity, Driver, DriverDto)
-            return response.onSuccess(dto, statusCodes.CREATED)
+            return response.onSuccess(dto)
         } catch (exception) {
-            return response.onError(DriverException.getErrorException(exception), statusCodes.INTERNAL_SERVER_ERROR)
+            return response.onError(DriverErrorCodes.getErrorException(exception))
         }
     }
 
@@ -62,9 +62,9 @@ class DriverAppService {
         try {
             await this.driverManager.delete(id)
 
-            return response.onSuccess(id, statusCodes.OK)
+            return response.onSuccess(id)
         } catch (exception) {
-            return response.onError(DriverException.getErrorException(exception), statusCodes.INTERNAL_SERVER_ERROR)
+            return response.onError(DriverErrorCodes.getErrorException(exception))
         }
     }
 }

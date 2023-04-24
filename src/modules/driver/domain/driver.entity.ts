@@ -1,21 +1,25 @@
 import { AutoMap } from "@automapper/classes"
 import BaseModel from "../../../core/domain/base.model"
 
-class Driver extends BaseModel {       
+class Driver extends BaseModel {
     @AutoMap()
-    identification: String
+    public identification: string
 
     @AutoMap()
-    name: String
+    public name: string
 
     @AutoMap()
-    lastName: String
+    public lastName: string
 
     @AutoMap()
-    email: String
+    public email: string
 
     @AutoMap()
-    phone: String
+    public phone: string
+
+    constructor(document?: any) {
+        super(document)
+    }
 }
 
 export default Driver

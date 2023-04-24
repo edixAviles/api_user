@@ -11,21 +11,21 @@ class DriverRepository implements Repository<Driver> {
 
     async get(id: ObjectId): Promise<Driver> {
         const document = await DriverModel.findById(id)
-        
+
         const entity = this.castToEntity(document)
         return entity
     }
 
     async insert(entity: Driver): Promise<Driver> {
-        const document = new DriverModel({...entity})
+        const document = new DriverModel({ ...entity })
         await document.save()
-        
+
         const createdEntity = this.castToEntity(document)
         return createdEntity
     }
 
     async update(entity: Driver): Promise<Driver> {
-        const document = await DriverModel.findByIdAndUpdate(entity._id, entity)
+        const document = await DriverModel.findByIdAndUpdate(entity._id, entity, { new: true })
         const updatedEntity = this.castToEntity(document)
         return updatedEntity
     }
@@ -35,16 +35,11 @@ class DriverRepository implements Repository<Driver> {
     }
 
     private castToEntity(document: any): Driver {
-        const entity = new Driver()
-        entity._id = document.id
-        entity.createdAt = document.createdAt
-        entity.creatorId = document.creatorId
-        entity.updatedAt = document.updatedAt
-        entity.updaterId = document.updaterId
-        entity.IsDeleted = document.IsDeleted
-        entity.deletedAt = document.deletedAt
-        entity.deleterId = document.deleterId
+        if (!document) {
+            return null
+        }
 
+        const entity = new Driver(document)
         entity.identification = document.identification
         entity.name = document.name
         entity.lastName = document.lastName

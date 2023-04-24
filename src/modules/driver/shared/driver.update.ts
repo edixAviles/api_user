@@ -2,11 +2,11 @@ import { ObjectId } from "mongodb"
 
 interface DriverUpdate {
     _id: ObjectId
-    identification: String
-    name: String
-    lastName: String
-    email: String
-    phone: String
+    identification: string
+    name: string
+    lastName: string
+    email: string
+    phone: string
 }
 
 export default DriverUpdate
