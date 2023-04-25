@@ -5,7 +5,6 @@ import DriverDto from "../../modules/driver/shared/domain/driver.dto"
 
 const runMappers = () => {
     createMap(mapper, Driver, DriverDto)
-    console.log("Mappers initialized")
 }
 
 export default runMappers

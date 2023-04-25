@@ -43,7 +43,7 @@ class DriverAppService {
     async updateDriver(driverUpdate: DriverUpdate): Promise<Response<DriverDto>> {
         const response = new ResponseManager<DriverDto>()
         try {
-            if (!driverUpdate._id) {
+            if (!driverUpdate.id) {
                 throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorIdNotProvided))
             }
 

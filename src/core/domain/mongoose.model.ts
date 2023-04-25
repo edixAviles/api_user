@@ -7,7 +7,7 @@ const modelMongoose = (className: string, properties: any): mongoose.Model<any> 
         ...baseSchema,
         ...properties,
     }, baseOptions)
-    
+
     const model = mongoose.model(className, schema)
     return model
 }

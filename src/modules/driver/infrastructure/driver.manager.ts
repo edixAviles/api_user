@@ -39,23 +39,23 @@ class DriverManager {
     }
 
     async update(driverUpdate: DriverUpdate): Promise<Driver> {
-        const findEntity = await this.driverRepository.get(driverUpdate._id)
+        const findEntity = await this.driverRepository.get(driverUpdate.id)
         if (!findEntity) {
             const errorParams = {
-                [sharedConsts.id]: driverUpdate._id
+                [sharedConsts.id]: driverUpdate.id
             }
             const error = DriverErrorCodes.getError(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
             throw new DriverException(error)
         }
 
         const driver = new Driver()
-        driver._id = driverUpdate._id
+        driver._id = driverUpdate.id
         driver.identification = driverUpdate.identification
         driver.name = driverUpdate.name
         driver.lastName = driverUpdate.lastName
         driver.email = driverUpdate.email
         driver.phone = driverUpdate.phone
-        
+
         const entity = await this.driverRepository.update(driver)
         return entity
     }
@@ -69,7 +69,7 @@ class DriverManager {
             const error = DriverErrorCodes.getError(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
             throw new DriverException(error)
         }
-        
+
         await this.driverRepository.delete(id)
     }
 }

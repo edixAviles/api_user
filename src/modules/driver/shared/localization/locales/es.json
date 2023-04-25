@@ -1,5 +1,5 @@
 {
-    "culture": "en",
+    "culture": "es",
     "translation": {
         "DRIVER_ERROR_ENTITY_NOT_FOUND": "El conductor con id: {{id}}, no existe",
         "DRIVER_ERROR_ID_NOT_PROVIDED": "No podemos proceder con su solicitud, porque no ha proporcionado el ID del conductor"
