@@ -1,0 +1,7 @@
+{
+    "culture": "en",
+    "translation": {
+        "DRIVER_ERROR_ENTITY_NOT_FOUND": "The requested object doesn't exists",
+        "DRIVER_ERROR_ID_NOT_PROVIDED": "The requested identifier has not been provided"
+    }
+}

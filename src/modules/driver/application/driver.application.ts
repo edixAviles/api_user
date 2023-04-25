@@ -1,8 +1,8 @@
 import Driver from "../domain/driver.entity"
-import DriverDto from "../shared/driver.dto"
+import DriverDto from "../shared/domain/driver.dto"
 import DriverManager from "../infrastructure/driver.manager"
-import DriverInsert from "../shared/driver.insert"
-import DriverUpdate from "../shared/driver.update"
+import DriverInsert from "../shared/domain/driver.insert"
+import DriverUpdate from "../shared/domain/driver.update"
 
 import Response from "../../../core/response/response"
 import ResponseManager from "../../../core/response/response.manager"
