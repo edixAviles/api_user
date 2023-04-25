@@ -12,15 +12,15 @@ const listenRequests = () => {
         origin: isProduction ? "test.com" : "*",
     }
 
-    const router = express()
+    const app = express()
 
-    router.use(bodyParser.json())
-    router.use(bodyParser.urlencoded({ extended: true }))
-    router.use(cors(origin))
+    app.use(bodyParser.json())
+    app.use(bodyParser.urlencoded({ extended: true }))
+    app.use(cors(origin))
     
-    router.use("/api/v1", v1Router)
+    app.use("/api/v1", v1Router)
 
-    router.listen(port, () => {
+    app.listen(port, () => {
         console.log(`Server listening on ${port}`)
     })
 }

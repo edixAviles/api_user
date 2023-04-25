@@ -1,3 +1,3 @@
-import app from "./src/core/api/app"
+import app from "./src/core/app"
 
 app()

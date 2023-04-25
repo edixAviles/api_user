@@ -1,7 +1,7 @@
 {
     "culture": "en",
     "translation": {
-        "DRIVER_ERROR_ENTITY_NOT_FOUND": "El objeto solicitado no existe",
-        "DRIVER_ERROR_ID_NOT_PROVIDED": "El Identificador solicitado no ha sido proporcionado"
+        "DRIVER_ERROR_ENTITY_NOT_FOUND": "El conductor con id: {{id}}, no existe",
+        "DRIVER_ERROR_ID_NOT_PROVIDED": "No podemos proceder con su solicitud, porque no ha proporcionado el ID del conductor"
     }
 }

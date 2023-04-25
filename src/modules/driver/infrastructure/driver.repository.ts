@@ -10,7 +10,11 @@ import Repository from "../../../core/repository/repository"
 class DriverRepository implements Repository<Driver> {
 
     async get(id: ObjectId): Promise<Driver> {
-        const document = await DriverModel.findById(id)
+        const filter = {
+            _id: id,
+            isDeleted: false
+        }
+        const document = await DriverModel.findOne(filter)
 
         const entity = this.castToEntity(document)
         return entity
@@ -31,7 +35,7 @@ class DriverRepository implements Repository<Driver> {
     }
 
     async delete(id: ObjectId): Promise<void> {
-        await DriverModel.findByIdAndDelete(id)
+        await DriverModel.findByIdAndUpdate(id, { isDeleted: true })
     }
 
     private castToEntity(document: any): Driver {

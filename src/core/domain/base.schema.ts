@@ -1,4 +1,3 @@
-import mongoose from "mongoose"
 import { ObjectId } from "mongodb"
 
 const baseOptions = {
@@ -11,20 +10,20 @@ const baseSchema = {
         required: true,
         auto: true,
     },
-    creatorId: {
-        type: ObjectId,
+    creatorUser: {
+        type: String,
     },
-    updaterId: {
-        type: ObjectId,
+    updaterUser: {
+        type: String,
     },
-    IsDeleted: {
+    isDeleted: {
         type: Boolean,
     },
     deletedAt: {
         type: Date,
     },
-    deleterId: {
-        type: ObjectId,
+    deleterUser: {
+        type: String,
     }
 }
 

@@ -3,23 +3,23 @@ import { ObjectId } from "mongodb"
 abstract class BaseModel {
     _id?: ObjectId
     createdAt: Date
-    creatorId?: ObjectId
+    creatorUser?: String
     updatedAt: Date
-    updaterId?: ObjectId
-    IsDeleted: boolean
+    updaterUser?: String
+    isDeleted: boolean
     deletedAt?: Date
-    deleterId?: ObjectId
+    deleterUser?: String
 
     constructor(document?: any) {
         if (document) {
             this._id = document.id
             this.createdAt = document.createdAt
-            this.creatorId = document.creatorId
+            this.creatorUser = document.creatorUser
             this.updatedAt = document.updatedAt
-            this.updaterId = document.updaterId
-            this.IsDeleted = document.IsDeleted
+            this.updaterUser = document.updaterUser
+            this.isDeleted = document.isDeleted
             this.deletedAt = document.deletedAt
-            this.deleterId = document.deleterId
+            this.deleterUser = document.deleterUser
         }
     }
 }
