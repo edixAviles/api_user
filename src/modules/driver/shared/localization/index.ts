@@ -1,20 +1,21 @@
-import i18n from "i18next"
-import { initReactI18next } from "react-i18next"
+import localizer from "i18next"
+import backend from "i18next-fs-backend"
+import middleware from "i18next-http-middleware"
 
-import es from "./locales/es.json"
 import en from "./locales/en.json"
+import es from "./locales/es.json"
 
 const resources = {
-    es,
-    en
+    en,
+    es
 }
 
-i18n.use(initReactI18next).init({
-    lng: "en",
-    resources,
-    interpolation: {
-        escapeValue: false
-    }
+const preload = Object.entries(resources).map(resource => resource[1].culture)
+
+localizer.use(backend).use(middleware.LanguageDetector).init({
+    fallbackLng: "en",
+    preload,
+    resources
 })
 
-export default i18n
+export default localizer

@@ -11,9 +11,9 @@ const connectDatabase = () => {
     const options = {
         serverSelectionTimeoutMS: 5000
     }
-    
+
     mongoose.connect(uri, options).then(() => {
-        console.log("Mongo running in cloud")
+        console.info("Mongo running in cloud")
     }).catch(err => {
         console.error(err)
     })

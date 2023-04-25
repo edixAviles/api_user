@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 
 interface DriverUpdate {
-    _id: ObjectId
+    id: ObjectId
     identification: string
     name: string
     lastName: string

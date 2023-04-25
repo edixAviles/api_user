@@ -12,7 +12,7 @@ class DriverRepository implements Repository<Driver> {
     async get(id: ObjectId): Promise<Driver> {
         const filter = {
             _id: id,
-            isDeleted: false
+            isDeleted: { $ne: true }
         }
         const document = await DriverModel.findOne(filter)
 
@@ -35,7 +35,11 @@ class DriverRepository implements Repository<Driver> {
     }
 
     async delete(id: ObjectId): Promise<void> {
-        await DriverModel.findByIdAndUpdate(id, { isDeleted: true })
+        const params = {
+            isDeleted: true,
+            deletedAt: new Date()
+        }
+        await DriverModel.findByIdAndUpdate(id, params)
     }
 
     private castToEntity(document: any): Driver {
