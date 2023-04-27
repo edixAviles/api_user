@@ -2,12 +2,15 @@ import { ObjectId } from "mongodb"
 
 import Driver from "../domain/driver.entity"
 import DriverModel from "../domain/driver.model"
-import Repository from "../../../core/repository/repository"
+import {
+    Repository,
+    IRepository
+} from "../../../core/repository/repository"
 
 /**
  * This class, performs explicit operations of CRUD from Database
  */
-class DriverRepository implements Repository<Driver> {
+class DriverRepository extends Repository<Driver> implements IRepository<Driver> {
 
     async get(id: ObjectId): Promise<Driver> {
         const filter = {
@@ -29,7 +32,9 @@ class DriverRepository implements Repository<Driver> {
     }
 
     async update(entity: Driver): Promise<Driver> {
-        const document = await DriverModel.findByIdAndUpdate(entity._id, entity, { new: true })
+        const dataToUpdate = this.getDataToUpdate(entity)
+
+        const document = await DriverModel.findByIdAndUpdate(entity._id, dataToUpdate, { new: true })
         const updatedEntity = this.castToEntity(document)
         return updatedEntity
     }
@@ -51,8 +56,12 @@ class DriverRepository implements Repository<Driver> {
         entity.identification = document.identification
         entity.name = document.name
         entity.lastName = document.lastName
+        entity.birthdate = document.birthdate
         entity.email = document.email
-        entity.phone = document.phone
+        entity.cellPhone = document.cellPhone
+        entity.profilePhoto = document.profilePhoto
+        entity.licencePhoto = document.licencePhoto
+        entity.policeRecord = document.policeRecord
 
         return entity
     }

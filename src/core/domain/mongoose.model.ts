@@ -1,8 +1,12 @@
 
 import mongoose from "mongoose"
-import { baseOptions, baseSchema } from "./base.schema"
 
-const modelMongoose = (className: string, properties: any): mongoose.Model<any> => {
+import {
+    baseOptions,
+    baseSchema
+} from "./base.schema"
+
+const mongooseModel = (className: string, properties: any): mongoose.Model<any> => {
     const schema = new mongoose.Schema({
         ...baseSchema,
         ...properties,
@@ -12,4 +16,4 @@ const modelMongoose = (className: string, properties: any): mongoose.Model<any> 
     return model
 }
 
-export default modelMongoose
+export default mongooseModel

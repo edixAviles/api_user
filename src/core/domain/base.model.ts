@@ -3,12 +3,12 @@ import { ObjectId } from "mongodb"
 abstract class BaseModel {
     _id?: ObjectId
     createdAt: Date
-    creatorUser?: String
+    creatorUser?: string
     updatedAt: Date
-    updaterUser?: String
+    updaterUser?: string
     isDeleted: boolean
     deletedAt?: Date
-    deleterUser?: String
+    deleterUser?: string
 
     constructor(document?: any) {
         if (document) {

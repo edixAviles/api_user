@@ -1,5 +1,8 @@
 import express from "express"
-import { Request, Response } from "express"
+import {
+    Request,
+    Response
+} from "express"
 
 import driverApi from "../../../modules/driver/api/driver.api"
 import statusCodes from "../../../core/api/statusCodes"

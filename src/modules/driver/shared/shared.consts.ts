@@ -1,5 +1,12 @@
-const sharedConsts = {
-    id: "id"
+abstract class SharedConsts {
+    public static readonly id = "id"
 }
 
-export default sharedConsts
+abstract class TypeMime {
+    public static readonly base64 = "base64"
+}
+
+export {
+    SharedConsts,
+    TypeMime
+}

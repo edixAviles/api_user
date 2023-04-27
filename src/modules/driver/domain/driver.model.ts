@@ -1,9 +1,15 @@
-import modelMongoose from "../../../core/domain/mongoose.model"
+import mongooseModel from "../../../core/domain/mongoose.model"
 
 const properties = {
     identification: {
-        type: String,
-        required: true,
+        data: {
+            type: String,
+            required: true,
+        },
+        isVerified: {
+            type: Boolean,
+            required: true,
+        },
     },
     name: {
         type: String,
@@ -13,15 +19,61 @@ const properties = {
         type: String,
         required: true,
     },
-    email: {
-        type: String,
+    birthdate: {
+        type: Date,
         required: true,
     },
-    phone: {
-        type: String,
-        required: false,
+    email: {
+        data: {
+            type: String,
+            required: true,
+        },
+        isVerified: {
+            type: Boolean,
+            required: true,
+        },
+    },
+    cellPhone: {
+        data: {
+            type: String,
+            required: true,
+        },
+        isVerified: {
+            type: Boolean,
+            required: true,
+        },
+    },
+    profilePhoto: {
+        data: {
+            type: Buffer,
+            required: true,
+        },
+        isApproved: {
+            type: Boolean,
+            required: true,
+        },
+    },
+    licencePhoto: {
+        data: {
+            type: Buffer,
+            required: true,
+        },
+        isApproved: {
+            type: Boolean,
+            required: true,
+        },
+    },
+    policeRecord: {
+        data: {
+            type: Buffer,
+            required: true,
+        },
+        isApproved: {
+            type: Boolean,
+            required: true,
+        },
     },
 }
 
-const DriverModel = modelMongoose("Driver", properties)
+const DriverModel = mongooseModel("Driver", properties)
 export default DriverModel
