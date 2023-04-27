@@ -1,15 +1,21 @@
+import { ObjectId } from "mongodb"
+
 import Driver from "../domain/driver.entity"
 import DriverDto from "../shared/domain/driver.dto"
 import DriverManager from "../infrastructure/driver.manager"
-import DriverInsert from "../shared/domain/driver.insert"
-import DriverUpdate from "../shared/domain/driver.update"
-
+import IDriverInsert from "../shared/domain/driver.insert"
 import Response from "../../../core/response/response"
 import ResponseManager from "../../../core/response/response.manager"
-import { mapper } from "../../../core/mappings/mapper"
 import DriverErrorCodes from "../shared/exception/driver.error.codes"
-import { ObjectId } from "mongodb"
 import DriverException from "../shared/exception/driver.exception"
+
+import { mapper } from "../../../core/mappings/mapper"
+import {
+    IDriverUpdate,
+    IDriverUpdateProfilePhoto,
+    IDriverUpdateLicencePhoto,
+    IDriverUpdatePoliceRecord
+} from "../shared/domain/driver.update"
 
 class DriverAppService {
     private driverManager = new DriverManager()
@@ -27,7 +33,7 @@ class DriverAppService {
         }
     }
 
-    async insertDriver(driverInsert: DriverInsert): Promise<Response<DriverDto>> {
+    async insertDriver(driverInsert: IDriverInsert): Promise<Response<DriverDto>> {
         const response = new ResponseManager<DriverDto>()
 
         try {
@@ -40,7 +46,7 @@ class DriverAppService {
         }
     }
 
-    async updateDriver(driverUpdate: DriverUpdate): Promise<Response<DriverDto>> {
+    async updateDriver(driverUpdate: IDriverUpdate): Promise<Response<DriverDto>> {
         const response = new ResponseManager<DriverDto>()
         try {
             if (!driverUpdate.id) {
@@ -48,6 +54,54 @@ class DriverAppService {
             }
 
             const entity = await this.driverManager.update(driverUpdate)
+
+            const dto = mapper.map(entity, Driver, DriverDto)
+            return response.onSuccess(dto)
+        } catch (exception) {
+            return response.onError(DriverErrorCodes.getErrorException(exception))
+        }
+    }
+
+    async updateDriverProfilePhoto(driverUpdate: IDriverUpdateProfilePhoto): Promise<Response<DriverDto>> {
+        const response = new ResponseManager<DriverDto>()
+        try {
+            if (!driverUpdate.id) {
+                throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorIdNotProvided))
+            }
+
+            const entity = await this.driverManager.updateProfilePhoto(driverUpdate)
+
+            const dto = mapper.map(entity, Driver, DriverDto)
+            return response.onSuccess(dto)
+        } catch (exception) {
+            return response.onError(DriverErrorCodes.getErrorException(exception))
+        }
+    }
+
+    async updateDriverLicencePhoto(driverUpdate: IDriverUpdateLicencePhoto): Promise<Response<DriverDto>> {
+        const response = new ResponseManager<DriverDto>()
+        try {
+            if (!driverUpdate.id) {
+                throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorIdNotProvided))
+            }
+
+            const entity = await this.driverManager.updateLicencePhoto(driverUpdate)
+
+            const dto = mapper.map(entity, Driver, DriverDto)
+            return response.onSuccess(dto)
+        } catch (exception) {
+            return response.onError(DriverErrorCodes.getErrorException(exception))
+        }
+    }
+
+    async updateDriverPoliceRecord(driverUpdate: IDriverUpdatePoliceRecord): Promise<Response<DriverDto>> {
+        const response = new ResponseManager<DriverDto>()
+        try {
+            if (!driverUpdate.id) {
+                throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorIdNotProvided))
+            }
+
+            const entity = await this.driverManager.updatePoliceRecord(driverUpdate)
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)

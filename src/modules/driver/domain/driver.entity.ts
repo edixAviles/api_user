@@ -1,9 +1,12 @@
 import { AutoMap } from "@automapper/classes"
-import BaseModel from "../../../core/domain/base.model"
 
-class Driver extends BaseModel {
+import BaseBasicModel from "../../../core/domain/base.model"
+import { DataStringVerified } from "../shared/extraProperties/verified"
+import { DataBufferApproved } from "../shared/extraProperties/approved"
+
+class Driver extends BaseBasicModel {
     @AutoMap()
-    public identification: string
+    public identification: DataStringVerified
 
     @AutoMap()
     public name: string
@@ -12,10 +15,22 @@ class Driver extends BaseModel {
     public lastName: string
 
     @AutoMap()
-    public email: string
+    public birthdate: Date
 
     @AutoMap()
-    public phone: string
+    public email: DataStringVerified
+
+    @AutoMap()
+    public cellPhone: DataStringVerified
+
+    @AutoMap()
+    public profilePhoto: DataBufferApproved
+
+    @AutoMap()
+    public licencePhoto: DataBufferApproved
+
+    @AutoMap()
+    public policeRecord: DataBufferApproved
 
     constructor(document?: any) {
         super(document)

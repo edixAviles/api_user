@@ -1,10 +1,19 @@
 import express from "express"
-import { Request, Response } from "express"
 import { mongo } from "mongoose"
+import {
+    Request,
+    Response
+} from "express"
+
 
 import DriverAppService from "../application/driver.application"
-import DriverInsert from "../shared/domain/driver.insert"
-import DriverUpdate from "../shared/domain/driver.update"
+import IDriverInsert from "../shared/domain/driver.insert"
+import {
+    IDriverUpdate,
+    IDriverUpdateProfilePhoto,
+    IDriverUpdateLicencePhoto,
+    IDriverUpdatePoliceRecord
+} from "../shared/domain/driver.update"
 
 const driverApi = express.Router()
 const driverAppService = new DriverAppService()
@@ -15,12 +24,27 @@ driverApi.get("/:id", async (req: Request, res: Response) => {
 })
 
 driverApi.post("/", async (req: Request, res: Response) => {
-    const result = await driverAppService.insertDriver(req.body as DriverInsert)
+    const result = await driverAppService.insertDriver(req.body as IDriverInsert)
     res.send(result)
 })
 
-driverApi.put("/", async (req: Request, res: Response) => {
-    const result = await driverAppService.updateDriver(req.body as DriverUpdate)
+driverApi.patch("/", async (req: Request, res: Response) => {
+    const result = await driverAppService.updateDriver(req.body as IDriverUpdate)
+    res.send(result)
+})
+
+driverApi.patch("/profile-photo", async (req: Request, res: Response) => {
+    const result = await driverAppService.updateDriverProfilePhoto(req.body as IDriverUpdateProfilePhoto)
+    res.send(result)
+})
+
+driverApi.patch("/licence-photo", async (req: Request, res: Response) => {
+    const result = await driverAppService.updateDriverLicencePhoto(req.body as IDriverUpdateLicencePhoto)
+    res.send(result)
+})
+
+driverApi.patch("/police-record", async (req: Request, res: Response) => {
+    const result = await driverAppService.updateDriverPoliceRecord(req.body as IDriverUpdatePoliceRecord)
     res.send(result)
 })
 

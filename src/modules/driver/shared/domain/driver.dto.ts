@@ -1,20 +1,34 @@
 import { AutoMap } from "@automapper/classes"
+import { DataStringVerified } from "../extraProperties/verified"
+import { DataBufferApprovedDto } from "../extraProperties/approved"
 
 class DriverDto {
     @AutoMap()
-    identification: string
+    public identification: DataStringVerified
 
     @AutoMap()
-    name: string
+    public name: string
 
     @AutoMap()
-    lastName: string
+    public lastName: string
 
     @AutoMap()
-    email: string
+    public birthdate: Date
 
     @AutoMap()
-    phone: string
+    public email: DataStringVerified
+
+    @AutoMap()
+    public cellPhone: DataStringVerified
+
+    @AutoMap()
+    public profilePhoto: DataBufferApprovedDto
+
+    @AutoMap()
+    public licencePhoto: DataBufferApprovedDto
+
+    @AutoMap()
+    public policeRecord: DataBufferApprovedDto
 }
 
 export default DriverDto
