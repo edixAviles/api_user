@@ -16,15 +16,16 @@ import {
     IDriverUpdateLicencePhoto,
     IDriverUpdatePoliceRecord
 } from "../shared/domain/driver.update"
+import ApplicationService from "../../../core/infrastructure/applicationService"
 
-class DriverAppService {
-    private driverManager = new DriverManager()
+class DriverAppService extends ApplicationService {
 
     async getDriver(id: ObjectId): Promise<Response<DriverDto>> {
         const response = new ResponseManager<DriverDto>()
 
         try {
-            const entity = await this.driverManager.get(id)
+            const driverManager = new DriverManager()
+            const entity = await driverManager.get(id)
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
@@ -37,7 +38,8 @@ class DriverAppService {
         const response = new ResponseManager<DriverDto>()
 
         try {
-            const entity = await this.driverManager.insert(driverInsert)
+            const driverManager = new DriverManager()
+            const entity = await driverManager.insert(driverInsert)
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
@@ -48,16 +50,21 @@ class DriverAppService {
 
     async updateDriver(driverUpdate: IDriverUpdate): Promise<Response<DriverDto>> {
         const response = new ResponseManager<DriverDto>()
+        const transaction = await this.transactionManager.beginTransaction()
+
         try {
             if (!driverUpdate.id) {
                 throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorIdNotProvided))
             }
-
-            const entity = await this.driverManager.update(driverUpdate)
+            
+            const driverManager = new DriverManager(transaction)
+            const entity = await driverManager.update(driverUpdate)
+            await transaction.completeTransaction()
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
         } catch (exception) {
+            transaction.cancellTransaction()
             return response.onError(DriverErrorCodes.getErrorException(exception))
         }
     }
@@ -69,7 +76,8 @@ class DriverAppService {
                 throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorIdNotProvided))
             }
 
-            const entity = await this.driverManager.updateProfilePhoto(driverUpdate)
+            const driverManager = new DriverManager()
+            const entity = await driverManager.updateProfilePhoto(driverUpdate)
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
@@ -85,7 +93,8 @@ class DriverAppService {
                 throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorIdNotProvided))
             }
 
-            const entity = await this.driverManager.updateLicencePhoto(driverUpdate)
+            const driverManager = new DriverManager()
+            const entity = await driverManager.updateLicencePhoto(driverUpdate)
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
@@ -101,7 +110,8 @@ class DriverAppService {
                 throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorIdNotProvided))
             }
 
-            const entity = await this.driverManager.updatePoliceRecord(driverUpdate)
+            const driverManager = new DriverManager()
+            const entity = await driverManager.updatePoliceRecord(driverUpdate)
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
@@ -114,7 +124,8 @@ class DriverAppService {
         const response = new ResponseManager<ObjectId>()
 
         try {
-            await this.driverManager.delete(id)
+            const driverManager = new DriverManager()
+            await driverManager.delete(id)
 
             return response.onSuccess(id)
         } catch (exception) {

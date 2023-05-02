@@ -13,7 +13,7 @@ const { NOT_FOUND } = statusCodes
 v1Router.use("/driver", driverApi)
 // All routes go here
 
-v1Router.all('*', (req: Request, res: Response) => {
+v1Router.all("*", (req: Request, res: Response) => {
     res.sendStatus(NOT_FOUND)
 })
 

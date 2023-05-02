@@ -1,11 +1,11 @@
 import listenRequests from "./api/router"
-import connectDatabase from "./database/connect"
 import runMappers from "./mappings/main"
+import DatabaseConnectionSingleton from "./database/databaseConnection"
 
 const app = () => {
     listenRequests()
-    connectDatabase()
     runMappers()
+    DatabaseConnectionSingleton.getInstance().connectDatabase()
 }
 
 export default app

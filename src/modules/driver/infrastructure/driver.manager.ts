@@ -1,7 +1,6 @@
-import { ObjectId } from "mongodb"
+import { ObjectId, Transaction } from "mongodb"
 
 import Driver from "../domain/driver.entity"
-import DriverRepository from "./driver.repository"
 import IDriverInsert from "../shared/domain/driver.insert"
 import DriverException from "../shared/exception/driver.exception"
 import DriverErrorCodes from "../shared/exception/driver.error.codes"
@@ -16,12 +15,18 @@ import {
     IDriverUpdateLicencePhoto,
     IDriverUpdatePoliceRecord
 } from "../shared/domain/driver.update"
+import DriverRepository from "./driver.repository"
+import TransactionSession from "../../../core/database/transactionSession"
 
 /**
  * This class, performs operations between the CRUD methods from the Repository
  */
 class DriverManager {
-    private driverRepository = new DriverRepository()
+    private driverRepository: DriverRepository
+
+    constructor(transaction?: TransactionSession) {
+        this.driverRepository = new DriverRepository(transaction)
+    }
 
     async get(id: ObjectId): Promise<Driver> {
         const driver = await this.driverRepository.get(id)
