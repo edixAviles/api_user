@@ -5,13 +5,12 @@ import DriverModel from "../domain/driver.model"
 import {
     Repository,
     IRepository
-} from "../../../core/repository/repository"
+} from "../../../core/infrastructure/repository"
 
 /**
  * This class, performs explicit operations of CRUD from Database
  */
 class DriverRepository extends Repository<Driver> implements IRepository<Driver> {
-
     async get(id: ObjectId): Promise<Driver> {
         const filter = {
             _id: id,
@@ -25,26 +24,22 @@ class DriverRepository extends Repository<Driver> implements IRepository<Driver>
 
     async insert(entity: Driver): Promise<Driver> {
         const document = new DriverModel({ ...entity })
-        await document.save()
+        await document.save(this.optionsToInsert())
 
         const createdEntity = this.castToEntity(document)
         return createdEntity
     }
 
     async update(entity: Driver): Promise<Driver> {
-        const dataToUpdate = this.getDataToUpdate(entity)
-
-        const document = await DriverModel.findByIdAndUpdate(entity._id, dataToUpdate, { new: true })
+        const dataToUpdate = this.mapObjectToUpdate(entity)
+        const document = await DriverModel.findOneAndUpdate({_id: entity._id }, dataToUpdate, this.optionsToUpdate())
+        
         const updatedEntity = this.castToEntity(document)
         return updatedEntity
     }
 
     async delete(id: ObjectId): Promise<void> {
-        const params = {
-            isDeleted: true,
-            deletedAt: new Date()
-        }
-        await DriverModel.findByIdAndUpdate(id, params)
+        await DriverModel.findOneAndUpdate({_id: id }, this.paramsToDelete(), this.optionsToUpdate())
     }
 
     private castToEntity(document: any): Driver {
