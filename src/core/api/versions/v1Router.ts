@@ -4,7 +4,7 @@ import {
     Response
 } from "express"
 
-import driverApi from "../../../modules/driver/api/driver.api"
+import driverApi from "../../../modules/api/driver/driver.api"
 import statusCodes from "../../../core/api/statusCodes"
 
 const v1Router = express.Router()

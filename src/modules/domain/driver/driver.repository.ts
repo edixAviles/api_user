@@ -1,11 +1,11 @@
 import { ObjectId } from "mongodb"
 
-import Driver from "../domain/driver.entity"
-import DriverModel from "../domain/driver.model"
+import Driver from "./driver.entity"
+import DriverModel from "./driver.model"
 import {
     Repository,
     IRepository
-} from "../../../core/infrastructure/repository"
+} from "../../../core/domain/repository"
 
 /**
  * This class, performs explicit operations of CRUD from Database

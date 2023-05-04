@@ -1,22 +1,23 @@
 import { ObjectId } from "mongodb"
 
-import Driver from "../domain/driver.entity"
-import DriverDto from "../shared/domain/driver.dto"
-import DriverManager from "../infrastructure/driver.manager"
-import IDriverInsert from "../shared/domain/driver.insert"
+import Driver from "../../domain/driver/driver.entity"
+import DriverDto from "../../contracts/driver/driver.dto"
+import DriverManager from "../../domain/driver/driver.manager"
+import IDriverInsert from "../../contracts/driver/driver.insert"
+import DriverErrorCodes from "../../shared.domain/driver/driver.error.codes"
+import ServiceException from "../../shared/service.exception"
+import ApplicationService from "../../../core/application/applicationService"
 import Response from "../../../core/response/response"
 import ResponseManager from "../../../core/response/response.manager"
-import DriverErrorCodes from "../shared/exception/driver.error.codes"
-import DriverException from "../shared/exception/driver.exception"
+import ServiceError from "../../shared/service.error"
 
-import { mapper } from "../../../core/mappings/mapper"
 import {
     IDriverUpdate,
     IDriverUpdateProfilePhoto,
     IDriverUpdateLicencePhoto,
     IDriverUpdatePoliceRecord
-} from "../shared/domain/driver.update"
-import ApplicationService from "../../../core/infrastructure/applicationService"
+} from "../../contracts/driver/driver.update"
+import { mapper } from "../../../core/mappings/mapper"
 
 class DriverAppService extends ApplicationService {
 
@@ -29,8 +30,8 @@ class DriverAppService extends ApplicationService {
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
-        } catch (exception) {
-            return response.onError(DriverErrorCodes.getErrorException(exception))
+        } catch (error) {
+            return response.onError(ServiceError.getException(error))
         }
     }
 
@@ -43,8 +44,8 @@ class DriverAppService extends ApplicationService {
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
-        } catch (exception) {
-            return response.onError(DriverErrorCodes.getErrorException(exception))
+        } catch (error) {
+            return response.onError(ServiceError.getException(error))
         }
     }
 
@@ -54,7 +55,7 @@ class DriverAppService extends ApplicationService {
 
         try {
             if (!driverUpdate.id) {
-                throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorIdNotProvided))
+                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
             }
             
             const driverManager = new DriverManager(transaction)
@@ -63,9 +64,9 @@ class DriverAppService extends ApplicationService {
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
-        } catch (exception) {
+        } catch (error) {
             transaction.cancellTransaction()
-            return response.onError(DriverErrorCodes.getErrorException(exception))
+            return response.onError(ServiceError.getException(error))
         }
     }
 
@@ -73,7 +74,7 @@ class DriverAppService extends ApplicationService {
         const response = new ResponseManager<DriverDto>()
         try {
             if (!driverUpdate.id) {
-                throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorIdNotProvided))
+                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
             }
 
             const driverManager = new DriverManager()
@@ -81,8 +82,8 @@ class DriverAppService extends ApplicationService {
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
-        } catch (exception) {
-            return response.onError(DriverErrorCodes.getErrorException(exception))
+        } catch (error) {
+            return response.onError(ServiceError.getException(error))
         }
     }
 
@@ -90,7 +91,7 @@ class DriverAppService extends ApplicationService {
         const response = new ResponseManager<DriverDto>()
         try {
             if (!driverUpdate.id) {
-                throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorIdNotProvided))
+                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
             }
 
             const driverManager = new DriverManager()
@@ -98,8 +99,8 @@ class DriverAppService extends ApplicationService {
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
-        } catch (exception) {
-            return response.onError(DriverErrorCodes.getErrorException(exception))
+        } catch (error) {
+            return response.onError(ServiceError.getException(error))
         }
     }
 
@@ -107,7 +108,7 @@ class DriverAppService extends ApplicationService {
         const response = new ResponseManager<DriverDto>()
         try {
             if (!driverUpdate.id) {
-                throw new DriverException(DriverErrorCodes.getError(DriverErrorCodes.DriverErrorIdNotProvided))
+                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
             }
 
             const driverManager = new DriverManager()
@@ -115,8 +116,8 @@ class DriverAppService extends ApplicationService {
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
-        } catch (exception) {
-            return response.onError(DriverErrorCodes.getErrorException(exception))
+        } catch (error) {
+            return response.onError(ServiceError.getException(error))
         }
     }
 
@@ -128,8 +129,8 @@ class DriverAppService extends ApplicationService {
             await driverManager.delete(id)
 
             return response.onSuccess(id)
-        } catch (exception) {
-            return response.onError(DriverErrorCodes.getErrorException(exception))
+        } catch (error) {
+            return response.onError(ServiceError.getException(error))
         }
     }
 }

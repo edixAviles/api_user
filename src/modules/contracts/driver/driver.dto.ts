@@ -1,6 +1,6 @@
 import { AutoMap } from "@automapper/classes"
-import { DataStringVerified } from "../extraProperties/verified"
-import { DataBufferApprovedDto } from "../extraProperties/approved"
+import { DataStringVerified } from "../../shared/extraProperties/verified"
+import { DataBufferApprovedDto } from "../../shared/extraProperties/approved"
 
 class DriverDto {
     @AutoMap()

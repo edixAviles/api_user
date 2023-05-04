@@ -1,22 +1,23 @@
 import { ObjectId, Transaction } from "mongodb"
 
-import Driver from "../domain/driver.entity"
-import IDriverInsert from "../shared/domain/driver.insert"
-import DriverException from "../shared/exception/driver.exception"
-import DriverErrorCodes from "../shared/exception/driver.error.codes"
+import Driver from "./driver.entity"
+import IDriverInsert from "../../contracts/driver/driver.insert"
+import ServiceException from "../../shared/service.exception"
+import DriverErrorCodes from "../../shared.domain/driver/driver.error.codes"
 
 import {
     SharedConsts,
     TypeMime
-} from "../shared/shared.consts"
+} from "../../shared/shared.consts"
 import {
     IDriverUpdate,
     IDriverUpdateProfilePhoto,
     IDriverUpdateLicencePhoto,
     IDriverUpdatePoliceRecord
-} from "../shared/domain/driver.update"
+} from "../../contracts/driver/driver.update"
 import DriverRepository from "./driver.repository"
 import TransactionSession from "../../../core/database/transactionSession"
+import ServiceError from "../../shared/service.error"
 
 /**
  * This class, performs operations between the CRUD methods from the Repository
@@ -34,8 +35,8 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: id
             }
-            const error = DriverErrorCodes.getError(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
-            throw new DriverException(error)
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
+            throw new ServiceException(error)
         }
 
         return driver
@@ -81,8 +82,8 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: driverUpdate.id
             }
-            const error = DriverErrorCodes.getError(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
-            throw new DriverException(error)
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
+            throw new ServiceException(error)
         }
 
         const driver = new Driver()
@@ -113,8 +114,8 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: driverUpdate.id
             }
-            const error = DriverErrorCodes.getError(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
-            throw new DriverException(error)
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
+            throw new ServiceException(error)
         }
 
         const driver = new Driver()
@@ -134,8 +135,8 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: driverUpdate.id
             }
-            const error = DriverErrorCodes.getError(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
-            throw new DriverException(error)
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
+            throw new ServiceException(error)
         }
 
         const driver = new Driver()
@@ -155,8 +156,8 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: driverUpdate.id
             }
-            const error = DriverErrorCodes.getError(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
-            throw new DriverException(error)
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
+            throw new ServiceException(error)
         }
 
         const driver = new Driver()
@@ -176,8 +177,8 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: id
             }
-            const error = DriverErrorCodes.getError(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
-            throw new DriverException(error)
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
+            throw new ServiceException(error)
         }
 
         await this.driverRepository.delete(id)
