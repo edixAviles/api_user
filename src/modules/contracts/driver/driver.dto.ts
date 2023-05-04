@@ -31,4 +31,6 @@ class DriverDto {
     public policeRecord: DataBufferApprovedDto
 }
 
-export default DriverDto
+export {
+    DriverDto
+}

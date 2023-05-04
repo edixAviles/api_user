@@ -4,14 +4,15 @@ import {
     Response
 } from "express"
 
-import driverApi from "../../../modules/api/driver/driver.api"
 import statusCodes from "../../../core/api/statusCodes"
+import driverApi from "../../../modules/api/driver/driver.api"
+import vehicleApi from "../../../modules/api/vehicle/vehicle.api"
 
 const v1Router = express.Router()
 const { NOT_FOUND } = statusCodes
 
 v1Router.use("/driver", driverApi)
-// All routes go here
+v1Router.use("/vehicle", vehicleApi)
 
 v1Router.all("*", (req: Request, res: Response) => {
     res.sendStatus(NOT_FOUND)

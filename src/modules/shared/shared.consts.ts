@@ -1,10 +1,10 @@
-abstract class SharedConsts {
-    public static readonly id = "id"
-}
+const SharedConsts = Object.freeze({
+    id: "id"
+})
 
-abstract class TypeMime {
-    public static readonly base64 = "base64"
-}
+const TypeMime = Object.freeze({
+    base64: "base64"
+})
 
 export {
     SharedConsts,

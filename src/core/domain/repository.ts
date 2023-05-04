@@ -10,6 +10,13 @@ abstract class Repository<T extends BaseBasicModel> {
         this.transaction = transaction
     }
 
+    public filterToGet(id: ObjectId): object {
+        return {
+            _id: id,
+            isDeleted: { $ne: true }
+        }
+    }
+
     public optionsToInsert(): object {
         if (!this.transaction?.session) {
             return {}
