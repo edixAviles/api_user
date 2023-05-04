@@ -1,8 +1,8 @@
 import { AutoMap } from "@automapper/classes"
 
 import BaseBasicModel from "../../../core/domain/base.model"
-import { DataStringVerified } from "../shared/extraProperties/verified"
-import { DataBufferApproved } from "../shared/extraProperties/approved"
+import { DataStringVerified } from "../../shared/extraProperties/verified"
+import { DataBufferApproved } from "../../shared/extraProperties/approved"
 
 class Driver extends BaseBasicModel {
     @AutoMap()

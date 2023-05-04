@@ -5,14 +5,14 @@ import {
 } from "@automapper/core"
 
 import { mapper } from "./mapper"
-import Driver from "../../modules/driver/domain/driver.entity"
-import DriverDto from "../../modules/driver/shared/domain/driver.dto"
+import Driver from "../../modules/domain/driver/driver.entity"
+import DriverDto from "../../modules/contracts/driver/driver.dto"
 
-import { TypeMime } from "../../modules/driver/shared/shared.consts"
+import { TypeMime } from "../../modules/shared/shared.consts"
 import {
     DataBufferApproved,
     DataBufferApprovedDto
-} from "../../modules/driver/shared/extraProperties/approved"
+} from "../../modules/shared/extraProperties/approved"
 
 const runMappers = () => {
     createMap(

@@ -4,7 +4,7 @@ import cors from "cors"
 import middleware from "i18next-http-middleware"
 
 import v1Router from "./versions/v1Router"
-import localizer from "../../modules/driver/shared/localization"
+import localizer from "../../modules/shared/localization"
 import {
     isProduction,
     limitRequest

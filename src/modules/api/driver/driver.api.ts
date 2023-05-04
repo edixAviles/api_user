@@ -6,14 +6,14 @@ import {
 } from "express"
 
 
-import DriverAppService from "../application/driver.application"
-import IDriverInsert from "../shared/domain/driver.insert"
+import DriverAppService from "../../application/driver/driver.app"
+import IDriverInsert from "../../contracts/driver/driver.insert"
 import {
     IDriverUpdate,
     IDriverUpdateProfilePhoto,
     IDriverUpdateLicencePhoto,
     IDriverUpdatePoliceRecord
-} from "../shared/domain/driver.update"
+} from "../../contracts/driver/driver.update"
 
 const driverApi = express.Router()
 const driverAppService = new DriverAppService()
