@@ -4,11 +4,14 @@ import {
     mapFrom
 } from "@automapper/core"
 
-import { mapper } from "./mapper"
 import Driver from "../../modules/domain/driver/driver.entity"
-import DriverDto from "../../modules/contracts/driver/driver.dto"
+import Vehicle from "../../modules/domain/vehicle/vehicle.entity"
 
+import { mapper } from "./mapper"
 import { TypeMime } from "../../modules/shared/shared.consts"
+
+import { DriverDto } from "../../modules/contracts/driver/driver.dto"
+import { VehicleDto } from "../../modules/contracts/vehicle/vehicle.dto"
 import {
     DataBufferApproved,
     DataBufferApprovedDto
@@ -23,6 +26,11 @@ const runMappers = () => {
     )
 
     createMap(mapper, Driver, DriverDto)
+    createMap(mapper,
+        Vehicle,
+        VehicleDto,
+        forMember(member => member.licencePlatePhoto, mapFrom(s => s.licencePlatePhoto.toString(TypeMime.base64)))
+    )
 }
 
 export default runMappers

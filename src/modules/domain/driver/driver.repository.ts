@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb"
 
 import Driver from "./driver.entity"
 import DriverModel from "./driver.model"
+
 import {
     Repository,
     IRepository
@@ -12,53 +13,38 @@ import {
  */
 class DriverRepository extends Repository<Driver> implements IRepository<Driver> {
     async get(id: ObjectId): Promise<Driver> {
-        const filter = {
-            _id: id,
-            isDeleted: { $ne: true }
-        }
-        const document = await DriverModel.findOne(filter)
+        const document = await DriverModel.findOne(this.filterToGet(id))
 
-        const entity = this.castToEntity(document)
-        return entity
+        const entity = new Driver({ ...document })
+        return document ? entity : null
     }
 
     async insert(entity: Driver): Promise<Driver> {
         const document = new DriverModel({ ...entity })
         await document.save(this.optionsToInsert())
 
-        const createdEntity = this.castToEntity(document)
+        const createdEntity = new Driver({ ...document })
         return createdEntity
     }
 
     async update(entity: Driver): Promise<Driver> {
         const dataToUpdate = this.mapObjectToUpdate(entity)
-        const document = await DriverModel.findOneAndUpdate({_id: entity._id }, dataToUpdate, this.optionsToUpdate())
-        
-        const updatedEntity = this.castToEntity(document)
+        const document = await DriverModel.findOneAndUpdate(
+            { _id: entity._id },
+            dataToUpdate,
+            this.optionsToUpdate()
+        )
+
+        const updatedEntity = new Driver({ ...document })
         return updatedEntity
     }
 
     async delete(id: ObjectId): Promise<void> {
-        await DriverModel.findOneAndUpdate({_id: id }, this.paramsToDelete(), this.optionsToUpdate())
-    }
-
-    private castToEntity(document: any): Driver {
-        if (!document) {
-            return null
-        }
-
-        const entity = new Driver(document)
-        entity.identification = document.identification
-        entity.name = document.name
-        entity.lastName = document.lastName
-        entity.birthdate = document.birthdate
-        entity.email = document.email
-        entity.cellPhone = document.cellPhone
-        entity.profilePhoto = document.profilePhoto
-        entity.licencePhoto = document.licencePhoto
-        entity.policeRecord = document.policeRecord
-
-        return entity
+        await DriverModel.findOneAndUpdate(
+            { _id: id },
+            this.paramsToDelete(),
+            this.optionsToUpdate()
+        )
     }
 }
 

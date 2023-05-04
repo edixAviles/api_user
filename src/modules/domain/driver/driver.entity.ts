@@ -31,10 +31,6 @@ class Driver extends BaseBasicModel {
 
     @AutoMap()
     public policeRecord: DataBufferApproved
-
-    constructor(document?: any) {
-        super(document)
-    }
 }
 
 export default Driver

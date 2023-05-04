@@ -1,8 +1,11 @@
-import { ObjectId, Transaction } from "mongodb"
+import { ObjectId } from "mongodb"
 
-import Driver from "./driver.entity"
-import IDriverInsert from "../../contracts/driver/driver.insert"
 import ServiceException from "../../shared/service.exception"
+import TransactionSession from "../../../core/database/transactionSession"
+import ServiceError from "../../shared/service.error"
+import Driver from "./driver.entity"
+import DriverRepository from "./driver.repository"
+import IDriverInsert from "../../contracts/driver/driver.insert"
 import DriverErrorCodes from "../../shared.domain/driver/driver.error.codes"
 
 import {
@@ -15,9 +18,6 @@ import {
     IDriverUpdateLicencePhoto,
     IDriverUpdatePoliceRecord
 } from "../../contracts/driver/driver.update"
-import DriverRepository from "./driver.repository"
-import TransactionSession from "../../../core/database/transactionSession"
-import ServiceError from "../../shared/service.error"
 
 /**
  * This class, performs operations between the CRUD methods from the Repository

@@ -1,23 +1,23 @@
 import { ObjectId } from "mongodb"
 
-import Driver from "../../domain/driver/driver.entity"
-import DriverDto from "../../contracts/driver/driver.dto"
-import DriverManager from "../../domain/driver/driver.manager"
-import IDriverInsert from "../../contracts/driver/driver.insert"
-import DriverErrorCodes from "../../shared.domain/driver/driver.error.codes"
 import ServiceException from "../../shared/service.exception"
 import ApplicationService from "../../../core/application/applicationService"
 import Response from "../../../core/response/response"
 import ResponseManager from "../../../core/response/response.manager"
 import ServiceError from "../../shared/service.error"
+import Driver from "../../domain/driver/driver.entity"
+import DriverManager from "../../domain/driver/driver.manager"
+import IDriverInsert from "../../contracts/driver/driver.insert"
+import DriverErrorCodes from "../../shared.domain/driver/driver.error.codes"
 
+import { mapper } from "../../../core/mappings/mapper"
+import { DriverDto } from "../../contracts/driver/driver.dto"
 import {
     IDriverUpdate,
     IDriverUpdateProfilePhoto,
     IDriverUpdateLicencePhoto,
     IDriverUpdatePoliceRecord
 } from "../../contracts/driver/driver.update"
-import { mapper } from "../../../core/mappings/mapper"
 
 class DriverAppService extends ApplicationService {
 
@@ -57,7 +57,7 @@ class DriverAppService extends ApplicationService {
             if (!driverUpdate.id) {
                 throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
             }
-            
+
             const driverManager = new DriverManager(transaction)
             const entity = await driverManager.update(driverUpdate)
             await transaction.completeTransaction()

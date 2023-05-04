@@ -11,15 +11,8 @@ abstract class BaseModel {
     deleterUser?: string
 
     constructor(document?: any) {
-        if (document) {
-            this._id = document.id
-            this.createdAt = document.createdAt
-            this.creatorUser = document.creatorUser
-            this.updatedAt = document.updatedAt
-            this.updaterUser = document.updaterUser
-            this.isDeleted = document.isDeleted
-            this.deletedAt = document.deletedAt
-            this.deleterUser = document.deleterUser
+        if (document?._doc) {
+            Object.assign(this, document?._doc)
         }
     }
 }

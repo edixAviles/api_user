@@ -21,7 +21,7 @@ class DatabaseConnectionSingleton {
 
         mongoose.connect(uri, options).then(() => {
             this.connection = mongoose.connection
-            console.info("Mongo's running")
+            console.info("Mongo is running")
         })
 
     }
