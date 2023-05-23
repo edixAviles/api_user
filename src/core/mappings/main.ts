@@ -15,7 +15,7 @@ import { VehicleDto } from "../../modules/contracts/vehicle/vehicle.dto"
 import {
     DataBufferApproved,
     DataBufferApprovedDto
-} from "../../modules/shared/extraProperties/approved"
+} from "../../modules/shared/extraProperties/driver.exta"
 
 const runMappers = () => {
     createMap(
