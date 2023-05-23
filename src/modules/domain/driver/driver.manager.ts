@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb"
+import CryptoJS from "crypto-js"
 
 import ServiceException from "../../shared/service.exception"
 import TransactionSession from "../../../core/database/transactionSession"
@@ -19,7 +20,6 @@ import {
     IDriverUpdatePoliceRecord,
     IDriverUpdatePassword
 } from "../../contracts/driver/driver.update"
-import CryptoJS from "crypto-js"
 
 /**
  * This class, performs operations between the CRUD methods from the Repository
@@ -37,7 +37,7 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: id
             }
-            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 
@@ -87,7 +87,7 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: driverUpdate.id
             }
-            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 
@@ -119,7 +119,7 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: driverUpdate.id
             }
-            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 
@@ -140,7 +140,7 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: driverUpdate.id
             }
-            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 
@@ -161,7 +161,7 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: driverUpdate.id
             }
-            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 
@@ -182,13 +182,13 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: driverUpdate.id
             }
-            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 
         const currentEncryptedPassword = CryptoJS.SHA256(driverUpdate.currentPassword).toString()
         if (driverFound.password != currentEncryptedPassword) {
-            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIncorrectCurrentPassword)
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.IncorrectCurrentPassword)
             throw new ServiceException(error)
         }
 
@@ -207,7 +207,7 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: id
             }
-            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 

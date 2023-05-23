@@ -5,7 +5,6 @@ import {
     Response
 } from "express"
 
-
 import DriverAppService from "../../application/driver/driver.app"
 import IDriverInsert from "../../contracts/driver/driver.insert"
 import {

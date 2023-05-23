@@ -2,7 +2,7 @@ import { AutoMap } from "@automapper/classes"
 import { ObjectId } from "mongodb"
 
 import BaseBasicModel from "../../../core/domain/base.model"
-import { DataPickupLocation } from "../../shared/extraProperties/tripDetail.exta"
+import { DataPickupLocation } from "../../shared.domain/trip/tripDetail.exta"
 
 class TripDetail extends BaseBasicModel {
     @AutoMap()
