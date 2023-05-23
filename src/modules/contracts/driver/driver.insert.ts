@@ -8,6 +8,7 @@ interface IDriverInsert {
     profilePhoto: string
     licencePhoto: string
     policeRecord: string
+    password: string
 }
 
 export default IDriverInsert

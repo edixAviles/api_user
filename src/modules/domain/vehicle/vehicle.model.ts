@@ -1,40 +1,42 @@
 import { ObjectId } from "mongodb"
 import mongooseModel from "../../../core/domain/mongoose.model"
+import { CollectionsName } from "../../shared/shared.consts"
 
 const properties = {
     brand: {
         type: String,
-        required: true,
+        required: true
     },
     model: {
         type: String,
-        required: true,
+        required: true
     },
     plate: {
         type: String,
-        required: true,
+        required: true
     },
     color: {
         type: String,
-        required: true,
+        required: true
     },
     year: {
         type: Number,
-        required: true,
+        required: true
     },
     licencePlatePhoto: {
         type: Buffer,
-        required: true,
+        required: true
     },
     isVerified: {
         type: Boolean,
-        required: true,
+        required: true
     },
     driverId: {
         type: ObjectId,
-        ref: "Driver"
+        required: true,
+        ref: CollectionsName.Driver
     }
 }
 
-const VehicleModel = mongooseModel("Vehicle", properties)
+const VehicleModel = mongooseModel(CollectionsName.Vehicle, properties)
 export default VehicleModel

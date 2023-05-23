@@ -16,8 +16,10 @@ import {
     IDriverUpdate,
     IDriverUpdateProfilePhoto,
     IDriverUpdateLicencePhoto,
-    IDriverUpdatePoliceRecord
+    IDriverUpdatePoliceRecord,
+    IDriverUpdatePassword
 } from "../../contracts/driver/driver.update"
+import CryptoJS from "crypto-js"
 
 /**
  * This class, performs operations between the CRUD methods from the Repository
@@ -43,6 +45,8 @@ class DriverManager {
     }
 
     async insert(driverInsert: IDriverInsert): Promise<Driver> {
+        const encryptedPassword = CryptoJS.SHA256(driverInsert.password).toString()
+        
         const driver = new Driver()
         driver.identification = {
             data: driverInsert.identification,
@@ -71,6 +75,7 @@ class DriverManager {
             data: Buffer.from(driverInsert.policeRecord, TypeMime.base64),
             isApproved: false
         }
+        driver.password = encryptedPassword
 
         const entity = await this.driverRepository.insert(driver)
         return entity
@@ -166,6 +171,31 @@ class DriverManager {
             data: Buffer.from(driverUpdate.policeRecord, TypeMime.base64),
             isApproved: driverFound.policeRecord.isApproved
         }
+
+        const entity = await this.driverRepository.update(driver)
+        return entity
+    }
+
+    async updatePassword(driverUpdate: IDriverUpdatePassword): Promise<Driver> {
+        const driverFound = await this.driverRepository.get(driverUpdate.id)
+        if (!driverFound) {
+            const errorParams = {
+                [SharedConsts.id]: driverUpdate.id
+            }
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorEntityNotFound, errorParams)
+            throw new ServiceException(error)
+        }
+
+        const currentEncryptedPassword = CryptoJS.SHA256(driverUpdate.currentPassword).toString()
+        if (driverFound.password != currentEncryptedPassword) {
+            const error = ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIncorrectCurrentPassword)
+            throw new ServiceException(error)
+        }
+
+        const newEncryptedPassword = CryptoJS.SHA256(driverUpdate.newPassword).toString()
+        const driver = new Driver()
+        driver._id = driverUpdate.id
+        driver.password = newEncryptedPassword
 
         const entity = await this.driverRepository.update(driver)
         return entity

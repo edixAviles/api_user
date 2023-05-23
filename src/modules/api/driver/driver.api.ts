@@ -12,7 +12,8 @@ import {
     IDriverUpdate,
     IDriverUpdateProfilePhoto,
     IDriverUpdateLicencePhoto,
-    IDriverUpdatePoliceRecord
+    IDriverUpdatePoliceRecord,
+    IDriverUpdatePassword
 } from "../../contracts/driver/driver.update"
 
 const driverApi = express.Router()
@@ -45,6 +46,11 @@ driverApi.patch("/licence-photo", async (req: Request, res: Response) => {
 
 driverApi.patch("/police-record", async (req: Request, res: Response) => {
     const result = await driverAppService.updateDriverPoliceRecord(req.body as IDriverUpdatePoliceRecord)
+    res.send(result)
+})
+
+driverApi.patch("/set-password", async (req: Request, res: Response) => {
+    const result = await driverAppService.updateDriverPassword(req.body as IDriverUpdatePassword)
     res.send(result)
 })
 

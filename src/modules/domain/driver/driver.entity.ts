@@ -1,8 +1,7 @@
 import { AutoMap } from "@automapper/classes"
 
 import BaseBasicModel from "../../../core/domain/base.model"
-import { DataStringVerified } from "../../shared/extraProperties/verified"
-import { DataBufferApproved } from "../../shared/extraProperties/approved"
+import { DataStringVerified, DataBufferApproved } from "../../shared/extraProperties/driver.exta"
 
 class Driver extends BaseBasicModel {
     @AutoMap()
@@ -31,6 +30,8 @@ class Driver extends BaseBasicModel {
 
     @AutoMap()
     public policeRecord: DataBufferApproved
+    
+    public password: string
 }
 
 export default Driver

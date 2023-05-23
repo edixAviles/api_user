@@ -25,9 +25,16 @@ interface IDriverUpdatePoliceRecord {
     policeRecord: string
 }
 
+interface IDriverUpdatePassword {
+    id: ObjectId
+    currentPassword: string
+    newPassword: string
+}
+
 export {
     IDriverUpdate,
     IDriverUpdateProfilePhoto,
     IDriverUpdateLicencePhoto,
-    IDriverUpdatePoliceRecord
+    IDriverUpdatePoliceRecord,
+    IDriverUpdatePassword
 }

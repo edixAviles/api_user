@@ -16,17 +16,23 @@ import {
     IDriverUpdate,
     IDriverUpdateProfilePhoto,
     IDriverUpdateLicencePhoto,
-    IDriverUpdatePoliceRecord
+    IDriverUpdatePoliceRecord,
+    IDriverUpdatePassword
 } from "../../contracts/driver/driver.update"
 
 class DriverAppService extends ApplicationService {
+    private driverManager: DriverManager
+
+    constructor() {
+        super()
+        this.driverManager = new DriverManager()
+    }
 
     async getDriver(id: ObjectId): Promise<Response<DriverDto>> {
         const response = new ResponseManager<DriverDto>()
 
         try {
-            const driverManager = new DriverManager()
-            const entity = await driverManager.get(id)
+            const entity = await this.driverManager.get(id)
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
@@ -39,8 +45,7 @@ class DriverAppService extends ApplicationService {
         const response = new ResponseManager<DriverDto>()
 
         try {
-            const driverManager = new DriverManager()
-            const entity = await driverManager.insert(driverInsert)
+            const entity = await this.driverManager.insert(driverInsert)
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
@@ -58,8 +63,8 @@ class DriverAppService extends ApplicationService {
                 throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
             }
 
-            const driverManager = new DriverManager(transaction)
-            const entity = await driverManager.update(driverUpdate)
+            const driverManagerTransaction = new DriverManager(transaction)
+            const entity = await driverManagerTransaction.update(driverUpdate)
             await transaction.completeTransaction()
 
             const dto = mapper.map(entity, Driver, DriverDto)
@@ -77,8 +82,7 @@ class DriverAppService extends ApplicationService {
                 throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
             }
 
-            const driverManager = new DriverManager()
-            const entity = await driverManager.updateProfilePhoto(driverUpdate)
+            const entity = await this.driverManager.updateProfilePhoto(driverUpdate)
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
@@ -94,8 +98,7 @@ class DriverAppService extends ApplicationService {
                 throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
             }
 
-            const driverManager = new DriverManager()
-            const entity = await driverManager.updateLicencePhoto(driverUpdate)
+            const entity = await this.driverManager.updateLicencePhoto(driverUpdate)
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
@@ -111,8 +114,23 @@ class DriverAppService extends ApplicationService {
                 throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
             }
 
-            const driverManager = new DriverManager()
-            const entity = await driverManager.updatePoliceRecord(driverUpdate)
+            const entity = await this.driverManager.updatePoliceRecord(driverUpdate)
+
+            const dto = mapper.map(entity, Driver, DriverDto)
+            return response.onSuccess(dto)
+        } catch (error) {
+            return response.onError(ServiceError.getException(error))
+        }
+    }
+
+    async updateDriverPassword(driverUpdate: IDriverUpdatePassword): Promise<Response<DriverDto>> {
+        const response = new ResponseManager<DriverDto>()
+        try {
+            if (!driverUpdate.id) {
+                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
+            }
+
+            const entity = await this.driverManager.updatePassword(driverUpdate)
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)

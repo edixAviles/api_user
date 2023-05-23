@@ -1,4 +1,5 @@
 import mongooseModel from "../../../core/domain/mongoose.model"
+import { CollectionsName } from "../../shared/shared.consts"
 
 const properties = {
     identification: {
@@ -73,7 +74,11 @@ const properties = {
             required: true,
         },
     },
+    password: {
+        type: String,
+        required: true,
+    }
 }
 
-const DriverModel = mongooseModel("Driver", properties)
+const DriverModel = mongooseModel(CollectionsName.Driver, properties)
 export default DriverModel
