@@ -29,6 +29,8 @@ class DriverDto {
 
     @AutoMap()
     public policeRecord: DataBufferApprovedDto
+
+    public password: DataBufferApprovedDto
 }
 
 export {
