@@ -2,7 +2,7 @@ import { AutoMap } from "@automapper/classes"
 import { ObjectId } from "mongodb"
 
 import BaseBasicModel from "../../../core/domain/base.model"
-import { DataDeparture, DataArrival } from "../../shared/extraProperties/trip.extra"
+import { DataDeparture, DataArrival } from "../../shared.domain/trip/trip.extra"
 
 class Trip extends BaseBasicModel {
     @AutoMap()

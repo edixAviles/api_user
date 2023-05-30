@@ -11,9 +11,6 @@ class DatabaseConnectionSingleton {
     private static context: DatabaseConnectionSingleton
     public connection: Connection
 
-    private constructor() {
-    }
-
     public connectDatabase = () => {
         const uri = `mongodb+srv://${username}:${password}@${cluster}/${database}?retryWrites=true&w=majority`
         const options = {

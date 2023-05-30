@@ -60,7 +60,7 @@ class DriverAppService extends ApplicationService {
 
         try {
             if (!driverUpdate.id) {
-                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
+                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.IdNotProvided))
             }
 
             const driverManagerTransaction = new DriverManager(transaction)
@@ -79,7 +79,7 @@ class DriverAppService extends ApplicationService {
         const response = new ResponseManager<DriverDto>()
         try {
             if (!driverUpdate.id) {
-                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
+                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.IdNotProvided))
             }
 
             const entity = await this.driverManager.updateProfilePhoto(driverUpdate)
@@ -95,7 +95,7 @@ class DriverAppService extends ApplicationService {
         const response = new ResponseManager<DriverDto>()
         try {
             if (!driverUpdate.id) {
-                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
+                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.IdNotProvided))
             }
 
             const entity = await this.driverManager.updateLicencePhoto(driverUpdate)
@@ -111,7 +111,7 @@ class DriverAppService extends ApplicationService {
         const response = new ResponseManager<DriverDto>()
         try {
             if (!driverUpdate.id) {
-                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
+                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.IdNotProvided))
             }
 
             const entity = await this.driverManager.updatePoliceRecord(driverUpdate)
@@ -127,7 +127,7 @@ class DriverAppService extends ApplicationService {
         const response = new ResponseManager<DriverDto>()
         try {
             if (!driverUpdate.id) {
-                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.DriverErrorIdNotProvided))
+                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.IdNotProvided))
             }
 
             const entity = await this.driverManager.updatePassword(driverUpdate)

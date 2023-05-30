@@ -2,10 +2,7 @@ import { AutoMap } from "@automapper/classes"
 import { DataStringVerified } from "../../shared.domain/driver/driver.exta"
 import { DataBufferApprovedDto } from "../../shared.domain/driver/driver.exta"
 
-class DriverDto {
-    @AutoMap()
-    public identification: DataStringVerified
-
+class UserDto {
     @AutoMap()
     public name: string
 
@@ -23,16 +20,8 @@ class DriverDto {
 
     @AutoMap()
     public profilePhoto: DataBufferApprovedDto
-
-    @AutoMap()
-    public licencePhoto: DataBufferApprovedDto
-
-    @AutoMap()
-    public policeRecord: DataBufferApprovedDto
-
-    public password: DataBufferApprovedDto
 }
 
 export {
-    DriverDto
+    UserDto
 }

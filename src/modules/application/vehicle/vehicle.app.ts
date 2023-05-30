@@ -7,8 +7,10 @@ import ResponseManager from "../../../core/response/response.manager"
 import ServiceError from "../../shared/service.error"
 import Vehicle from "../../domain/vehicle/vehicle.entity"
 import VehicleManager from "../../domain/vehicle/vehicle.manager"
+import DriverManager from "../../domain/driver/driver.manager"
 import IVehicleInsert from "../../contracts/vehicle/vehicle.insert"
 import VehicleErrorCodes from "../../shared.domain/vehicle/vehicle.error.codes"
+import DriverErrorCodes from "../../shared.domain/driver/driver.error.codes"
 
 import { mapper } from "../../../core/mappings/mapper"
 import { VehicleDto } from "../../contracts/vehicle/vehicle.dto"
@@ -17,6 +19,14 @@ import {
 } from "../../contracts/vehicle/vehicle.update"
 
 class VehicleAppService extends ApplicationService {
+    private vehicleManager: VehicleManager
+    private driverManager: DriverManager
+
+    constructor() {
+        super()
+        this.vehicleManager = new VehicleManager()
+        this.driverManager = new DriverManager()
+    }
 
     async getVehicle(id: ObjectId): Promise<Response<VehicleDto>> {
         const response = new ResponseManager<VehicleDto>()
@@ -36,8 +46,12 @@ class VehicleAppService extends ApplicationService {
         const response = new ResponseManager<VehicleDto>()
 
         try {
-            const vehicleManager = new VehicleManager()
-            const entity = await vehicleManager.insert(vehicleInsert)
+            const driver = await this.driverManager.get(vehicleInsert.driverId)
+            if (!driver) {
+                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.EntityNotFound))
+            }
+
+            const entity = await this.vehicleManager.insert(vehicleInsert)
 
             const dto = mapper.map(entity, Vehicle, VehicleDto)
             return response.onSuccess(dto)
@@ -53,6 +67,11 @@ class VehicleAppService extends ApplicationService {
         try {
             if (!vehicleUpdate.id) {
                 throw new ServiceException(ServiceError.getErrorByCode(VehicleErrorCodes.VehicleErrorIdNotProvided))
+            }
+
+            const driver = await this.driverManager.get(vehicleUpdate.driverId)
+            if (!driver) {
+                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.EntityNotFound))
             }
 
             const vehicleManager = new VehicleManager(transaction)
@@ -71,8 +90,7 @@ class VehicleAppService extends ApplicationService {
         const response = new ResponseManager<ObjectId>()
 
         try {
-            const vehicleManager = new VehicleManager()
-            await vehicleManager.delete(id)
+            await this.vehicleManager.delete(id)
 
             return response.onSuccess(id)
         } catch (error) {
