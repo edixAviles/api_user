@@ -33,17 +33,17 @@ driverApi.patch("/", async (req: Request, res: Response) => {
     res.send(result)
 })
 
-driverApi.patch("/profile-photo", async (req: Request, res: Response) => {
+driverApi.patch("/set-profile-photo", async (req: Request, res: Response) => {
     const result = await driverAppService.updateDriverProfilePhoto(req.body as IDriverUpdateProfilePhoto)
     res.send(result)
 })
 
-driverApi.patch("/licence-photo", async (req: Request, res: Response) => {
+driverApi.patch("/set-licence-photo", async (req: Request, res: Response) => {
     const result = await driverAppService.updateDriverLicencePhoto(req.body as IDriverUpdateLicencePhoto)
     res.send(result)
 })
 
-driverApi.patch("/police-record", async (req: Request, res: Response) => {
+driverApi.patch("/set-police-record", async (req: Request, res: Response) => {
     const result = await driverAppService.updateDriverPoliceRecord(req.body as IDriverUpdatePoliceRecord)
     res.send(result)
 })

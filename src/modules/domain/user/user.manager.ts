@@ -116,7 +116,7 @@ class UserManager {
         return entity
     }
 
-    async updatePassword(userUpdate: IUserUpdatePassword): Promise<User> {
+    async updatePassword(userUpdate: IUserUpdatePassword): Promise<void> {
         const userFound = await this.userRepository.get(userUpdate.id)
         if (!userFound) {
             const errorParams = {
@@ -137,8 +137,7 @@ class UserManager {
         user._id = userUpdate.id
         user.password = newEncryptedPassword
 
-        const entity = await this.userRepository.update(user)
-        return entity
+        await this.userRepository.update(user)
     }
 
     async delete(id: ObjectId): Promise<void> {
