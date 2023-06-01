@@ -107,8 +107,7 @@ class UserAppService extends ApplicationService {
         const response = new ResponseManager<ObjectId>()
 
         try {
-            const userManager = new UserManager()
-            await userManager.delete(id)
+            await this.userManager.delete(id)
 
             return response.onSuccess(id)
         } catch (error) {

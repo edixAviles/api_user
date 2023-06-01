@@ -15,7 +15,7 @@ import {
 } from "../../shared/shared.consts"
 import { IVehicleUpdate } from "../../contracts/vehicle/vehicle.update"
 
-class DriverManager {
+class VehicleManager {
     private vehicleRepository: VehicleRepository
 
     constructor(transaction?: TransactionSession) {
@@ -28,7 +28,7 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: id
             }
-            const error = ServiceError.getErrorByCode(VehicleErrorCodes.VehicleErrorEntityNotFound, errorParams)
+            const error = ServiceError.getErrorByCode(VehicleErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 
@@ -56,7 +56,7 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: vehicleUpdate.id
             }
-            const error = ServiceError.getErrorByCode(VehicleErrorCodes.VehicleErrorEntityNotFound, errorParams)
+            const error = ServiceError.getErrorByCode(VehicleErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 
@@ -81,7 +81,7 @@ class DriverManager {
             const errorParams = {
                 [SharedConsts.id]: id
             }
-            const error = ServiceError.getErrorByCode(VehicleErrorCodes.VehicleErrorEntityNotFound, errorParams)
+            const error = ServiceError.getErrorByCode(VehicleErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 
@@ -89,4 +89,4 @@ class DriverManager {
     }
 }
 
-export default DriverManager
+export default VehicleManager

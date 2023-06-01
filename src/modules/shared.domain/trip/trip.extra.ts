@@ -5,12 +5,27 @@ class DataDeparture {
 
 class DataArrival {
     arrivalCity: string
-    latitude: number
-    length: number
     arrivalTime: Date
+}
+
+class DataTripStatus {
+    status: string
+    dateTimeAudit: Date
+    observation: string
+    isCurrent: boolean
+}
+
+enum StatusTrip {
+    Available = "AVAILABLE",
+    Full = "FULL",
+    OnTheWay = "ON_THE_WAY",
+    Finished = "FINISHED",
+    Cancelled = "CANCELLED"
 }
 
 export {
     DataDeparture,
-    DataArrival
+    DataArrival,
+    DataTripStatus,
+    StatusTrip
 }
