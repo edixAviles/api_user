@@ -31,7 +31,7 @@ userApi.patch("/", async (req: Request, res: Response) => {
     res.send(result)
 })
 
-userApi.patch("/profile-photo", async (req: Request, res: Response) => {
+userApi.patch("/set-profile-photo", async (req: Request, res: Response) => {
     const result = await userAppService.updateUserProfilePhoto(req.body as IUserUpdateProfilePhoto)
     res.send(result)
 })

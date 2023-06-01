@@ -89,17 +89,15 @@ class UserAppService extends ApplicationService {
         }
     }
 
-    async updateUserPassword(userUpdate: IUserUpdatePassword): Promise<Response<UserDto>> {
-        const response = new ResponseManager<UserDto>()
+    async updateUserPassword(userUpdate: IUserUpdatePassword): Promise<Response<ObjectId>> {
+        const response = new ResponseManager<ObjectId>()
         try {
             if (!userUpdate.id) {
                 throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IdNotProvided))
             }
 
-            const entity = await this.userManager.updatePassword(userUpdate)
-
-            const dto = mapper.map(entity, User, UserDto)
-            return response.onSuccess(dto)
+            await this.userManager.updatePassword(userUpdate)
+            return response.onSuccess(userUpdate.id)
         } catch (error) {
             return response.onError(ServiceError.getException(error))
         }

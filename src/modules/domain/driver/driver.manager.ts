@@ -176,7 +176,7 @@ class DriverManager {
         return entity
     }
 
-    async updatePassword(driverUpdate: IDriverUpdatePassword): Promise<Driver> {
+    async updatePassword(driverUpdate: IDriverUpdatePassword): Promise<void> {
         const driverFound = await this.driverRepository.get(driverUpdate.id)
         if (!driverFound) {
             const errorParams = {
@@ -197,8 +197,7 @@ class DriverManager {
         driver._id = driverUpdate.id
         driver.password = newEncryptedPassword
 
-        const entity = await this.driverRepository.update(driver)
-        return entity
+        await this.driverRepository.update(driver)
     }
 
     async delete(id: ObjectId): Promise<void> {

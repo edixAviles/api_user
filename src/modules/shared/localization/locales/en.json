@@ -4,7 +4,12 @@
         "DRIVER_ERROR_ENTITY_NOT_FOUND": "Driver with id: {{id}} doesn't exist",
         "DRIVER_ERROR_ID_NOT_PROVIDED": "We cannot proceed with your request because you have not provided the driver's ID",
         "DRIVER_ERROR_INCORRECT_CURRENT_PASSWORD": "The current password entered is incorrect",
+
         "VEHICLE_ERROR_ENTITY_NOT_FOUND": "Vehicle with id: {{id}} doesn't exist",
-        "VEHICLE_ERROR_ID_NOT_PROVIDED": "We cannot proceed with your request because you have not provided the vehicle's ID"
+        "VEHICLE_ERROR_ID_NOT_PROVIDED": "We cannot proceed with your request because you have not provided the vehicle's ID",
+
+        "USER_ERROR_ENTITY_NOT_FOUND": "User with id: {{id}} doesn't exist",
+        "USER_ERROR_ID_NOT_PROVIDED": "We cannot proceed with your request because you have not provided the users's ID",
+        "USER_ERROR_INCORRECT_CURRENT_PASSWORD": "The current password entered is incorrect"
     }
 }

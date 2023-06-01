@@ -61,6 +61,7 @@ class DriverManager {
         }
 
         const vehicle = new Vehicle()
+        vehicle._id = vehicleUpdate.id
         vehicle.brand = vehicleUpdate.brand
         vehicle.model = vehicleUpdate.model
         vehicle.plate = vehicleUpdate.plate

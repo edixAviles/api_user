@@ -123,17 +123,15 @@ class DriverAppService extends ApplicationService {
         }
     }
 
-    async updateDriverPassword(driverUpdate: IDriverUpdatePassword): Promise<Response<DriverDto>> {
-        const response = new ResponseManager<DriverDto>()
+    async updateDriverPassword(driverUpdate: IDriverUpdatePassword): Promise<Response<ObjectId>> {
+        const response = new ResponseManager<ObjectId>()
         try {
             if (!driverUpdate.id) {
                 throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.IdNotProvided))
             }
 
-            const entity = await this.driverManager.updatePassword(driverUpdate)
-
-            const dto = mapper.map(entity, Driver, DriverDto)
-            return response.onSuccess(dto)
+            await this.driverManager.updatePassword(driverUpdate)
+            return response.onSuccess(driverUpdate.id)
         } catch (error) {
             return response.onError(ServiceError.getException(error))
         }
