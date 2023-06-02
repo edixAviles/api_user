@@ -36,7 +36,6 @@ class TripManager {
     }
 
     async insert(tripInsert: ITripInsert): Promise<Trip> {
-        console.log(tripInsert.departure)
         const trip = new Trip()
         trip.departure = {
             departureCity: tripInsert.departure.departureCity,
@@ -117,7 +116,7 @@ class TripManager {
     private getNewState = (tripStatus: DataTripStatus[], state: string, observation?: string) => {
         const status = tripStatus.map(element => {
             if (element.isCurrent) {
-                return { ...element, isCurrent: false }
+                element.isCurrent = false
             }
 
             return element

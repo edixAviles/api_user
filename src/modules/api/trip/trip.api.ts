@@ -17,7 +17,7 @@ tripApi.post("/", async (req: Request, res: Response) => {
     res.send(result)
 })
 
-tripApi.patch("/finish", async (req: Request, res: Response) => {
+tripApi.patch("/finish/:id", async (req: Request, res: Response) => {
     const result = await tripAppService.finishTrip(new mongo.ObjectId(req.params.id))
     res.send(result)
 })
