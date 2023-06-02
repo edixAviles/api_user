@@ -10,6 +10,10 @@
 
         "USER_ERROR_ENTITY_NOT_FOUND": "User with id: {{id}} doesn't exist",
         "USER_ERROR_ID_NOT_PROVIDED": "We cannot proceed with your request because you have not provided the users's ID",
-        "USER_ERROR_INCORRECT_CURRENT_PASSWORD": "The current password entered is incorrect"
+        "USER_ERROR_INCORRECT_CURRENT_PASSWORD": "The current password entered is incorrect",
+
+        "TRIP_ERROR_ENTITY_NOT_FOUND": "Trip with id: {{id}} doesn't exist",
+        "TRIP_ERROR_ID_NOT_PROVIDED": "We cannot proceed with your request because you have not provided the trip's ID",
+        "TRIP_ERROR_TRIP_NOT_AVAILABLE": "The trip with id {{id}} that you want to modify is no longer available"
     }
 }

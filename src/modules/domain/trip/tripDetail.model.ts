@@ -1,13 +1,10 @@
 import { ObjectId } from "mongodb"
 import mongooseModel from "../../../core/domain/mongoose.model"
 import { CollectionsName } from "../../shared/shared.consts"
+import { StatusTripDetail, PaymentMethods } from "../../shared.domain/trip/tripDetail.exta"
 
 const properties = {
-    seats: {
-        type: Number,
-        required: true
-    },
-    price: {
+    numberOfSeats: {
         type: Number,
         required: true
     },
@@ -16,12 +13,53 @@ const properties = {
             type: Number,
             required: true
         },
-        length: {
+        longitude: {
             type: Number,
             required: true
         },
-        pickupTime: {
+        dateTimeAudit: {
             type: Date
+        },
+    },
+    arrivalLocation: {
+        latitude: {
+            type: Number
+        },
+        longitude: {
+            type: Number
+        },
+        dateTimeAudit: {
+            type: Date
+        },
+    },
+    tripStatus: [{
+        status: {
+            type: String,
+            enum: StatusTripDetail
+        },
+        dateTimeAudit: {
+            type: Date,
+            required: true
+        },
+        observation: {
+            type: String
+        },
+        isCurrent: {
+            type: Boolean,
+            required: true
+        },
+    }],
+    payment: {
+        price: {
+            type: Number,
+            required: true
+        },
+        isPaid: {
+            type: Boolean,
+            required: true
+        },
+        method: {
+            enum: PaymentMethods
         }
     },
     tripId: {

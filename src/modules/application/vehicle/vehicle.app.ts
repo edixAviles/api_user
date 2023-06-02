@@ -32,8 +32,7 @@ class VehicleAppService extends ApplicationService {
         const response = new ResponseManager<VehicleDto>()
 
         try {
-            const vehicleManager = new VehicleManager()
-            const entity = await vehicleManager.get(id)
+            const entity = await this.vehicleManager.get(id)
 
             const dto = mapper.map(entity, Vehicle, VehicleDto)
             return response.onSuccess(dto)
@@ -66,7 +65,7 @@ class VehicleAppService extends ApplicationService {
 
         try {
             if (!vehicleUpdate.id) {
-                throw new ServiceException(ServiceError.getErrorByCode(VehicleErrorCodes.VehicleErrorIdNotProvided))
+                throw new ServiceException(ServiceError.getErrorByCode(VehicleErrorCodes.IdNotProvided))
             }
 
             const driver = await this.driverManager.get(vehicleUpdate.driverId)

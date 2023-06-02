@@ -141,8 +141,7 @@ class DriverAppService extends ApplicationService {
         const response = new ResponseManager<ObjectId>()
 
         try {
-            const driverManager = new DriverManager()
-            await driverManager.delete(id)
+            await this.driverManager.delete(id)
 
             return response.onSuccess(id)
         } catch (error) {

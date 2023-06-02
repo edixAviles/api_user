@@ -18,6 +18,8 @@ import {
     DataBufferApproved,
     DataBufferApprovedDto
 } from "../../modules/shared.domain/driver/driver.exta"
+import Trip from "../../modules/domain/trip/trip.entity"
+import { TripDto } from "../../modules/contracts/trip/trip.dto"
 
 const runMappers = () => {
     createMap(
@@ -35,6 +37,7 @@ const runMappers = () => {
         forMember(member => member.licencePlatePhoto, mapFrom(s => s.licencePlatePhoto.toString(TypeMime.base64)))
     )
     createMap(mapper, User, UserDto)
+    createMap(mapper, Trip, TripDto)
 }
 
 export default runMappers
