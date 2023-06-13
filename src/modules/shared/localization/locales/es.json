@@ -14,6 +14,11 @@
 
         "TRIP_ERROR_ENTITY_NOT_FOUND": "El viaje con id: {{id}} no existe",
         "TRIP_ERROR_ID_NOT_PROVIDED": "No podemos proceder con su solicitud porque no ha proporcionado el ID del viaje",
-        "TRIP_ERROR_TRIP_NOT_AVAILABLE": "El viaje con id {{id}} que deseas modificar, ya no está disponible"
+        "TRIP_ERROR_TRIP_NOT_AVAILABLE": "El viaje con id {{id}} que deseas modificar, ya no está disponible",
+        "TRIP_ERROR_EXCEEDED_SEATS": "El número de asientos que deseas reservar, excede la cantidad disponible para este viaje",
+        "TRIP_ERROR_NO_TRIPS_BOOKED": "No tienes viajes reservados",
+
+        "TRIP_USER_ERROR_ENTITY_NOT_FOUND": "El viaje reservado con id: {{id}} no existe",
+        "TRIP_USER_ERROR_TRIP_NOT_AVAILABLE": "El viaje reservado con id {{id}} que deseas modificar, ya no está disponible"
     }
 }

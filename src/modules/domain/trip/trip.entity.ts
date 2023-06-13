@@ -22,6 +22,9 @@ class Trip extends BaseBasicModel {
     public price: number
 
     @AutoMap()
+    public offeredSeats: number
+
+    @AutoMap()
     public availableSeats: number
 
     @AutoMap()

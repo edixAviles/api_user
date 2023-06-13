@@ -14,6 +14,11 @@
 
         "TRIP_ERROR_ENTITY_NOT_FOUND": "Trip with id: {{id}} doesn't exist",
         "TRIP_ERROR_ID_NOT_PROVIDED": "We cannot proceed with your request because you have not provided the trip's ID",
-        "TRIP_ERROR_TRIP_NOT_AVAILABLE": "The trip with id {{id}} that you want to modify is no longer available"
+        "TRIP_ERROR_TRIP_NOT_AVAILABLE": "The trip with id {{id}} that you want to modify is no longer available",
+        "TRIP_ERROR_EXCEEDED_SEATS": "The number of seats you wish to reserve exceeds the number available for this trip",
+        "TRIP_ERROR_NO_TRIPS_BOOKED": "You don't have booked trips",
+
+        "TRIP_USER_ERROR_ENTITY_NOT_FOUND": "Trip booked with id: {{id}} doesn't exist",
+        "TRIP_USER_ERROR_TRIP_NOT_AVAILABLE": "The trip booked with id {{id}} that you want to modify is no longer available"
     }
 }

@@ -44,6 +44,10 @@ const properties = {
         type: Number,
         required: true,
     },
+    offeredSeats: {
+        type: Number,
+        required: true
+    },
     availableSeats: {
         type: Number,
         required: true

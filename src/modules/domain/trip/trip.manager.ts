@@ -53,7 +53,8 @@ class TripManager {
         }]
 
         trip.price = tripInsert.price
-        trip.availableSeats = tripInsert.availableSeats
+        trip.offeredSeats = tripInsert.offeredSeats
+        trip.availableSeats = tripInsert.offeredSeats
         trip.passengersToPickUp = null
         trip.description = tripInsert.description
         trip.vehicleId = tripInsert.vehicleId
@@ -104,6 +105,8 @@ class TripManager {
     }
 
     async updateAvailableSeats(tripId: ObjectId, numberOfSeats: number): Promise<void> {
+        const tripFound = await this.validateTrip(tripId, [TripState.Available])
+
         if (numberOfSeats == 0) {
             const errorParams = {
                 [SharedConsts.id]: tripId
@@ -111,8 +114,7 @@ class TripManager {
             const error = ServiceError.getErrorByCode(TripErrorCodes.EmptySeats, errorParams)
             throw new ServiceException(error)
         }
-
-        const tripFound = await this.validateTrip(tripId, [TripState.Available])
+        
         if (numberOfSeats > tripFound.availableSeats) {
             const errorParams = {
                 [SharedConsts.id]: tripId
@@ -138,7 +140,6 @@ class TripManager {
         const trip = new Trip()
         trip._id = id
         trip.passengersToPickUp = tripFound.passengersToPickUp - 1
-        console.log(trip)
 
         await this.tripRepository.update(trip)
     }
