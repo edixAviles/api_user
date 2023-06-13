@@ -27,11 +27,6 @@ tripUserApi.patch("/start-trip/:id", async (req: Request, res: Response) => {
     res.send(result)
 })
 
-tripUserApi.patch("/finish/:id", async (req: Request, res: Response) => {
-    const result = await tripUserAppService.finishTripUser(new mongo.ObjectId(req.params.id))
-    res.send(result)
-})
-
 tripUserApi.patch("/cancel", async (req: Request, res: Response) => {
     const result = await tripUserAppService.cancelTripUser(req.body as ITripUserCancel)
     res.send(result)

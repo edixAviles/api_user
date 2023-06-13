@@ -21,17 +21,6 @@ const properties = {
             type: Date
         },
     },
-    arrivalLocation: {
-        latitude: {
-            type: Number
-        },
-        longitude: {
-            type: Number
-        },
-        dateTimeAudit: {
-            type: Date
-        },
-    },
     tripState: [{
         state: {
             type: String,

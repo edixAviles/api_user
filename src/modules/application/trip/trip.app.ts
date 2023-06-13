@@ -83,12 +83,30 @@ class TripAppService extends ApplicationService {
 
     async finishTrip(id: ObjectId): Promise<Response<ObjectId>> {
         const response = new ResponseManager<ObjectId>()
+        const transaction = await this.transactionManager.beginTransaction()
 
         try {
-            await this.tripManager.finish(id)
+            const tripManagerTransaction = new TripManager(transaction)
+            const tripUserManagerTransaction = new TripUserManager(transaction)
+
+            const entity = await tripManagerTransaction.get(id)
+            const onTheWayTrips = await tripUserManagerTransaction.getTripsUserByState(entity._id, TripStateUser.OnTheWay)
+            if (onTheWayTrips.length === 0) {
+                throw new ServiceException(ServiceError.getErrorByCode(TripErrorCodes.NoTripsOnTheWay))
+            }
+
+            for (const trip of onTheWayTrips) {
+                await tripUserManagerTransaction.finish(trip._id)
+            }
+
+            await tripManagerTransaction.finish(id)
+            // TODO: Se debe notificar a los usuarios que se finalizo el viaje
+
+            await transaction.completeTransaction()
 
             return response.onSuccess(id)
         } catch (error) {
+            transaction.cancellTransaction()
             return response.onError(ServiceError.getException(error))
         }
     }

@@ -4,7 +4,6 @@ import { ObjectId } from "mongodb"
 import BaseBasicModel from "../../../core/domain/base.model"
 import {
     DataPickupLocation,
-    DataArrivalLocation,
     DataTripUserStates,
     DataPayment
 } from "../../shared.domain/trip/tripUser.extra"
@@ -15,9 +14,6 @@ class TripUser extends BaseBasicModel {
 
     @AutoMap()
     public pickupLocation: DataPickupLocation
-
-    @AutoMap()
-    public arrivalLocation: DataArrivalLocation
 
     @AutoMap(() => [DataTripUserStates])
     public tripState: DataTripUserStates[]

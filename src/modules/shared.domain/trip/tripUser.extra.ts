@@ -4,12 +4,6 @@ class DataPickupLocation {
     dateTimeAudit: Date
 }
 
-class DataArrivalLocation {
-    latitude: number
-    longitude: number
-    dateTimeAudit: Date
-}
-
 class DataTripUserStates {
     state: string
     dateTimeAudit: Date
@@ -39,7 +33,6 @@ enum PaymentMethods {
 
 export {
     DataPickupLocation,
-    DataArrivalLocation,
     DataTripUserStates,
     DataPayment,
     TripStateUser,

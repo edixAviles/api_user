@@ -134,18 +134,6 @@ class TripUserAppService extends ApplicationService {
         }
     }
 
-    async finishTripUser(id: ObjectId): Promise<Response<ObjectId>> {
-        const response = new ResponseManager<ObjectId>()
-
-        try {
-            await this.tripUserManager.finish(id)
-
-            return response.onSuccess(id)
-        } catch (error) {
-            return response.onError(ServiceError.getException(error))
-        }
-    }
-
     async cancelTripUser(tripCancel: ITripUserCancel): Promise<Response<ObjectId>> {
         const response = new ResponseManager<ObjectId>()
 
