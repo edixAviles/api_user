@@ -1,4 +1,4 @@
-enum statusCodes {
+enum statesCodes {
     OK = 200,
     CREATED = 201,
     BAD_REQUEST = 400,
@@ -7,4 +7,4 @@ enum statusCodes {
     INTERNAL_SERVER_ERROR = 500
 }
 
-export default statusCodes
+export default statesCodes

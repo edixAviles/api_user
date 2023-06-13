@@ -54,21 +54,17 @@ class UserAppService extends ApplicationService {
 
     async updateUser(userUpdate: IUserUpdate): Promise<Response<UserDto>> {
         const response = new ResponseManager<UserDto>()
-        const transaction = await this.transactionManager.beginTransaction()
 
         try {
             if (!userUpdate.id) {
                 throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IdNotProvided))
             }
 
-            const userManagerTransaction = new UserManager(transaction)
-            const entity = await userManagerTransaction.update(userUpdate)
-            await transaction.completeTransaction()
+            const entity = await this.userManager.update(userUpdate)
 
             const dto = mapper.map(entity, User, UserDto)
             return response.onSuccess(dto)
         } catch (error) {
-            transaction.cancellTransaction()
             return response.onError(ServiceError.getException(error))
         }
     }

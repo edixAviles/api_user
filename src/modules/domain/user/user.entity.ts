@@ -1,7 +1,7 @@
 import { AutoMap } from "@automapper/classes"
 
 import BaseBasicModel from "../../../core/domain/base.model"
-import { DataStringVerified, DataBufferApproved } from "../../shared.domain/driver/driver.exta"
+import { DataStringVerified, DataBufferApproved } from "../../shared.domain/driver/driver.extra"
 
 class User extends BaseBasicModel {
     @AutoMap()

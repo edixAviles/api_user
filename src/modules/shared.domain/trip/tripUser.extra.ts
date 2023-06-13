@@ -4,14 +4,8 @@ class DataPickupLocation {
     dateTimeAudit: Date
 }
 
-class DataArrivalLocation {
-    latitude: number
-    longitude: number
-    dateTimeAudit: Date
-}
-
-class DataTripStatus {
-    status: string
+class DataTripUserStates {
+    state: string
     dateTimeAudit: Date
     observation: string
     isCurrent: boolean
@@ -23,8 +17,9 @@ class DataPayment {
     method: string
 }
 
-enum StatusTripDetail {
-    Reserved = "RESERVED",
+enum TripStateUser {
+    Booked = "BOOKED",
+    OnTheWayToYou = "ON_THE_WAY_TO_YOU",
     OnTheWay = "ON_THE_WAY",
     Finished = "FINISHED",
     Cancelled = "CANCELLED"
@@ -32,15 +27,14 @@ enum StatusTripDetail {
 
 enum PaymentMethods {
     Cash = "CASH",
-    CreditCard = "CREDIT_cARD",
+    CreditCard = "CREDIT_CARD",
     BankTransfer = "BANK_TRANSFER"
 }
 
 export {
     DataPickupLocation,
-    DataArrivalLocation,
-    DataTripStatus,
+    DataTripUserStates,
     DataPayment,
-    StatusTripDetail,
+    TripStateUser,
     PaymentMethods
 }

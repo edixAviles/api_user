@@ -1,6 +1,6 @@
 import { AutoMap } from "@automapper/classes"
-import { DataStringVerified } from "../../shared.domain/driver/driver.exta"
-import { DataBufferApprovedDto } from "../../shared.domain/driver/driver.exta"
+import { DataStringVerified } from "../../shared.domain/driver/driver.extra"
+import { DataBufferApprovedDto } from "../../shared.domain/driver/driver.extra"
 
 class DriverDto {
     @AutoMap()

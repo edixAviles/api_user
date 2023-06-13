@@ -7,7 +7,7 @@ interface ITripInsert {
     }
     arrivalCity: string
     price: number
-    availableSeats: number
+    offeredSeats: number
     description: string
     vehicleId: ObjectId
 }

@@ -12,17 +12,22 @@ tripApi.get("/:id", async (req: Request, res: Response) => {
     res.send(result)
 })
 
-tripApi.post("/", async (req: Request, res: Response) => {
-    const result = await tripAppService.insertTrip(req.body as ITripInsert)
+tripApi.post("/publish", async (req: Request, res: Response) => {
+    const result = await tripAppService.publishTrip(req.body as ITripInsert)
     res.send(result)
 })
 
-tripApi.patch("/finish/:id", async (req: Request, res: Response) => {
+tripApi.post("/pick-up-passengers/:id", async (req: Request, res: Response) => {
+    const result = await tripAppService.pickUpPassengers(new mongo.ObjectId(req.params.id))
+    res.send(result)
+})
+
+tripApi.post("/finish/:id", async (req: Request, res: Response) => {
     const result = await tripAppService.finishTrip(new mongo.ObjectId(req.params.id))
     res.send(result)
 })
 
-tripApi.patch("/cancel", async (req: Request, res: Response) => {
+tripApi.post("/cancel", async (req: Request, res: Response) => {
     const result = await tripAppService.cancelTrip(req.body as ITripCancel)
     res.send(result)
 })

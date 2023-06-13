@@ -5,7 +5,7 @@ import BaseBasicModel from "../../../core/domain/base.model"
 import {
     DataDeparture,
     DataArrival,
-    DataTripStatus
+    DataTripStates
 } from "../../shared.domain/trip/trip.extra"
 
 class Trip extends BaseBasicModel {
@@ -15,14 +15,20 @@ class Trip extends BaseBasicModel {
     @AutoMap()
     public arrival: DataArrival
 
-    @AutoMap()
-    public tripStatus: DataTripStatus[]
+    @AutoMap(() => [DataTripStates])
+    public tripState: DataTripStates[]
 
     @AutoMap()
     public price: number
 
     @AutoMap()
+    public offeredSeats: number
+
+    @AutoMap()
     public availableSeats: number
+
+    @AutoMap()
+    public passengersToPickUp: number
 
     @AutoMap()
     public description: string
