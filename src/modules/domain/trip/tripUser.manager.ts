@@ -35,8 +35,8 @@ class TripUserManager {
     }
 
     async getTripsUserByState(tripId: ObjectId, state: string): Promise<TripUser[]> {
-        const tripUser = await this.tripUserRepository.getTripsUserByState(tripId, state)
-        return tripUser
+        const tripsUser = await this.tripUserRepository.getTripsUserByState(tripId, state)
+        return tripsUser
     }
 
     async bookTrip(tripInsert: ITripUserInsert, price: number): Promise<TripUser> {

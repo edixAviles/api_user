@@ -45,6 +45,19 @@ class TripAppService extends ApplicationService {
         }
     }
 
+    async getTripsByDriver(driverId: ObjectId): Promise<Response<TripDto[]>> {
+        const response = new ResponseManager<TripDto[]>()
+
+        try {
+            const entities = await this.tripManager.getTripsByDriver(driverId)
+
+            const dto = mapper.mapArray(entities, Trip, TripDto)
+            return response.onSuccess(dto)
+        } catch (error) {
+            return response.onError(ServiceError.getException(error))
+        }
+    }
+
     async publishTrip(tripInsert: ITripInsert): Promise<Response<TripDto>> {
         const response = new ResponseManager<TripDto>()
 

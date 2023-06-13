@@ -14,7 +14,10 @@ import { mapper } from "./mapper"
 import { TypeMime } from "../../modules/shared/shared.consts"
 
 import { DriverDto } from "../../modules/contracts/driver/driver.dto"
-import { VehicleDto } from "../../modules/contracts/vehicle/vehicle.dto"
+import {
+    VehicleDto,
+    VehicleLiteDto
+} from "../../modules/contracts/vehicle/vehicle.dto"
 import { UserDto } from "../../modules/contracts/user/user.dto"
 import { TripDto } from "../../modules/contracts/trip/trip.dto"
 import { TripUserDto } from "../../modules/contracts/trip/tripUser.dto"
@@ -38,6 +41,7 @@ const runMappers = () => {
         VehicleDto,
         forMember(member => member.licencePlatePhoto, mapFrom(s => s.licencePlatePhoto.toString(TypeMime.base64)))
     )
+    createMap(mapper, Vehicle, VehicleLiteDto)
     createMap(mapper, User, UserDto)
     createMap(mapper, Trip, TripDto)
     createMap(mapper, TripUser, TripUserDto)

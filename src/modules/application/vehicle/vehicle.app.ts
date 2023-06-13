@@ -13,7 +13,10 @@ import VehicleErrorCodes from "../../shared.domain/vehicle/vehicle.error.codes"
 import DriverErrorCodes from "../../shared.domain/driver/driver.error.codes"
 
 import { mapper } from "../../../core/mappings/mapper"
-import { VehicleDto } from "../../contracts/vehicle/vehicle.dto"
+import {
+    VehicleDto,
+    VehicleLiteDto
+} from "../../contracts/vehicle/vehicle.dto"
 import {
     IVehicleUpdate
 } from "../../contracts/vehicle/vehicle.update"
@@ -35,6 +38,19 @@ class VehicleAppService extends ApplicationService {
             const entity = await this.vehicleManager.get(id)
 
             const dto = mapper.map(entity, Vehicle, VehicleDto)
+            return response.onSuccess(dto)
+        } catch (error) {
+            return response.onError(ServiceError.getException(error))
+        }
+    }
+
+    async getVehiclesByDriver(driverId: ObjectId): Promise<Response<VehicleLiteDto[]>> {
+        const response = new ResponseManager<VehicleLiteDto[]>()
+
+        try {
+            const entities = await this.vehicleManager.getVehiclesByDriver(driverId)
+
+            const dto = mapper.mapArray(entities, Vehicle, VehicleLiteDto)
             return response.onSuccess(dto)
         } catch (error) {
             return response.onError(ServiceError.getException(error))

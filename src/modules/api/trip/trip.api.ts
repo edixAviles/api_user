@@ -12,6 +12,11 @@ tripApi.get("/:id", async (req: Request, res: Response) => {
     res.send(result)
 })
 
+tripApi.get("/:id/by-driver", async (req: Request, res: Response) => {
+    const result = await tripAppService.getTripsByDriver(new mongo.ObjectId(req.params.id))
+    res.send(result)
+})
+
 tripApi.post("/publish", async (req: Request, res: Response) => {
     const result = await tripAppService.publishTrip(req.body as ITripInsert)
     res.send(result)

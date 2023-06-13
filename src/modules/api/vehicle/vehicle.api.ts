@@ -20,6 +20,11 @@ vehicleApi.get("/:id", async (req: Request, res: Response) => {
     res.send(result)
 })
 
+vehicleApi.get("/:id/by-driver", async (req: Request, res: Response) => {
+    const result = await vehicleAppService.getVehiclesByDriver(new mongo.ObjectId(req.params.id))
+    res.send(result)
+})
+
 vehicleApi.post("/", async (req: Request, res: Response) => {
     const result = await vehicleAppService.insertVehicle(req.body as IVehicleInsert)
     res.send(result)

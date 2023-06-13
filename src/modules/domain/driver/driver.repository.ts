@@ -13,7 +13,7 @@ import {
  */
 class DriverRepository extends Repository<Driver> implements IRepository<Driver> {
     async get(id: ObjectId): Promise<Driver> {
-        const document = await DriverModel.findOne(this.filterToGet(id))
+        const document = await DriverModel.findOne(Repository.filterToGetById(id))
 
         const entity = new Driver({ ...document })
         return document ? entity : null
@@ -42,7 +42,7 @@ class DriverRepository extends Repository<Driver> implements IRepository<Driver>
     async delete(id: ObjectId): Promise<void> {
         await DriverModel.findOneAndUpdate(
             { _id: id },
-            this.paramsToDelete(),
+            Repository.paramsToDelete(),
             this.optionsToUpdate()
         )
     }

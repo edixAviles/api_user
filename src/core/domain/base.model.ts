@@ -11,9 +11,7 @@ abstract class BaseModel {
     deleterUser?: string
 
     constructor(document?: any) {
-        if (document?._doc) {
-            Object.assign(this, document?._doc)
-        }
+        Object.assign(this, document?._doc || document)
     }
 }
 
