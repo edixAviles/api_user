@@ -18,6 +18,7 @@ import { TripDto } from "../../contracts/trip/trip.dto"
 import { ITripCancel } from "../../contracts/trip/trip.update"
 import TripErrorCodes from "../../shared.domain/trip/trip.error.codes"
 import { TripStateUser } from "../../shared.domain/trip/tripUser.extra"
+import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
 
 class TripAppService extends ApplicationService {
     private tripManager: TripManager
@@ -113,12 +114,28 @@ class TripAppService extends ApplicationService {
 
     async cancelTrip(tripCancel: ITripCancel): Promise<Response<ObjectId>> {
         const response = new ResponseManager<ObjectId>()
+        const transaction = await this.transactionManager.beginTransaction()
 
         try {
-            await this.tripManager.cancel(tripCancel)
+            const tripManagerTransaction = new TripManager(transaction)
+            const tripUserManagerTransaction = new TripUserManager(transaction)
+
+            const entity = await tripManagerTransaction.get(tripCancel.id)
+            const bookedTrips = await tripUserManagerTransaction.getTripsUserByState(entity._id, TripStateUser.Booked)
+            for (const trip of bookedTrips) {
+                const tripCancel = {} as ITripUserCancel
+                tripCancel.id = trip._id
+                await tripUserManagerTransaction.cancel(tripCancel)
+            }
+
+            await tripManagerTransaction.cancel(tripCancel)
+            // TODO: Se debe notificar a los usuarios que se cancelo el viaje
+
+            await transaction.completeTransaction()
 
             return response.onSuccess(tripCancel.id)
         } catch (error) {
+            transaction.cancellTransaction()
             return response.onError(ServiceError.getException(error))
         }
     }

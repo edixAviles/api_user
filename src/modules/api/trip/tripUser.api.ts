@@ -17,17 +17,17 @@ tripUserApi.post("/book", async (req: Request, res: Response) => {
     res.send(result)
 })
 
-tripUserApi.patch("/pick-up-passenger/:id", async (req: Request, res: Response) => {
+tripUserApi.post("/pick-up-passenger/:id", async (req: Request, res: Response) => {
     const result = await tripUserAppService.pickUpPassenger(new mongo.ObjectId(req.params.id))
     res.send(result)
 })
 
-tripUserApi.patch("/start-trip/:id", async (req: Request, res: Response) => {
+tripUserApi.post("/start-trip/:id", async (req: Request, res: Response) => {
     const result = await tripUserAppService.startTripUser(new mongo.ObjectId(req.params.id))
     res.send(result)
 })
 
-tripUserApi.patch("/cancel", async (req: Request, res: Response) => {
+tripUserApi.post("/cancel", async (req: Request, res: Response) => {
     const result = await tripUserAppService.cancelTripUser(req.body as ITripUserCancel)
     res.send(result)
 })

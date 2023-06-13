@@ -103,6 +103,7 @@ class TripUserManager {
         tripUser.tripState = this.getNewState(tripFound.tripState, TripStateUser.Cancelled, tripCancel.observation)
 
         await this.tripUserRepository.update(tripUser)
+        await this.tripUserRepository.delete(tripUser._id)
     }
 
     private validateTrip = async (id: ObjectId, states: string[]): Promise<TripUser> => {

@@ -102,6 +102,7 @@ class TripManager {
         trip.tripState = this.getNewState(tripFound.tripState, TripState.Cancelled, tripCancel.observation)
 
         await this.tripRepository.update(trip)
+        await this.tripRepository.delete(trip._id)
     }
 
     async updateAvailableSeats(tripId: ObjectId, numberOfSeats: number): Promise<void> {
