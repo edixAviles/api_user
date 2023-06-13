@@ -12,8 +12,13 @@ tripApi.get("/:id", async (req: Request, res: Response) => {
     res.send(result)
 })
 
-tripApi.post("/", async (req: Request, res: Response) => {
-    const result = await tripAppService.insertTrip(req.body as ITripInsert)
+tripApi.post("/publish", async (req: Request, res: Response) => {
+    const result = await tripAppService.publishTrip(req.body as ITripInsert)
+    res.send(result)
+})
+
+tripApi.patch("/pick-up-passengers/:id", async (req: Request, res: Response) => {
+    const result = await tripAppService.pickUpPassengers(new mongo.ObjectId(req.params.id))
     res.send(result)
 })
 

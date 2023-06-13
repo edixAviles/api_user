@@ -8,16 +8,17 @@ class DataArrival {
     arrivalTime: Date
 }
 
-class DataTripStatus {
-    status: string
+class DataTripStates {
+    state: string
     dateTimeAudit: Date
     observation: string
     isCurrent: boolean
 }
 
-enum StatusTrip {
+enum TripState {
     Available = "AVAILABLE",
     Full = "FULL",
+    PickingUpPassengers = "PICKING_UP_PASSANGERS",
     OnTheWay = "ON_THE_WAY",
     Finished = "FINISHED",
     Cancelled = "CANCELLED"
@@ -26,6 +27,6 @@ enum StatusTrip {
 export {
     DataDeparture,
     DataArrival,
-    DataTripStatus,
-    StatusTrip
+    DataTripStates,
+    TripState
 }

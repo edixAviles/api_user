@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 import mongooseModel from "../../../core/domain/mongoose.model"
 import { CollectionsName } from "../../shared/shared.consts"
-import { StatusTrip } from "../../shared.domain/trip/trip.extra"
+import { TripState } from "../../shared.domain/trip/trip.extra"
 
 const properties = {
     departure: {
@@ -23,10 +23,10 @@ const properties = {
             type: Date
         }
     },
-    tripStatus: [{
-        status: {
+    tripState: [{
+        state: {
             type: String,
-            enum: StatusTrip
+            enum: TripState
         },
         dateTimeAudit: {
             type: Date,
@@ -47,6 +47,9 @@ const properties = {
     availableSeats: {
         type: Number,
         required: true
+    },
+    passengersToPickUp: {
+        type: Number
     },
     description: {
         type: String

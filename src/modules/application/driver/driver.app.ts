@@ -56,21 +56,17 @@ class DriverAppService extends ApplicationService {
 
     async updateDriver(driverUpdate: IDriverUpdate): Promise<Response<DriverDto>> {
         const response = new ResponseManager<DriverDto>()
-        const transaction = await this.transactionManager.beginTransaction()
 
         try {
             if (!driverUpdate.id) {
                 throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.IdNotProvided))
             }
 
-            const driverManagerTransaction = new DriverManager(transaction)
-            const entity = await driverManagerTransaction.update(driverUpdate)
-            await transaction.completeTransaction()
+            const entity = await this.driverManager.update(driverUpdate)
 
             const dto = mapper.map(entity, Driver, DriverDto)
             return response.onSuccess(dto)
         } catch (error) {
-            transaction.cancellTransaction()
             return response.onError(ServiceError.getException(error))
         }
     }

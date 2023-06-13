@@ -52,7 +52,7 @@ abstract class Repository<T extends BaseBasicModel> {
 
         const entries = Object.entries(entity)
         entries.map(([key, val]) => {
-            if (!!val) {
+            if (val || val >= 0) {
                 data[key] = val
             }
         })

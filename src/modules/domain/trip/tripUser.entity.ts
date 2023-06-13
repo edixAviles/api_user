@@ -5,11 +5,11 @@ import BaseBasicModel from "../../../core/domain/base.model"
 import {
     DataPickupLocation,
     DataArrivalLocation,
-    DataTripStatus,
+    DataTripUserStates,
     DataPayment
-} from "../../shared.domain/trip/tripDetail.exta"
+} from "../../shared.domain/trip/tripUser.extra"
 
-class TripDetail extends BaseBasicModel {
+class TripUser extends BaseBasicModel {
     @AutoMap()
     public numberOfSeats: number
 
@@ -19,8 +19,8 @@ class TripDetail extends BaseBasicModel {
     @AutoMap()
     public arrivalLocation: DataArrivalLocation
 
-    @AutoMap()
-    public tripStatus: DataTripStatus[]
+    @AutoMap(() => [DataTripUserStates])
+    public tripState: DataTripUserStates[]
 
     @AutoMap()
     public payment: DataPayment
@@ -32,4 +32,4 @@ class TripDetail extends BaseBasicModel {
     public userId: ObjectId
 }
 
-export default TripDetail
+export default TripUser

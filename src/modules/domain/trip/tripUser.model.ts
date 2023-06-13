@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 import mongooseModel from "../../../core/domain/mongoose.model"
 import { CollectionsName } from "../../shared/shared.consts"
-import { StatusTripDetail, PaymentMethods } from "../../shared.domain/trip/tripDetail.exta"
+import { TripStateUser, PaymentMethods } from "../../shared.domain/trip/tripUser.extra"
 
 const properties = {
     numberOfSeats: {
@@ -32,10 +32,10 @@ const properties = {
             type: Date
         },
     },
-    tripStatus: [{
-        status: {
+    tripState: [{
+        state: {
             type: String,
-            enum: StatusTripDetail
+            enum: TripStateUser
         },
         dateTimeAudit: {
             type: Date,
@@ -59,6 +59,7 @@ const properties = {
             required: true
         },
         method: {
+            type: String,
             enum: PaymentMethods
         }
     },
@@ -74,5 +75,5 @@ const properties = {
     }
 }
 
-const TripDetailModel = mongooseModel(CollectionsName.TripDetail, properties)
-export default TripDetailModel
+const TripUserModel = mongooseModel(CollectionsName.TripUser, properties)
+export default TripUserModel

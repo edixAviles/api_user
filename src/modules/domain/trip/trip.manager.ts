@@ -9,11 +9,11 @@ import ITripInsert from "../../contracts/trip/trip.insert"
 import {
     SharedConsts
 } from "../../shared/shared.consts"
-import { StatusTrip } from "../../shared.domain/trip/trip.extra"
+import { TripState } from "../../shared.domain/trip/trip.extra"
 import TripErrorCodes from "../../shared.domain/trip/trip.error.codes"
 import { ITripCancel } from "../../contracts/trip/trip.update"
 import TripRepository from "./trip.repository"
-import { DataTripStatus } from "../../shared.domain/trip/tripDetail.exta"
+import { DataTripStates } from "../../shared.domain/trip/trip.extra"
 
 class TripManager {
     private tripRepository: TripRepository
@@ -45,8 +45,8 @@ class TripManager {
             arrivalCity: tripInsert.arrivalCity,
             arrivalTime: null
         }
-        trip.tripStatus = [{
-            status: StatusTrip.Available,
+        trip.tripState = [{
+            state: TripState.Available,
             dateTimeAudit: new Date(),
             observation: null,
             isCurrent: true
@@ -54,6 +54,7 @@ class TripManager {
 
         trip.price = tripInsert.price
         trip.availableSeats = tripInsert.availableSeats
+        trip.passengersToPickUp = null
         trip.description = tripInsert.description
         trip.vehicleId = tripInsert.vehicleId
 
@@ -61,60 +62,111 @@ class TripManager {
         return entity
     }
 
-    async finish(id: ObjectId): Promise<void> {
-        const tripFound = await this.tripRepository.get(id)
-        if (!tripFound) {
-            const errorParams = {
-                [SharedConsts.id]: id
-            }
-            const error = ServiceError.getErrorByCode(TripErrorCodes.EntityNotFound, errorParams)
-            throw new ServiceException(error)
-        }
-
-        const available = tripFound.tripStatus.some(element => element.isCurrent && (element.status === StatusTrip.Available || element.status === StatusTrip.Full))
-        if (!available) {
-            const errorParams = {
-                [SharedConsts.id]: id
-            }
-            const error = ServiceError.getErrorByCode(TripErrorCodes.TripNotAvailable, errorParams)
-            throw new ServiceException(error)
-        }
+    async pickUpPassengers(id: ObjectId, passengersToPickUp: number): Promise<void> {
+        const tripFound = await this.validateTrip(id, [TripState.Available, TripState.Full])
 
         const trip = new Trip()
         trip._id = id
-        trip.tripStatus = this.getNewState(tripFound.tripStatus, StatusTrip.Finished)
+        trip.tripState = this.getNewState(tripFound.tripState, TripState.PickingUpPassengers)
+        trip.passengersToPickUp = passengersToPickUp
+
+        await this.tripRepository.update(trip)
+    }
+
+    async startTrip(id: ObjectId): Promise<void> {
+        const tripFound = await this.validateTrip(id, [TripState.PickingUpPassengers])
+
+        const trip = new Trip()
+        trip._id = id
+        trip.tripState = this.getNewState(tripFound.tripState, TripState.OnTheWay)
+
+        await this.tripRepository.update(trip)
+    }
+
+    async finish(id: ObjectId): Promise<void> {
+        const tripFound = await this.validateTrip(id, [TripState.OnTheWay])
+
+        const trip = new Trip()
+        trip._id = id
+        trip.tripState = this.getNewState(tripFound.tripState, TripState.Finished)
 
         await this.tripRepository.update(trip)
     }
 
     async cancel(tripCancel: ITripCancel): Promise<void> {
-        const tripFound = await this.tripRepository.get(tripCancel.id)
-        if (!tripFound) {
+        const tripFound = await this.validateTrip(tripCancel.id, [TripState.Available, TripState.Full])
+
+        const trip = new Trip()
+        trip._id = tripCancel.id
+        trip.tripState = this.getNewState(tripFound.tripState, TripState.Cancelled, tripCancel.observation)
+
+        await this.tripRepository.update(trip)
+    }
+
+    async updateAvailableSeats(tripId: ObjectId, numberOfSeats: number): Promise<void> {
+        if (numberOfSeats == 0) {
             const errorParams = {
-                [SharedConsts.id]: tripCancel.id
+                [SharedConsts.id]: tripId
+            }
+            const error = ServiceError.getErrorByCode(TripErrorCodes.EmptySeats, errorParams)
+            throw new ServiceException(error)
+        }
+
+        const tripFound = await this.validateTrip(tripId, [TripState.Available])
+        if (numberOfSeats > tripFound.availableSeats) {
+            const errorParams = {
+                [SharedConsts.id]: tripId
+            }
+            const error = ServiceError.getErrorByCode(TripErrorCodes.ExceededSeats, errorParams)
+            throw new ServiceException(error)
+        }
+
+        const trip = new Trip()
+        trip._id = tripId
+        trip.availableSeats = tripFound.availableSeats - numberOfSeats
+
+        if (trip.availableSeats == 0) {
+            trip.tripState = this.getNewState(tripFound.tripState, TripState.Full)
+        }
+
+        await this.tripRepository.update(trip)
+    }
+
+    async reducePassengersToPickUp(id: ObjectId): Promise<void> {
+        const tripFound = await this.validateTrip(id, [TripState.PickingUpPassengers])
+
+        const trip = new Trip()
+        trip._id = id
+        trip.passengersToPickUp = tripFound.passengersToPickUp - 1
+        console.log(trip)
+
+        await this.tripRepository.update(trip)
+    }
+
+    private validateTrip = async (id: ObjectId, states: string[]): Promise<Trip> => {
+        const trip = await this.tripRepository.get(id)
+        if (!trip) {
+            const errorParams = {
+                [SharedConsts.id]: id
             }
             const error = ServiceError.getErrorByCode(TripErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 
-        const available = tripFound.tripStatus.some(element => element.isCurrent && (element.status === StatusTrip.Available || element.status === StatusTrip.Full))
+        const available = trip.tripState.some(element => element.isCurrent && states.includes(element.state))
         if (!available) {
             const errorParams = {
-                [SharedConsts.id]: tripCancel.id
+                [SharedConsts.id]: id
             }
-            const error = ServiceError.getErrorByCode(TripErrorCodes.TripNotAvailable, errorParams)
+            const error = ServiceError.getErrorByCode(TripErrorCodes.NotAvailable, errorParams)
             throw new ServiceException(error)
         }
 
-        const trip = new Trip()
-        trip._id = tripCancel.id
-        trip.tripStatus = this.getNewState(tripFound.tripStatus, StatusTrip.Cancelled, tripCancel.observation)
-
-        await this.tripRepository.update(trip)
+        return trip
     }
 
-    private getNewState = (tripStatus: DataTripStatus[], state: string, observation?: string) => {
-        const status = tripStatus.map(element => {
+    private getNewState = (tripState: DataTripStates[], state: string, observation?: string) => {
+        const states = tripState.map(element => {
             if (element.isCurrent) {
                 element.isCurrent = false
             }
@@ -122,14 +174,14 @@ class TripManager {
             return element
         })
 
-        status.push({
-            status: state,
+        states.push({
+            state: state,
             dateTimeAudit: new Date(),
             observation: observation,
             isCurrent: true
         })
 
-        return status
+        return states
     }
 }
 

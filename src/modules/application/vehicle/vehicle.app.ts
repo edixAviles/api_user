@@ -61,7 +61,6 @@ class VehicleAppService extends ApplicationService {
 
     async updateVehicle(vehicleUpdate: IVehicleUpdate): Promise<Response<VehicleDto>> {
         const response = new ResponseManager<VehicleDto>()
-        const transaction = await this.transactionManager.beginTransaction()
 
         try {
             if (!vehicleUpdate.id) {
@@ -73,14 +72,11 @@ class VehicleAppService extends ApplicationService {
                 throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.EntityNotFound))
             }
 
-            const vehicleManager = new VehicleManager(transaction)
-            const entity = await vehicleManager.update(vehicleUpdate)
-            await transaction.completeTransaction()
+            const entity = await this.vehicleManager.update(vehicleUpdate)
 
             const dto = mapper.map(entity, Vehicle, VehicleDto)
             return response.onSuccess(dto)
         } catch (error) {
-            transaction.cancellTransaction()
             return response.onError(ServiceError.getException(error))
         }
     }

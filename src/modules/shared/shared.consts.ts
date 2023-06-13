@@ -11,7 +11,7 @@ enum CollectionsName {
     Vehicle = "Vehicle",
     User = "User",
     Trip = "Trip",
-    TripDetail = "TripDetail",
+    TripUser = "TripUser"
 }
 
 export {

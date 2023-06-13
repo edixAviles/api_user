@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb"
 import {
     DataDeparture,
     DataArrival,
-    DataTripStatus
+    DataTripStates
 } from "../../shared.domain/trip/trip.extra"
 
 class TripDto {
@@ -14,14 +14,17 @@ class TripDto {
     @AutoMap()
     public arrival: DataArrival
 
-    @AutoMap()
-    public tripStatus: DataTripStatus
+    @AutoMap(() => [DataTripStates])
+    public tripState: DataTripStates[]
 
     @AutoMap()
     public price: number
 
     @AutoMap()
     public availableSeats: number
+
+    @AutoMap()
+    public passengersToPickUp: number
 
     @AutoMap()
     public description: string
