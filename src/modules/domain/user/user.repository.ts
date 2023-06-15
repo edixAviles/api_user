@@ -8,8 +8,11 @@ import {
     IRepository
 } from "../../../core/domain/repository"
 
+/**
+ * This class, performs explicit operations of CRUD from Database
+ */
 class UserRepository extends Repository<User> implements IRepository<User> {
-    async get(id: ObjectId): Promise<User | null> {
+    async get(id: ObjectId): Promise<User> {
         const document = await UserModel.findOne(Repository.filterToGetById(id))
 
         const entity = new User({ ...document })

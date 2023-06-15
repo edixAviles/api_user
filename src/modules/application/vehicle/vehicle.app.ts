@@ -7,10 +7,9 @@ import ResponseManager from "../../../core/response/response.manager"
 import ServiceError from "../../shared/service.error"
 import Vehicle from "../../domain/vehicle/vehicle.entity"
 import VehicleManager from "../../domain/vehicle/vehicle.manager"
-import DriverManager from "../../domain/driver/driver.manager"
+import UserManager from "../../domain/user/user.manager"
 import IVehicleInsert from "../../contracts/vehicle/vehicle.insert"
-import VehicleErrorCodes from "../../shared.domain/vehicle/vehicle.error.codes"
-import DriverErrorCodes from "../../shared.domain/driver/driver.error.codes"
+import UserErrorCodes from "../../shared.domain/user/user.error.codes"
 
 import { mapper } from "../../../core/mappings/mapper"
 import {
@@ -20,15 +19,16 @@ import {
 import {
     IVehicleUpdate
 } from "../../contracts/vehicle/vehicle.update"
+import { SharedConsts } from "../../shared/shared.consts"
 
 class VehicleAppService extends ApplicationService {
     private vehicleManager: VehicleManager
-    private driverManager: DriverManager
+    private userManager: UserManager
 
     constructor() {
         super()
         this.vehicleManager = new VehicleManager()
-        this.driverManager = new DriverManager()
+        this.userManager = new UserManager()
     }
 
     async getVehicle(id: ObjectId): Promise<Response<VehicleDto>> {
@@ -48,6 +48,11 @@ class VehicleAppService extends ApplicationService {
         const response = new ResponseManager<VehicleLiteDto[]>()
 
         try {
+            const user = await this.userManager.get(driverId)
+            if (!user.isDriver) {
+                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver))
+            }
+
             const entities = await this.vehicleManager.getVehiclesByDriver(driverId)
 
             const dto = mapper.mapArray(entities, Vehicle, VehicleLiteDto)
@@ -61,9 +66,9 @@ class VehicleAppService extends ApplicationService {
         const response = new ResponseManager<VehicleDto>()
 
         try {
-            const driver = await this.driverManager.get(vehicleInsert.driverId)
-            if (!driver) {
-                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.EntityNotFound))
+            const user = await this.userManager.get(vehicleInsert.driverId)
+            if (!user.isDriver) {
+                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver))
             }
 
             const entity = await this.vehicleManager.insert(vehicleInsert)
@@ -79,15 +84,6 @@ class VehicleAppService extends ApplicationService {
         const response = new ResponseManager<VehicleDto>()
 
         try {
-            if (!vehicleUpdate.id) {
-                throw new ServiceException(ServiceError.getErrorByCode(VehicleErrorCodes.IdNotProvided))
-            }
-
-            const driver = await this.driverManager.get(vehicleUpdate.driverId)
-            if (!driver) {
-                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.EntityNotFound))
-            }
-
             const entity = await this.vehicleManager.update(vehicleUpdate)
 
             const dto = mapper.map(entity, Vehicle, VehicleDto)

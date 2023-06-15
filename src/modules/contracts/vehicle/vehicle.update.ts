@@ -8,7 +8,6 @@ interface IVehicleUpdate {
     color: string
     year: number
     licencePlatePhoto: string
-    driverId: ObjectId
 }
 
 export {

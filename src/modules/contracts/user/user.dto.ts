@@ -1,8 +1,11 @@
 import { AutoMap } from "@automapper/classes"
-import { DataStringVerified } from "../../shared.domain/driver/driver.extra"
-import { DataBufferApprovedDto } from "../../shared.domain/driver/driver.extra"
+import { DataStringVerified } from "../../shared.domain/user/user.extra"
+import { DataBufferApprovedDto } from "../../shared.domain/user/user.extra"
 
 class UserDto {
+    @AutoMap()
+    public identification: DataStringVerified
+
     @AutoMap()
     public name: string
 
@@ -20,6 +23,17 @@ class UserDto {
 
     @AutoMap()
     public profilePhoto: DataBufferApprovedDto
+
+    @AutoMap()
+    public isDriver: boolean
+
+    @AutoMap()
+    public licencePhoto: DataBufferApprovedDto
+
+    @AutoMap()
+    public policeRecord: DataBufferApprovedDto
+
+    public password: DataBufferApprovedDto
 }
 
 export {

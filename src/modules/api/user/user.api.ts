@@ -10,7 +10,10 @@ import IUserInsert from "../../contracts/user/user.insert"
 import {
     IUserUpdate,
     IUserUpdateProfilePhoto,
-    IUserUpdatePassword
+    IDriverUpdateLicencePhoto,
+    IDriverUpdatePoliceRecord,
+    IUserUpdatePassword,
+    IUserUpdateToDriver
 } from "../../contracts/user/user.update"
 
 const userApi = express.Router()
@@ -28,6 +31,12 @@ userApi.post("/", async (req: Request, res: Response) => {
     res.send(result)
 })
 
+userApi.post("/be-driver", async (req: Request, res: Response) => {
+    const userUpdate = req.body as IUserUpdateToDriver
+    const result = await userAppService.beDriver(userUpdate)
+    res.send(result)
+})
+
 userApi.patch("/", async (req: Request, res: Response) => {
     const userUpdate = req.body as IUserUpdate
     const result = await userAppService.updateUser(userUpdate)
@@ -37,6 +46,18 @@ userApi.patch("/", async (req: Request, res: Response) => {
 userApi.patch("/set-profile-photo", async (req: Request, res: Response) => {
     const userUpdate = req.body as IUserUpdateProfilePhoto
     const result = await userAppService.updateUserProfilePhoto(userUpdate)
+    res.send(result)
+})
+
+userApi.patch("/set-licence-photo", async (req: Request, res: Response) => {
+    const userUpdate = req.body as IDriverUpdateLicencePhoto
+    const result = await userAppService.updateDriverLicencePhoto(userUpdate)
+    res.send(result)
+})
+
+userApi.patch("/set-police-record", async (req: Request, res: Response) => {
+    const userUpdate = req.body as IDriverUpdatePoliceRecord
+    const result = await userAppService.updateDriverPoliceRecord(userUpdate)
     res.send(result)
 })
 

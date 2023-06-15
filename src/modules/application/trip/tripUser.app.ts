@@ -17,6 +17,7 @@ import { mapper } from "../../../core/mappings/mapper"
 import { TripUserDto, TripUserStartTrip } from "../../contracts/trip/tripUser.dto"
 import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
 import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
+import { SharedConsts } from "../../shared/shared.consts"
 
 class TripUserAppService extends ApplicationService {
     private tripUserManager: TripUserManager
@@ -77,16 +78,8 @@ class TripUserAppService extends ApplicationService {
             const tripManagerTransaction = new TripManager(transaction)
             const tripUserManagerTransaction = new TripUserManager(transaction)
 
+            await this.userManager.get(tripInsert.userId)
             const trip = await tripManagerTransaction.get(tripInsert.tripId)
-            if (!trip) {
-                throw new ServiceException(ServiceError.getErrorByCode(TripErrorCodes.EntityNotFound))
-            }
-
-            const user = await this.userManager.get(tripInsert.userId)
-            if (!user) {
-                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound))
-            }
-
             await tripManagerTransaction.updateAvailableSeats(tripInsert.tripId, tripInsert.numberOfSeats)
             const entity = await tripUserManagerTransaction.bookTrip(tripInsert, trip.price)
 

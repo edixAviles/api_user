@@ -23,20 +23,17 @@ class TripManager {
     }
 
     async get(id: ObjectId): Promise<Trip> {
-        const trip = await this.tripRepository.get(id)
-        if (!trip) {
-            const errorParams = {
-                [SharedConsts.id]: id
-            }
-            const error = ServiceError.getErrorByCode(TripErrorCodes.EntityNotFound, errorParams)
-            throw new ServiceException(error)
-        }
-
-        return trip
+        const entity = await this.foundEntity(id)
+        return entity
     }
 
     async getTripsByDriver(driverId: ObjectId, state: TripState): Promise<Trip[]> {
         const trips = await this.tripRepository.getTripsByDriver(driverId, state)
+        return trips
+    }
+
+    async searchTrips(departure: string, arrival: string, requestedSeats: number): Promise<Trip[]> {
+        const trips = await this.tripRepository.searchTrips(departure, arrival, requestedSeats)
         return trips
     }
 
@@ -63,6 +60,7 @@ class TripManager {
         trip.passengersToPickUp = null
         trip.description = tripInsert.description
         trip.vehicleId = tripInsert.vehicleId
+        trip.driverId = tripInsert.driverId
 
         const entity = await this.tripRepository.insert(trip)
         return entity
@@ -114,17 +112,13 @@ class TripManager {
         const tripFound = await this.validateTrip(tripId, [TripState.Available])
 
         if (numberOfSeats == 0) {
-            const errorParams = {
-                [SharedConsts.id]: tripId
-            }
+            const errorParams = { [SharedConsts.id]: tripId }
             const error = ServiceError.getErrorByCode(TripErrorCodes.EmptySeats, errorParams)
             throw new ServiceException(error)
         }
-        
+
         if (numberOfSeats > tripFound.availableSeats) {
-            const errorParams = {
-                [SharedConsts.id]: tripId
-            }
+            const errorParams = { [SharedConsts.id]: tripId }
             const error = ServiceError.getErrorByCode(TripErrorCodes.ExceededSeats, errorParams)
             throw new ServiceException(error)
         }
@@ -151,25 +145,16 @@ class TripManager {
     }
 
     private validateTrip = async (id: ObjectId, states: string[]): Promise<Trip> => {
-        const trip = await this.tripRepository.get(id)
-        if (!trip) {
-            const errorParams = {
-                [SharedConsts.id]: id
-            }
-            const error = ServiceError.getErrorByCode(TripErrorCodes.EntityNotFound, errorParams)
-            throw new ServiceException(error)
-        }
+        const entity = await this.foundEntity(id)
 
-        const available = trip.tripState.some(element => element.isCurrent && states.includes(element.state))
+        const available = entity.tripState.some(element => element.isCurrent && states.includes(element.state))
         if (!available) {
-            const errorParams = {
-                [SharedConsts.id]: id
-            }
+            const errorParams = { [SharedConsts.id]: id }
             const error = ServiceError.getErrorByCode(TripErrorCodes.NotAvailable, errorParams)
             throw new ServiceException(error)
         }
 
-        return trip
+        return entity
     }
 
     private getNewState = (tripState: DataTripStates[], state: string, observation?: string) => {
@@ -189,6 +174,17 @@ class TripManager {
         })
 
         return states
+    }
+
+    private foundEntity = async (id: ObjectId): Promise<Trip> => {
+        const entity = await this.tripRepository.get(id)
+        if (!entity) {
+            const errorParams = { [SharedConsts.id]: id }
+            const error = ServiceError.getErrorByCode(TripErrorCodes.EntityNotFound, errorParams)
+            throw new ServiceException(error)
+        }
+
+        return entity
     }
 }
 

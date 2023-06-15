@@ -34,8 +34,23 @@ class TripDto {
 
     @AutoMap()
     public vehicleId: ObjectId
+
+    @AutoMap()
+    public driverId: ObjectId
+}
+
+class TripsAvailablesDto {
+    public departure: DataDeparture
+    public arrival: string
+    public price: number
+    public offeredSeats: number
+    public availableSeats: number
+    public description: string
+    public vehicleId: ObjectId
+    public driverId: ObjectId
 }
 
 export {
-    TripDto
+    TripDto,
+    TripsAvailablesDto
 }

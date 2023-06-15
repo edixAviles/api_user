@@ -2,6 +2,16 @@ import mongooseModel from "../../../core/domain/mongoose.model"
 import { CollectionsName } from "../../shared/shared.consts"
 
 const properties = {
+    identification: {
+        data: {
+            type: String,
+            required: true,
+        },
+        isVerified: {
+            type: Boolean,
+            required: true,
+        },
+    },
     name: {
         type: String,
         required: true,
@@ -42,6 +52,26 @@ const properties = {
         isApproved: {
             type: Boolean,
             required: true,
+        },
+    },
+    isDriver: {
+        type: Boolean,
+        required: true,
+    },
+    licencePhoto: {
+        data: {
+            type: Buffer
+        },
+        isApproved: {
+            type: Boolean
+        },
+    },
+    policeRecord: {
+        data: {
+            type: Buffer
+        },
+        isApproved: {
+            type: Boolean
         },
     },
     password: {

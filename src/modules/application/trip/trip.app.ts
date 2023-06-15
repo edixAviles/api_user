@@ -12,25 +12,30 @@ import TripManager from "../../domain/trip/trip.manager"
 import VehicleErrorCodes from "../../shared.domain/vehicle/vehicle.error.codes"
 import VehicleManager from "../../domain/vehicle/vehicle.manager"
 import TripUserManager from "../../domain/trip/tripUser.manager"
+import UserManager from "../../domain/user/user.manager"
 
 import { mapper } from "../../../core/mappings/mapper"
-import { TripDto } from "../../contracts/trip/trip.dto"
+import { TripDto, TripsAvailablesDto } from "../../contracts/trip/trip.dto"
 import { ITripCancel } from "../../contracts/trip/trip.update"
 import TripErrorCodes from "../../shared.domain/trip/trip.error.codes"
 import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
 import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
 import { TripState } from "../../shared.domain/trip/trip.extra"
+import UserErrorCodes from "../../shared.domain/user/user.error.codes"
+import { SharedConsts } from "../../shared/shared.consts"
 
 class TripAppService extends ApplicationService {
     private tripManager: TripManager
     private tripUserManager: TripUserManager
     private vehicleManager: VehicleManager
+    private userManager: UserManager
 
     constructor() {
         super()
         this.tripManager = new TripManager()
         this.tripUserManager = new TripUserManager()
         this.vehicleManager = new VehicleManager()
+        this.userManager = new UserManager()
     }
 
     async getTrip(id: ObjectId): Promise<Response<TripDto>> {
@@ -50,6 +55,11 @@ class TripAppService extends ApplicationService {
         const response = new ResponseManager<TripDto[]>()
 
         try {
+            const user = await this.userManager.get(driverId)
+            if (!user.isDriver) {
+                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver))
+            }
+
             const entities = await this.tripManager.getTripsByDriver(driverId, state)
 
             const dto = mapper.mapArray(entities, Trip, TripDto)
@@ -59,13 +69,42 @@ class TripAppService extends ApplicationService {
         }
     }
 
+    async searchTrips(departure: string, arrival: string, requestedSeats: number): Promise<Response<TripsAvailablesDto[]>> {
+        const response = new ResponseManager<TripsAvailablesDto[]>()
+
+        try {
+            const entities = await this.tripManager.searchTrips(departure, arrival, requestedSeats)
+            
+            const tripsAvailables = new Array<TripsAvailablesDto>()
+            entities.forEach(entity => {
+                const trip = new TripsAvailablesDto()
+                trip.departure = entity.departure
+                trip.arrival = entity.arrival.arrivalCity
+                trip.price = entity.price
+                trip.offeredSeats = entity.offeredSeats
+                trip.availableSeats = entity.availableSeats
+                trip.description = entity.description
+                trip.vehicleId = entity.vehicleId
+                trip.driverId = entity.driverId
+
+                tripsAvailables.push(trip)
+            })
+
+            return response.onSuccess(tripsAvailables)
+        } catch (error) {
+            return response.onError(ServiceError.getException(error))
+        }
+    }
+
     async publishTrip(tripInsert: ITripInsert): Promise<Response<TripDto>> {
         const response = new ResponseManager<TripDto>()
 
         try {
-            const vehicle = await this.vehicleManager.get(tripInsert.vehicleId)
-            if (!vehicle) {
-                throw new ServiceException(ServiceError.getErrorByCode(VehicleErrorCodes.EntityNotFound))
+            await this.vehicleManager.get(tripInsert.vehicleId)
+            
+            const user = await this.userManager.get(tripInsert.driverId)
+            if (!user.isDriver) {
+                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver))
             }
 
             const entity = await this.tripManager.insert(tripInsert)
