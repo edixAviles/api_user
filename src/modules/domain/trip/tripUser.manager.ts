@@ -10,7 +10,7 @@ import {
 import TripUser from "./tripUser.entity"
 import TripUserErrorCodes from "../../shared.domain/trip/tripUser.error.codes"
 import ITripUserInsert from "../../contracts/trip/tripUser.insert"
-import { DataTripUserStates, PaymentMethods, TripStateUser } from "../../shared.domain/trip/tripUser.extra"
+import { DataTripUserStates, PaymentMethods, TripUserState } from "../../shared.domain/trip/tripUser.extra"
 import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
 import TripUserRepository from "./tripUser.repository"
 
@@ -34,8 +34,13 @@ class TripUserManager {
         return tripUser
     }
 
-    async getTripsUserByState(tripId: ObjectId, state: string): Promise<TripUser[]> {
+    async getTripsUserByState(tripId: ObjectId, state: TripUserState): Promise<TripUser[]> {
         const tripsUser = await this.tripUserRepository.getTripsUserByState(tripId, state)
+        return tripsUser
+    }
+
+    async getTripsUserByUser(userId: ObjectId, state: TripUserState): Promise<TripUser[]> {
+        const tripsUser = await this.tripUserRepository.getTripsUserByUser(userId, state)
         return tripsUser
     }
 
@@ -48,7 +53,7 @@ class TripUserManager {
             dateTimeAudit: null
         }
         tripUser.tripState = [{
-            state: TripStateUser.Booked,
+            state: TripUserState.Booked,
             dateTimeAudit: new Date(),
             observation: null,
             isCurrent: true
@@ -66,41 +71,41 @@ class TripUserManager {
     }
 
     async pickUpPassenger(id: ObjectId): Promise<void> {
-        const tripFound = await this.validateTrip(id, [TripStateUser.Booked])
+        const tripFound = await this.validateTrip(id, [TripUserState.Booked])
 
         const tripUser = new TripUser()
         tripUser._id = id
-        tripUser.tripState = this.getNewState(tripFound.tripState, TripStateUser.OnTheWayToYou)
+        tripUser.tripState = this.getNewState(tripFound.tripState, TripUserState.OnTheWayToYou)
 
         await this.tripUserRepository.update(tripUser)
     }
 
     async startTrip(id: ObjectId): Promise<void> {
-        const tripFound = await this.validateTrip(id, [TripStateUser.OnTheWayToYou])
+        const tripFound = await this.validateTrip(id, [TripUserState.OnTheWayToYou])
 
         const tripUser = new TripUser()
         tripUser._id = id
-        tripUser.tripState = this.getNewState(tripFound.tripState, TripStateUser.OnTheWay)
+        tripUser.tripState = this.getNewState(tripFound.tripState, TripUserState.OnTheWay)
 
         await this.tripUserRepository.update(tripUser)
     }
 
     async finish(id: ObjectId): Promise<void> {
-        const tripFound = await this.validateTrip(id, [TripStateUser.OnTheWay])
+        const tripFound = await this.validateTrip(id, [TripUserState.OnTheWay])
 
         const tripUser = new TripUser()
         tripUser._id = id
-        tripUser.tripState = this.getNewState(tripFound.tripState, TripStateUser.Finished)
+        tripUser.tripState = this.getNewState(tripFound.tripState, TripUserState.Finished)
 
         await this.tripUserRepository.update(tripUser)
     }
 
     async cancel(tripCancel: ITripUserCancel): Promise<void> {
-        const tripFound = await this.validateTrip(tripCancel.id, [TripStateUser.Booked])
+        const tripFound = await this.validateTrip(tripCancel.id, [TripUserState.Booked])
 
         const tripUser = new TripUser()
         tripUser._id = tripCancel.id
-        tripUser.tripState = this.getNewState(tripFound.tripState, TripStateUser.Cancelled, tripCancel.observation)
+        tripUser.tripState = this.getNewState(tripFound.tripState, TripUserState.Cancelled, tripCancel.observation)
 
         await this.tripUserRepository.update(tripUser)
         await this.tripUserRepository.delete(tripUser._id)

@@ -7,6 +7,8 @@ import {
 import Trip from "./trip.entity"
 import TripModel from "./trip.model"
 import { PipelineStage } from "mongoose"
+import { CollectionsName } from "../../shared/shared.consts"
+import { TripState } from "../../shared.domain/trip/trip.extra"
 
 class TripRepository extends Repository<Trip> implements IRepository<Trip> {
     async get(id: ObjectId): Promise<Trip> {
@@ -15,21 +17,26 @@ class TripRepository extends Repository<Trip> implements IRepository<Trip> {
         return document ? entity : null
     }
 
-    async getTripsByDriver(driverId: ObjectId): Promise<Trip[]> {
+    async getTripsByDriver(driverId: ObjectId, state: TripState): Promise<Trip[]> {
         const filter: PipelineStage[] = [
             {
                 $lookup: {
-                    from: "vehicles",
+                    from: CollectionsName.Vehicle,
                     localField: "vehicleId",
                     foreignField: "_id",
-                    as: "vehicles"
-
+                    as: "vehiclesList"
                 }
             },
             {
                 $match: {
                     ...Repository.filterToGetActive(),
-                    "vehicles.driverId": driverId
+                    "vehiclesList.driverId": driverId,
+                    tripState: {
+                        $elemMatch: {
+                            state,
+                            isCurrent: true
+                        }
+                    }
                 }
             }
         ]

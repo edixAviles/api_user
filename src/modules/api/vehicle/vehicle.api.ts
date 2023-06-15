@@ -16,27 +16,32 @@ const vehicleApi = express.Router()
 const vehicleAppService = new VehicleAppService()
 
 vehicleApi.get("/:id", async (req: Request, res: Response) => {
-    const result = await vehicleAppService.getVehicle(new mongo.ObjectId(req.params.id))
+    const id = new mongo.ObjectId(req.params.id)
+    const result = await vehicleAppService.getVehicle(id)
     res.send(result)
 })
 
 vehicleApi.get("/:id/by-driver", async (req: Request, res: Response) => {
-    const result = await vehicleAppService.getVehiclesByDriver(new mongo.ObjectId(req.params.id))
+    const id = new mongo.ObjectId(req.params.id)
+    const result = await vehicleAppService.getVehiclesByDriver(id)
     res.send(result)
 })
 
 vehicleApi.post("/", async (req: Request, res: Response) => {
-    const result = await vehicleAppService.insertVehicle(req.body as IVehicleInsert)
+    const vehicleInsert = req.body as IVehicleInsert
+    const result = await vehicleAppService.insertVehicle(vehicleInsert)
     res.send(result)
 })
 
 vehicleApi.patch("/", async (req: Request, res: Response) => {
-    const result = await vehicleAppService.updateVehicle(req.body as IVehicleUpdate)
+    const vehicleUpdate = req.body as IVehicleUpdate
+    const result = await vehicleAppService.updateVehicle(vehicleUpdate)
     res.send(result)
 })
 
 vehicleApi.delete("/:id", async (req: Request, res: Response) => {
-    const result = await vehicleAppService.deleteVehicle(new mongo.ObjectId(req.params.id))
+    const id = new mongo.ObjectId(req.params.id)
+    const result = await vehicleAppService.deleteVehicle(id)
     res.send(result)
 })
 

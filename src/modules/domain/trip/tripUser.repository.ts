@@ -6,6 +6,7 @@ import {
 } from "../../../core/domain/repository"
 import TripUser from "./tripUser.entity"
 import TripUserModel from "./tripUser.model"
+import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
 
 class TripUserRepository extends Repository<TripUser> implements IRepository<TripUser> {
     async get(id: ObjectId): Promise<TripUser> {
@@ -15,13 +16,36 @@ class TripUserRepository extends Repository<TripUser> implements IRepository<Tri
         return document ? entity : null
     }
 
-    async getTripsUserByState(tripId: ObjectId, state: string): Promise<TripUser[]> {
+    async getTripsUserByState(tripId: ObjectId, state: TripUserState): Promise<TripUser[]> {
         const filter = {
             ...Repository.filterToGetActive(),
             tripId,
             tripState: {
                 $elemMatch: {
-                    state: state,
+                    state,
+                    isCurrent: true
+                }
+            }
+        }
+        const documents = await TripUserModel.find(filter)
+
+        const entities = new Array<TripUser>()
+        documents.forEach(document => {
+            if (document) {
+                entities.push(new TripUser({ ...document }))
+            }
+        })
+
+        return entities
+    }
+
+    async getTripsUserByUser(userId: ObjectId, state: TripUserState): Promise<TripUser[]> {
+        const filter = {
+            ...Repository.filterToGetActive(),
+            userId,
+            tripState: {
+                $elemMatch: {
+                    state,
                     isCurrent: true
                 }
             }

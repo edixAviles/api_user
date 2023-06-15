@@ -16,7 +16,7 @@ import UserErrorCodes from "../../shared.domain/user/user.error.codes"
 import { mapper } from "../../../core/mappings/mapper"
 import { TripUserDto, TripUserStartTrip } from "../../contracts/trip/tripUser.dto"
 import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
-import { TripStateUser } from "../../shared.domain/trip/tripUser.extra"
+import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
 
 class TripUserAppService extends ApplicationService {
     private tripUserManager: TripUserManager
@@ -43,11 +43,24 @@ class TripUserAppService extends ApplicationService {
         }
     }
 
-    async getTripsUserByState(tripId: ObjectId, state: string): Promise<Response<TripUserDto[]>> {
+    async getTripsUserByState(tripId: ObjectId, state: TripUserState): Promise<Response<TripUserDto[]>> {
         const response = new ResponseManager<TripUserDto[]>()
 
         try {
             const entities = await this.tripUserManager.getTripsUserByState(tripId, state)
+
+            const dto = mapper.mapArray(entities, TripUser, TripUserDto)
+            return response.onSuccess(dto)
+        } catch (error) {
+            return response.onError(ServiceError.getException(error))
+        }
+    }
+
+    async getTripsUserByUser(userId: ObjectId, state: TripUserState): Promise<Response<TripUserDto[]>> {
+        const response = new ResponseManager<TripUserDto[]>()
+
+        try {
+            const entities = await this.tripUserManager.getTripsUserByUser(userId, state)
 
             const dto = mapper.mapArray(entities, TripUser, TripUserDto)
             return response.onSuccess(dto)

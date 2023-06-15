@@ -17,7 +17,7 @@ class DataPayment {
     method: string
 }
 
-enum TripStateUser {
+enum TripUserState {
     Booked = "BOOKED",
     OnTheWayToYou = "ON_THE_WAY_TO_YOU",
     OnTheWay = "ON_THE_WAY",
@@ -35,6 +35,6 @@ export {
     DataPickupLocation,
     DataTripUserStates,
     DataPayment,
-    TripStateUser,
+    TripUserState,
     PaymentMethods
 }

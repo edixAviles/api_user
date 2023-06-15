@@ -7,11 +7,11 @@ enum TypeMime {
 }
 
 enum CollectionsName {
-    Driver = "Driver",
-    Vehicle = "Vehicle",
-    User = "User",
-    Trip = "Trip",
-    TripUser = "TripUser"
+    Driver = "drivers",
+    Vehicle = "vehicles",
+    User = "users",
+    Trip = "trips",
+    TripUser = "tripusers"
 }
 
 export {
