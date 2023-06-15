@@ -6,7 +6,7 @@ import Response from "../../../core/response/response"
 import ResponseManager from "../../../core/response/response.manager"
 import ServiceError from "../../shared/service.error"
 import User from "../../domain/user/user.entity"
-import DriverManager from "../../domain/user/user.manager"
+import UserManager from "../../domain/user/user.manager"
 import IUserInsert from "../../contracts/user/user.insert"
 import UserErrorCodes from "../../shared.domain/user/user.error.codes"
 
@@ -21,18 +21,18 @@ import {
 } from "../../contracts/user/user.update"
 
 class UserAppService extends ApplicationService {
-    private driverManager: DriverManager
+    private userManager: UserManager
 
     constructor() {
         super()
-        this.driverManager = new DriverManager()
+        this.userManager = new UserManager()
     }
 
-    async getDriver(id: ObjectId): Promise<Response<UserDto>> {
+    async getUser(id: ObjectId): Promise<Response<UserDto>> {
         const response = new ResponseManager<UserDto>()
 
         try {
-            const entity = await this.driverManager.get(id)
+            const entity = await this.userManager.get(id)
 
             const dto = mapper.map(entity, User, UserDto)
             return response.onSuccess(dto)
@@ -41,11 +41,11 @@ class UserAppService extends ApplicationService {
         }
     }
 
-    async insertDriver(driverInsert: IUserInsert): Promise<Response<UserDto>> {
+    async insertUser(userInsert: IUserInsert): Promise<Response<UserDto>> {
         const response = new ResponseManager<UserDto>()
 
         try {
-            const entity = await this.driverManager.insert(driverInsert)
+            const entity = await this.userManager.insert(userInsert)
 
             const dto = mapper.map(entity, User, UserDto)
             return response.onSuccess(dto)
@@ -54,15 +54,15 @@ class UserAppService extends ApplicationService {
         }
     }
 
-    async updateDriver(driverUpdate: IUserUpdate): Promise<Response<UserDto>> {
+    async updateUser(userUpdate: IUserUpdate): Promise<Response<UserDto>> {
         const response = new ResponseManager<UserDto>()
 
         try {
-            if (!driverUpdate.id) {
+            if (!userUpdate.id) {
                 throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IdNotProvided))
             }
 
-            const entity = await this.driverManager.update(driverUpdate)
+            const entity = await this.userManager.update(userUpdate)
 
             const dto = mapper.map(entity, User, UserDto)
             return response.onSuccess(dto)
@@ -71,14 +71,14 @@ class UserAppService extends ApplicationService {
         }
     }
 
-    async updateDriverProfilePhoto(driverUpdate: IUserUpdateProfilePhoto): Promise<Response<UserDto>> {
+    async updateUserProfilePhoto(userUpdate: IUserUpdateProfilePhoto): Promise<Response<UserDto>> {
         const response = new ResponseManager<UserDto>()
         try {
-            if (!driverUpdate.id) {
+            if (!userUpdate.id) {
                 throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IdNotProvided))
             }
 
-            const entity = await this.driverManager.updateProfilePhoto(driverUpdate)
+            const entity = await this.userManager.updateProfilePhoto(userUpdate)
 
             const dto = mapper.map(entity, User, UserDto)
             return response.onSuccess(dto)
@@ -87,14 +87,14 @@ class UserAppService extends ApplicationService {
         }
     }
 
-    async updateDriverLicencePhoto(driverUpdate: IUserUpdateLicencePhoto): Promise<Response<UserDto>> {
+    async updateUserLicencePhoto(userUpdate: IUserUpdateLicencePhoto): Promise<Response<UserDto>> {
         const response = new ResponseManager<UserDto>()
         try {
-            if (!driverUpdate.id) {
+            if (!userUpdate.id) {
                 throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IdNotProvided))
             }
 
-            const entity = await this.driverManager.updateLicencePhoto(driverUpdate)
+            const entity = await this.userManager.updateLicencePhoto(userUpdate)
 
             const dto = mapper.map(entity, User, UserDto)
             return response.onSuccess(dto)
@@ -103,14 +103,14 @@ class UserAppService extends ApplicationService {
         }
     }
 
-    async updateDriverPoliceRecord(driverUpdate: IUserUpdatePoliceRecord): Promise<Response<UserDto>> {
+    async updateUserPoliceRecord(userUpdate: IUserUpdatePoliceRecord): Promise<Response<UserDto>> {
         const response = new ResponseManager<UserDto>()
         try {
-            if (!driverUpdate.id) {
+            if (!userUpdate.id) {
                 throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IdNotProvided))
             }
 
-            const entity = await this.driverManager.updatePoliceRecord(driverUpdate)
+            const entity = await this.userManager.updatePoliceRecord(userUpdate)
 
             const dto = mapper.map(entity, User, UserDto)
             return response.onSuccess(dto)
@@ -119,25 +119,25 @@ class UserAppService extends ApplicationService {
         }
     }
 
-    async updateDriverPassword(driverUpdate: IUserUpdatePassword): Promise<Response<ObjectId>> {
+    async updateUserPassword(userUpdate: IUserUpdatePassword): Promise<Response<ObjectId>> {
         const response = new ResponseManager<ObjectId>()
         try {
-            if (!driverUpdate.id) {
+            if (!userUpdate.id) {
                 throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IdNotProvided))
             }
 
-            await this.driverManager.updatePassword(driverUpdate)
-            return response.onSuccess(driverUpdate.id)
+            await this.userManager.updatePassword(userUpdate)
+            return response.onSuccess(userUpdate.id)
         } catch (error) {
             return response.onError(ServiceError.getException(error))
         }
     }
 
-    async deleteDriver(id: ObjectId): Promise<Response<ObjectId>> {
+    async deleteUser(id: ObjectId): Promise<Response<ObjectId>> {
         const response = new ResponseManager<ObjectId>()
 
         try {
-            await this.driverManager.delete(id)
+            await this.userManager.delete(id)
 
             return response.onSuccess(id)
         } catch (error) {

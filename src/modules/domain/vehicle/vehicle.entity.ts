@@ -26,7 +26,7 @@ class Vehicle extends BaseBasicModel {
     public isVerified: boolean
 
     @AutoMap()
-    public driverId: ObjectId
+    public userId: ObjectId
 }
 
 export default Vehicle

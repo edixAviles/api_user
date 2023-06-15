@@ -20,49 +20,49 @@ const userAppService = new UserAppService()
 
 userApi.get("/:id", async (req: Request, res: Response) => {
     const id = new mongo.ObjectId(req.params.id)
-    const result = await userAppService.getDriver(id)
+    const result = await userAppService.getUser(id)
     res.send(result)
 })
 
 userApi.post("/", async (req: Request, res: Response) => {
-    const driverInsert = req.body as IUserInsert
-    const result = await userAppService.insertDriver(driverInsert)
+    const userInsert = req.body as IUserInsert
+    const result = await userAppService.insertUser(userInsert)
     res.send(result)
 })
 
 userApi.patch("/", async (req: Request, res: Response) => {
-    const driverUpdate = req.body as IUserUpdate
-    const result = await userAppService.updateDriver(driverUpdate)
+    const userUpdate = req.body as IUserUpdate
+    const result = await userAppService.updateUser(userUpdate)
     res.send(result)
 })
 
 userApi.patch("/set-profile-photo", async (req: Request, res: Response) => {
-    const driverUpdate = req.body as IUserUpdateProfilePhoto
-    const result = await userAppService.updateDriverProfilePhoto(driverUpdate)
+    const userUpdate = req.body as IUserUpdateProfilePhoto
+    const result = await userAppService.updateUserProfilePhoto(userUpdate)
     res.send(result)
 })
 
 userApi.patch("/set-licence-photo", async (req: Request, res: Response) => {
-    const driverUpdate = req.body as IUserUpdateLicencePhoto
-    const result = await userAppService.updateDriverLicencePhoto(driverUpdate)
+    const userUpdate = req.body as IUserUpdateLicencePhoto
+    const result = await userAppService.updateUserLicencePhoto(userUpdate)
     res.send(result)
 })
 
 userApi.patch("/set-police-record", async (req: Request, res: Response) => {
-    const driverUpdate = req.body as IUserUpdatePoliceRecord
-    const result = await userAppService.updateDriverPoliceRecord(driverUpdate)
+    const userUpdate = req.body as IUserUpdatePoliceRecord
+    const result = await userAppService.updateUserPoliceRecord(userUpdate)
     res.send(result)
 })
 
 userApi.patch("/set-password", async (req: Request, res: Response) => {
-    const driverUpdate = req.body as IUserUpdatePassword
-    const result = await userAppService.updateDriverPassword(driverUpdate)
+    const userUpdate = req.body as IUserUpdatePassword
+    const result = await userAppService.updateUserPassword(userUpdate)
     res.send(result)
 })
 
 userApi.delete("/:id", async (req: Request, res: Response) => {
     const id = new mongo.ObjectId(req.params.id)
-    const result = await userAppService.deleteDriver(id)
+    const result = await userAppService.deleteUser(id)
     res.send(result)
 })
 

@@ -1,9 +1,9 @@
 {
     "culture": "es",
     "translation": {
-        "DRIVER_ERROR_ENTITY_NOT_FOUND": "El conductor con id: {{id}} no existe",
-        "DRIVER_ERROR_ID_NOT_PROVIDED": "No podemos proceder con su solicitud porque no ha proporcionado el ID del conductor",
-        "DRIVER_ERROR_INCORRECT_CURRENT_PASSWORD": "La contraseña actual ingresada es incorrecta",
+        "USER_ERROR_ENTITY_NOT_FOUND": "El conductor con id: {{id}} no existe",
+        "USER_ERROR_ID_NOT_PROVIDED": "No podemos proceder con su solicitud porque no ha proporcionado el ID del conductor",
+        "USER_ERROR_INCORRECT_CURRENT_PASSWORD": "La contraseña actual ingresada es incorrecta",
 
         "VEHICLE_ERROR_ENTITY_NOT_FOUND": "El vehículo con id: {{id}} no existe",
         "VEHICLE_ERROR_ID_NOT_PROVIDED": "No podemos proceder con su solicitud porque no ha proporcionado el ID del vehículo",

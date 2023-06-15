@@ -15,10 +15,10 @@ class VehicleRepository extends Repository<Vehicle> implements IRepository<Vehic
         return document ? entity : null
     }
 
-    async getVehiclesByDriver(driverId: ObjectId): Promise<Vehicle[]> {
+    async getVehiclesByUser(userId: ObjectId): Promise<Vehicle[]> {
         const filter = {
             ...Repository.filterToGetActive(),
-            driverId
+            userId
         }
         const documents = await VehicleModel.find(filter)
 

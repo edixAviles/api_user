@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 
 import User from "./user.entity"
-import DriverModel from "./user.model"
+import UserModel from "./user.model"
 
 import {
     Repository,
@@ -11,16 +11,16 @@ import {
 /**
  * This class, performs explicit operations of CRUD from Database
  */
-class DriverRepository extends Repository<User> implements IRepository<User> {
+class UserRepository extends Repository<User> implements IRepository<User> {
     async get(id: ObjectId): Promise<User> {
-        const document = await DriverModel.findOne(Repository.filterToGetById(id))
+        const document = await UserModel.findOne(Repository.filterToGetById(id))
 
         const entity = new User({ ...document })
         return document ? entity : null
     }
 
     async insert(entity: User): Promise<User> {
-        const document = new DriverModel({ ...entity })
+        const document = new UserModel({ ...entity })
         await document.save(this.optionsToInsert())
 
         const createdEntity = new User({ ...document })
@@ -29,7 +29,7 @@ class DriverRepository extends Repository<User> implements IRepository<User> {
 
     async update(entity: User): Promise<User> {
         const dataToUpdate = this.mapObjectToUpdate(entity)
-        const document = await DriverModel.findOneAndUpdate(
+        const document = await UserModel.findOneAndUpdate(
             { _id: entity._id },
             dataToUpdate,
             this.optionsToUpdate()
@@ -40,7 +40,7 @@ class DriverRepository extends Repository<User> implements IRepository<User> {
     }
 
     async delete(id: ObjectId): Promise<void> {
-        await DriverModel.findOneAndUpdate(
+        await UserModel.findOneAndUpdate(
             { _id: id },
             Repository.paramsToDelete(),
             this.optionsToUpdate()
@@ -48,4 +48,4 @@ class DriverRepository extends Repository<User> implements IRepository<User> {
     }
 }
 
-export default DriverRepository
+export default UserRepository

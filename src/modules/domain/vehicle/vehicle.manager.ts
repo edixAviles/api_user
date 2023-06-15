@@ -35,8 +35,8 @@ class VehicleManager {
         return vehicle
     }
 
-    async getVehiclesByDriver(driverId: ObjectId): Promise<Vehicle[]> {
-        const vehicles = await this.vehicleRepository.getVehiclesByDriver(driverId)
+    async getVehiclesByUser(userId: ObjectId): Promise<Vehicle[]> {
+        const vehicles = await this.vehicleRepository.getVehiclesByUser(userId)
         return vehicles
     }
 
@@ -49,7 +49,7 @@ class VehicleManager {
         vehicle.year = vehicleInsert.year
         vehicle.licencePlatePhoto = Buffer.from(vehicleInsert.licencePlatePhoto, TypeMime.base64)
         vehicle.isVerified = false
-        vehicle.driverId = vehicleInsert.driverId
+        vehicle.userId = vehicleInsert.userId
 
         const entity = await this.vehicleRepository.insert(vehicle)
         return entity
@@ -74,7 +74,7 @@ class VehicleManager {
         vehicle.year = vehicleUpdate.year
         vehicle.licencePlatePhoto = Buffer.from(vehicleUpdate.licencePlatePhoto, TypeMime.base64)
         vehicle.isVerified = vehicleFound.isVerified
-        vehicle.driverId = vehicleUpdate.driverId
+        vehicle.userId = vehicleUpdate.userId
 
         const entity = await this.vehicleRepository.update(vehicle)
         return entity

@@ -24,7 +24,7 @@ class VehicleDto {
     public isVerified: boolean
 
     @AutoMap()
-    public driverId: ObjectId
+    public userId: ObjectId
 }
 
 class VehicleLiteDto {
@@ -47,7 +47,7 @@ class VehicleLiteDto {
     public isVerified: boolean
 
     @AutoMap()
-    public driverId: ObjectId
+    public userId: ObjectId
 }
 
 export {

@@ -7,7 +7,7 @@ import ResponseManager from "../../../core/response/response.manager"
 import ServiceError from "../../shared/service.error"
 import Vehicle from "../../domain/vehicle/vehicle.entity"
 import VehicleManager from "../../domain/vehicle/vehicle.manager"
-import DriverManager from "../../domain/user/user.manager"
+import UserManager from "../../domain/user/user.manager"
 import IVehicleInsert from "../../contracts/vehicle/vehicle.insert"
 import VehicleErrorCodes from "../../shared.domain/vehicle/vehicle.error.codes"
 import UserErrorCodes from "../../shared.domain/user/user.error.codes"
@@ -23,12 +23,12 @@ import {
 
 class VehicleAppService extends ApplicationService {
     private vehicleManager: VehicleManager
-    private driverManager: DriverManager
+    private userManager: UserManager
 
     constructor() {
         super()
         this.vehicleManager = new VehicleManager()
-        this.driverManager = new DriverManager()
+        this.userManager = new UserManager()
     }
 
     async getVehicle(id: ObjectId): Promise<Response<VehicleDto>> {
@@ -44,11 +44,11 @@ class VehicleAppService extends ApplicationService {
         }
     }
 
-    async getVehiclesByDriver(driverId: ObjectId): Promise<Response<VehicleLiteDto[]>> {
+    async getVehiclesByUser(userId: ObjectId): Promise<Response<VehicleLiteDto[]>> {
         const response = new ResponseManager<VehicleLiteDto[]>()
 
         try {
-            const entities = await this.vehicleManager.getVehiclesByDriver(driverId)
+            const entities = await this.vehicleManager.getVehiclesByUser(userId)
 
             const dto = mapper.mapArray(entities, Vehicle, VehicleLiteDto)
             return response.onSuccess(dto)
@@ -61,7 +61,7 @@ class VehicleAppService extends ApplicationService {
         const response = new ResponseManager<VehicleDto>()
 
         try {
-            const user = await this.driverManager.get(vehicleInsert.driverId)
+            const user = await this.userManager.get(vehicleInsert.userId)
             if (!user) {
                 throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound))
             }
@@ -83,7 +83,7 @@ class VehicleAppService extends ApplicationService {
                 throw new ServiceException(ServiceError.getErrorByCode(VehicleErrorCodes.IdNotProvided))
             }
 
-            const user = await this.driverManager.get(vehicleUpdate.driverId)
+            const user = await this.userManager.get(vehicleUpdate.userId)
             if (!user) {
                 throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound))
             }

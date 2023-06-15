@@ -35,8 +35,8 @@ class TripManager {
         return trip
     }
 
-    async getTripsByDriver(driverId: ObjectId, state: TripState): Promise<Trip[]> {
-        const trips = await this.tripRepository.getTripsByDriver(driverId, state)
+    async getTripsByUser(userId: ObjectId, state: TripState): Promise<Trip[]> {
+        const trips = await this.tripRepository.getTripsByUser(userId, state)
         return trips
     }
 

@@ -17,7 +17,7 @@ class TripRepository extends Repository<Trip> implements IRepository<Trip> {
         return document ? entity : null
     }
 
-    async getTripsByDriver(driverId: ObjectId, state: TripState): Promise<Trip[]> {
+    async getTripsByUser(userId: ObjectId, state: TripState): Promise<Trip[]> {
         const filter: PipelineStage[] = [
             {
                 $lookup: {
@@ -30,7 +30,7 @@ class TripRepository extends Repository<Trip> implements IRepository<Trip> {
             {
                 $match: {
                     ...Repository.filterToGetActive(),
-                    "vehiclesList.driverId": driverId,
+                    "vehiclesList.userId": userId,
                     tripState: {
                         $elemMatch: {
                             state,
