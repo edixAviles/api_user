@@ -54,6 +54,10 @@ const properties = {
             required: true,
         },
     },
+    isDriver: {
+        type: Boolean,
+        required: true,
+    },
     licencePhoto: {
         data: {
             type: Buffer,

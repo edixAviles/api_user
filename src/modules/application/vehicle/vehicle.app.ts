@@ -44,11 +44,11 @@ class VehicleAppService extends ApplicationService {
         }
     }
 
-    async getVehiclesByUser(userId: ObjectId): Promise<Response<VehicleLiteDto[]>> {
+    async getVehiclesByDriver(driverId: ObjectId): Promise<Response<VehicleLiteDto[]>> {
         const response = new ResponseManager<VehicleLiteDto[]>()
 
         try {
-            const entities = await this.vehicleManager.getVehiclesByUser(userId)
+            const entities = await this.vehicleManager.getVehiclesByDriver(driverId)
 
             const dto = mapper.mapArray(entities, Vehicle, VehicleLiteDto)
             return response.onSuccess(dto)
@@ -61,7 +61,7 @@ class VehicleAppService extends ApplicationService {
         const response = new ResponseManager<VehicleDto>()
 
         try {
-            const user = await this.userManager.get(vehicleInsert.userId)
+            const user = await this.userManager.get(vehicleInsert.driverId)
             if (!user) {
                 throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound))
             }
@@ -81,11 +81,6 @@ class VehicleAppService extends ApplicationService {
         try {
             if (!vehicleUpdate.id) {
                 throw new ServiceException(ServiceError.getErrorByCode(VehicleErrorCodes.IdNotProvided))
-            }
-
-            const user = await this.userManager.get(vehicleUpdate.userId)
-            if (!user) {
-                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound))
             }
 
             const entity = await this.vehicleManager.update(vehicleUpdate)

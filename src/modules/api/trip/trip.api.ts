@@ -14,10 +14,10 @@ tripApi.get("/:id", async (req: Request, res: Response) => {
     res.send(result)
 })
 
-tripApi.get("/:state/state/:id/by-user", async (req: Request, res: Response) => {
-    const userId = new mongo.ObjectId(req.params.id)
+tripApi.get("/:state/state/:id/by-driver", async (req: Request, res: Response) => {
+    const driverId = new mongo.ObjectId(req.params.id)
     const state = req.params.state as TripState
-    const result = await tripAppService.getTripsByUser(userId, state)
+    const result = await tripAppService.getTripsByDriver(driverId, state)
     res.send(result)
 })
 

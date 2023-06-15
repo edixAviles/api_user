@@ -7,7 +7,7 @@ interface IVehicleInsert {
     color: string
     year: number
     licencePlatePhoto: string
-    userId: ObjectId
+    driverId: ObjectId
 }
 
 export default IVehicleInsert

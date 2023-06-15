@@ -23,20 +23,12 @@ class VehicleManager {
     }
 
     async get(id: ObjectId): Promise<Vehicle> {
-        const vehicle = await this.vehicleRepository.get(id)
-        if (!vehicle) {
-            const errorParams = {
-                [SharedConsts.id]: id
-            }
-            const error = ServiceError.getErrorByCode(VehicleErrorCodes.EntityNotFound, errorParams)
-            throw new ServiceException(error)
-        }
-
-        return vehicle
+        const entity = await this.foundEntity(id)
+        return entity
     }
 
-    async getVehiclesByUser(userId: ObjectId): Promise<Vehicle[]> {
-        const vehicles = await this.vehicleRepository.getVehiclesByUser(userId)
+    async getVehiclesByDriver(driverId: ObjectId): Promise<Vehicle[]> {
+        const vehicles = await this.vehicleRepository.getVehiclesByDriver(driverId)
         return vehicles
     }
 
@@ -49,21 +41,14 @@ class VehicleManager {
         vehicle.year = vehicleInsert.year
         vehicle.licencePlatePhoto = Buffer.from(vehicleInsert.licencePlatePhoto, TypeMime.base64)
         vehicle.isVerified = false
-        vehicle.userId = vehicleInsert.userId
+        vehicle.driverId = vehicleInsert.driverId
 
         const entity = await this.vehicleRepository.insert(vehicle)
         return entity
     }
 
     async update(vehicleUpdate: IVehicleUpdate): Promise<Vehicle> {
-        const vehicleFound = await this.vehicleRepository.get(vehicleUpdate.id)
-        if (!vehicleFound) {
-            const errorParams = {
-                [SharedConsts.id]: vehicleUpdate.id
-            }
-            const error = ServiceError.getErrorByCode(VehicleErrorCodes.EntityNotFound, errorParams)
-            throw new ServiceException(error)
-        }
+        const entity = await this.foundEntity(vehicleUpdate.id)
 
         const vehicle = new Vehicle()
         vehicle._id = vehicleUpdate.id
@@ -73,16 +58,20 @@ class VehicleManager {
         vehicle.color = vehicleUpdate.color
         vehicle.year = vehicleUpdate.year
         vehicle.licencePlatePhoto = Buffer.from(vehicleUpdate.licencePlatePhoto, TypeMime.base64)
-        vehicle.isVerified = vehicleFound.isVerified
-        vehicle.userId = vehicleUpdate.userId
+        vehicle.isVerified = entity.isVerified
 
-        const entity = await this.vehicleRepository.update(vehicle)
-        return entity
+        const entityUpdated = await this.vehicleRepository.update(vehicle)
+        return entityUpdated
     }
 
     async delete(id: ObjectId): Promise<void> {
-        const entity = await this.vehicleRepository.get(id)
-        if (!entity) {
+        await this.foundEntity(id)
+        await this.vehicleRepository.delete(id)
+    }
+
+    private foundEntity = async(id: ObjectId): Promise<Vehicle> => {
+        const vehicle = await this.vehicleRepository.get(id)
+        if (!vehicle) {
             const errorParams = {
                 [SharedConsts.id]: id
             }
@@ -90,7 +79,7 @@ class VehicleManager {
             throw new ServiceException(error)
         }
 
-        await this.vehicleRepository.delete(id)
+        return vehicle
     }
 }
 

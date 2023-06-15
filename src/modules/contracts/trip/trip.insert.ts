@@ -10,6 +10,7 @@ interface ITripInsert {
     offeredSeats: number
     description: string
     vehicleId: ObjectId
+    driverId: ObjectId
 }
 
 export default ITripInsert

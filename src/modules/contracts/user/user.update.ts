@@ -15,12 +15,12 @@ interface IUserUpdateProfilePhoto {
     profilePhoto: string
 }
 
-interface IUserUpdateLicencePhoto {
+interface IDriverUpdateLicencePhoto {
     id: ObjectId
     licencePhoto: string
 }
 
-interface IUserUpdatePoliceRecord {
+interface IDriverUpdatePoliceRecord {
     id: ObjectId
     policeRecord: string
 }
@@ -34,7 +34,7 @@ interface IUserUpdatePassword {
 export {
     IUserUpdate,
     IUserUpdateProfilePhoto,
-    IUserUpdateLicencePhoto,
-    IUserUpdatePoliceRecord,
+    IDriverUpdateLicencePhoto,
+    IDriverUpdatePoliceRecord,
     IUserUpdatePassword
 }

@@ -25,6 +25,9 @@ class UserDto {
     public profilePhoto: DataBufferApprovedDto
 
     @AutoMap()
+    public isDriver: boolean
+
+    @AutoMap()
     public licencePhoto: DataBufferApprovedDto
 
     @AutoMap()

@@ -15,8 +15,8 @@ import { UserDto } from "../../contracts/user/user.dto"
 import {
     IUserUpdate,
     IUserUpdateProfilePhoto,
-    IUserUpdateLicencePhoto,
-    IUserUpdatePoliceRecord,
+    IDriverUpdateLicencePhoto,
+    IDriverUpdatePoliceRecord,
     IUserUpdatePassword
 } from "../../contracts/user/user.update"
 
@@ -49,6 +49,21 @@ class UserAppService extends ApplicationService {
 
             const dto = mapper.map(entity, User, UserDto)
             return response.onSuccess(dto)
+        } catch (error) {
+            return response.onError(ServiceError.getException(error))
+        }
+    }
+
+    async beDriver(id: ObjectId): Promise<Response<ObjectId>> {
+        const response = new ResponseManager<ObjectId>()
+
+        try {
+            if (!id) {
+                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IdNotProvided))
+            }
+
+            const entity = await this.userManager.beDriver(id)
+            return response.onSuccess(id)
         } catch (error) {
             return response.onError(ServiceError.getException(error))
         }
@@ -87,7 +102,7 @@ class UserAppService extends ApplicationService {
         }
     }
 
-    async updateUserLicencePhoto(userUpdate: IUserUpdateLicencePhoto): Promise<Response<UserDto>> {
+    async updateDriverLicencePhoto(userUpdate: IDriverUpdateLicencePhoto): Promise<Response<UserDto>> {
         const response = new ResponseManager<UserDto>()
         try {
             if (!userUpdate.id) {
@@ -103,7 +118,7 @@ class UserAppService extends ApplicationService {
         }
     }
 
-    async updateUserPoliceRecord(userUpdate: IUserUpdatePoliceRecord): Promise<Response<UserDto>> {
+    async updateDriverPoliceRecord(userUpdate: IDriverUpdatePoliceRecord): Promise<Response<UserDto>> {
         const response = new ResponseManager<UserDto>()
         try {
             if (!userUpdate.id) {

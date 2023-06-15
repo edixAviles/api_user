@@ -26,6 +26,9 @@ class User extends BaseBasicModel {
     public profilePhoto: DataBufferApproved
 
     @AutoMap()
+    public isDriver: boolean
+
+    @AutoMap()
     public licencePhoto: DataBufferApproved
 
     @AutoMap()

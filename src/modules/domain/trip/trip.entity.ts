@@ -35,6 +35,9 @@ class Trip extends BaseBasicModel {
 
     @AutoMap()
     public vehicleId: ObjectId
+
+    @AutoMap()
+    public driverId: ObjectId
 }
 
 export default Trip

@@ -62,6 +62,11 @@ const properties = {
         type: ObjectId,
         required: true,
         ref: CollectionsName.Vehicle
+    },
+    driverId: {
+        type: ObjectId,
+        required: true,
+        ref: CollectionsName.User
     }
 }
 

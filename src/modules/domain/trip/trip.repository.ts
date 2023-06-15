@@ -17,30 +17,18 @@ class TripRepository extends Repository<Trip> implements IRepository<Trip> {
         return document ? entity : null
     }
 
-    async getTripsByUser(userId: ObjectId, state: TripState): Promise<Trip[]> {
-        const filter: PipelineStage[] = [
-            {
-                $lookup: {
-                    from: CollectionsName.Vehicle,
-                    localField: "vehicleId",
-                    foreignField: "_id",
-                    as: "vehiclesList"
-                }
-            },
-            {
-                $match: {
-                    ...Repository.filterToGetActive(),
-                    "vehiclesList.userId": userId,
-                    tripState: {
-                        $elemMatch: {
-                            state,
-                            isCurrent: true
-                        }
-                    }
+    async getTripsByDriver(driverId: ObjectId, state: TripState): Promise<Trip[]> {
+        const filter = {
+            ...Repository.filterToGetActive(),
+            driverId,
+            tripState: {
+                $elemMatch: {
+                    state,
+                    isCurrent: true
                 }
             }
-        ]
-        const documents = await TripModel.aggregate(filter)
+        }
+        const documents = await TripModel.find(filter)
 
         const entities = new Array<Trip>()
         documents.forEach(document => {

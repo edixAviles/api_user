@@ -10,8 +10,8 @@ import IUserInsert from "../../contracts/user/user.insert"
 import {
     IUserUpdate,
     IUserUpdateProfilePhoto,
-    IUserUpdateLicencePhoto,
-    IUserUpdatePoliceRecord,
+    IDriverUpdateLicencePhoto,
+    IDriverUpdatePoliceRecord,
     IUserUpdatePassword
 } from "../../contracts/user/user.update"
 
@@ -30,6 +30,12 @@ userApi.post("/", async (req: Request, res: Response) => {
     res.send(result)
 })
 
+userApi.post("/:id/be-driver", async (req: Request, res: Response) => {
+    const id = new mongo.ObjectId(req.params.id)
+    const result = await userAppService.beDriver(id)
+    res.send(result)
+})
+
 userApi.patch("/", async (req: Request, res: Response) => {
     const userUpdate = req.body as IUserUpdate
     const result = await userAppService.updateUser(userUpdate)
@@ -43,14 +49,14 @@ userApi.patch("/set-profile-photo", async (req: Request, res: Response) => {
 })
 
 userApi.patch("/set-licence-photo", async (req: Request, res: Response) => {
-    const userUpdate = req.body as IUserUpdateLicencePhoto
-    const result = await userAppService.updateUserLicencePhoto(userUpdate)
+    const userUpdate = req.body as IDriverUpdateLicencePhoto
+    const result = await userAppService.updateDriverLicencePhoto(userUpdate)
     res.send(result)
 })
 
 userApi.patch("/set-police-record", async (req: Request, res: Response) => {
-    const userUpdate = req.body as IUserUpdatePoliceRecord
-    const result = await userAppService.updateUserPoliceRecord(userUpdate)
+    const userUpdate = req.body as IDriverUpdatePoliceRecord
+    const result = await userAppService.updateDriverPoliceRecord(userUpdate)
     res.send(result)
 })
 

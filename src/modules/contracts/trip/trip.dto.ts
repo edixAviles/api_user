@@ -34,6 +34,9 @@ class TripDto {
 
     @AutoMap()
     public vehicleId: ObjectId
+
+    @AutoMap()
+    public driverId: ObjectId
 }
 
 export {

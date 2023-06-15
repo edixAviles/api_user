@@ -31,7 +31,7 @@ const properties = {
         type: Boolean,
         required: true
     },
-    userId: {
+    driverId: {
         type: ObjectId,
         required: true,
         ref: CollectionsName.User

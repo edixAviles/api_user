@@ -46,11 +46,11 @@ class TripAppService extends ApplicationService {
         }
     }
 
-    async getTripsByUser(userId: ObjectId, state: TripState): Promise<Response<TripDto[]>> {
+    async getTripsByDriver(driverId: ObjectId, state: TripState): Promise<Response<TripDto[]>> {
         const response = new ResponseManager<TripDto[]>()
 
         try {
-            const entities = await this.tripManager.getTripsByUser(userId, state)
+            const entities = await this.tripManager.getTripsByDriver(driverId, state)
 
             const dto = mapper.mapArray(entities, Trip, TripDto)
             return response.onSuccess(dto)

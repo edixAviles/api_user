@@ -16,8 +16,8 @@ import {
 import {
     IUserUpdate,
     IUserUpdateProfilePhoto,
-    IUserUpdateLicencePhoto,
-    IUserUpdatePoliceRecord,
+    IDriverUpdateLicencePhoto,
+    IDriverUpdatePoliceRecord,
     IUserUpdatePassword
 } from "../../contracts/user/user.update"
 
@@ -32,21 +32,13 @@ class UserManager {
     }
 
     async get(id: ObjectId): Promise<User> {
-        const user = await this.userRepository.get(id)
-        if (!user) {
-            const errorParams = {
-                [SharedConsts.id]: id
-            }
-            const error = ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound, errorParams)
-            throw new ServiceException(error)
-        }
-
-        return user
+        const entity = await this.foundEntity(id)
+        return entity
     }
 
     async insert(userInsert: IUserInsert): Promise<User> {
         const encryptedPassword = CryptoJS.SHA256(userInsert.password).toString()
-        
+
         const user = new User()
         user.identification = {
             data: userInsert.identification,
@@ -67,6 +59,7 @@ class UserManager {
             data: Buffer.from(userInsert.profilePhoto, TypeMime.base64),
             isApproved: false
         }
+        user.isDriver = userInsert.isDriver
         user.licencePhoto = {
             data: Buffer.from(userInsert.licencePhoto, TypeMime.base64),
             isApproved: false
@@ -82,112 +75,88 @@ class UserManager {
     }
 
     async update(userUpdate: IUserUpdate): Promise<User> {
-        const userFound = await this.userRepository.get(userUpdate.id)
-        if (!userFound) {
-            const errorParams = {
-                [SharedConsts.id]: userUpdate.id
-            }
-            const error = ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound, errorParams)
-            throw new ServiceException(error)
-        }
+        const entity = await this.foundEntity(userUpdate.id)
 
         const user = new User()
         user._id = userUpdate.id
         user.identification = {
             data: userUpdate.identification,
-            isVerified: userFound.identification.isVerified
+            isVerified: entity.identification.isVerified
         }
         user.name = userUpdate.name
         user.lastName = userUpdate.lastName
         user.birthdate = userUpdate.birthdate
         user.email = {
             data: userUpdate.email,
-            isVerified: userFound.email.isVerified
+            isVerified: entity.email.isVerified
         }
         user.cellPhone = {
             data: userUpdate.cellPhone,
-            isVerified: userFound.cellPhone.isVerified
+            isVerified: entity.cellPhone.isVerified
         }
 
-        const entity = await this.userRepository.update(user)
-        return entity
+        const entityUpdated = await this.userRepository.update(user)
+        return entityUpdated
+    }
+
+    async beDriver(id: ObjectId): Promise<User> {
+        const entity = await this.foundEntity(id)
+
+        const user = new User()
+        user._id = entity._id
+        user.isDriver = true
+
+        const entityUpdated = await this.userRepository.update(user)
+        return entityUpdated
     }
 
     async updateProfilePhoto(userUpdate: IUserUpdateProfilePhoto): Promise<User> {
-        const userFound = await this.userRepository.get(userUpdate.id)
-        if (!userFound) {
-            const errorParams = {
-                [SharedConsts.id]: userUpdate.id
-            }
-            const error = ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound, errorParams)
-            throw new ServiceException(error)
-        }
+        const entity = await this.foundEntity(userUpdate.id)
 
         const user = new User()
         user._id = userUpdate.id
         user.profilePhoto = {
             data: Buffer.from(userUpdate.profilePhoto, TypeMime.base64),
-            isApproved: userFound.profilePhoto.isApproved
+            isApproved: entity.profilePhoto.isApproved
         }
 
-        const entity = await this.userRepository.update(user)
-        return entity
+        const entityUpdated = await this.userRepository.update(user)
+        return entityUpdated
     }
 
-    async updateLicencePhoto(userUpdate: IUserUpdateLicencePhoto): Promise<User> {
-        const userFound = await this.userRepository.get(userUpdate.id)
-        if (!userFound) {
-            const errorParams = {
-                [SharedConsts.id]: userUpdate.id
-            }
-            const error = ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound, errorParams)
-            throw new ServiceException(error)
-        }
+    async updateLicencePhoto(userUpdate: IDriverUpdateLicencePhoto): Promise<User> {
+        const entity = await this.foundEntity(userUpdate.id)
 
         const user = new User()
         user._id = userUpdate.id
         user.profilePhoto = {
             data: Buffer.from(userUpdate.licencePhoto, TypeMime.base64),
-            isApproved: userFound.licencePhoto.isApproved
+            isApproved: entity.licencePhoto.isApproved
         }
 
-        const entity = await this.userRepository.update(user)
-        return entity
+        const entityUpdated = await this.userRepository.update(user)
+        return entityUpdated
     }
 
-    async updatePoliceRecord(userUpdate: IUserUpdatePoliceRecord): Promise<User> {
-        const userFound = await this.userRepository.get(userUpdate.id)
-        if (!userFound) {
-            const errorParams = {
-                [SharedConsts.id]: userUpdate.id
-            }
-            const error = ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound, errorParams)
-            throw new ServiceException(error)
-        }
+    async updatePoliceRecord(userUpdate: IDriverUpdatePoliceRecord): Promise<User> {
+        const entity = await this.foundEntity(userUpdate.id)
 
         const user = new User()
         user._id = userUpdate.id
         user.profilePhoto = {
             data: Buffer.from(userUpdate.policeRecord, TypeMime.base64),
-            isApproved: userFound.policeRecord.isApproved
+            isApproved: entity.policeRecord.isApproved
         }
 
-        const entity = await this.userRepository.update(user)
-        return entity
+        const entityUpdated = await this.userRepository.update(user)
+        return entityUpdated
     }
 
     async updatePassword(userUpdate: IUserUpdatePassword): Promise<void> {
-        const userFound = await this.userRepository.get(userUpdate.id)
-        if (!userFound) {
-            const errorParams = {
-                [SharedConsts.id]: userUpdate.id
-            }
-            const error = ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound, errorParams)
-            throw new ServiceException(error)
-        }
+        const entity = await this.foundEntity(userUpdate.id)
 
         const currentEncryptedPassword = CryptoJS.SHA256(userUpdate.currentPassword).toString()
-        if (userFound.password != currentEncryptedPassword) {
+        if (entity.password != currentEncryptedPassword) {
             const error = ServiceError.getErrorByCode(UserErrorCodes.IncorrectCurrentPassword)
             throw new ServiceException(error)
         }
@@ -201,6 +170,11 @@ class UserManager {
     }
 
     async delete(id: ObjectId): Promise<void> {
+        await this.foundEntity(id)
+        await this.userRepository.delete(id)
+    }
+
+    private foundEntity = async(id: ObjectId): Promise<User> => {
         const entity = await this.userRepository.get(id)
         if (!entity) {
             const errorParams = {
@@ -210,7 +184,7 @@ class UserManager {
             throw new ServiceException(error)
         }
 
-        await this.userRepository.delete(id)
+        return entity
     }
 }
 
