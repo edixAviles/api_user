@@ -1,9 +1,9 @@
 import { AutoMap } from "@automapper/classes"
 
 import BaseBasicModel from "../../../core/domain/base.model"
-import { DataStringVerified, DataBufferApproved } from "../../shared.domain/driver/driver.extra"
+import { DataStringVerified, DataBufferApproved } from "../../shared.domain/user/user.extra"
 
-class Driver extends BaseBasicModel {
+class User extends BaseBasicModel {
     @AutoMap()
     public identification: DataStringVerified
 
@@ -34,4 +34,4 @@ class Driver extends BaseBasicModel {
     public password: string
 }
 
-export default Driver
+export default User

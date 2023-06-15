@@ -1,8 +1,8 @@
 import { AutoMap } from "@automapper/classes"
-import { DataStringVerified } from "../../shared.domain/driver/driver.extra"
-import { DataBufferApprovedDto } from "../../shared.domain/driver/driver.extra"
+import { DataStringVerified } from "../../shared.domain/user/user.extra"
+import { DataBufferApprovedDto } from "../../shared.domain/user/user.extra"
 
-class DriverDto {
+class UserDto {
     @AutoMap()
     public identification: DataStringVerified
 
@@ -34,5 +34,5 @@ class DriverDto {
 }
 
 export {
-    DriverDto
+    UserDto
 }

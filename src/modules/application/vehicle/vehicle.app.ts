@@ -7,10 +7,10 @@ import ResponseManager from "../../../core/response/response.manager"
 import ServiceError from "../../shared/service.error"
 import Vehicle from "../../domain/vehicle/vehicle.entity"
 import VehicleManager from "../../domain/vehicle/vehicle.manager"
-import DriverManager from "../../domain/driver/driver.manager"
+import DriverManager from "../../domain/user/user.manager"
 import IVehicleInsert from "../../contracts/vehicle/vehicle.insert"
 import VehicleErrorCodes from "../../shared.domain/vehicle/vehicle.error.codes"
-import DriverErrorCodes from "../../shared.domain/driver/driver.error.codes"
+import UserErrorCodes from "../../shared.domain/user/user.error.codes"
 
 import { mapper } from "../../../core/mappings/mapper"
 import {
@@ -61,9 +61,9 @@ class VehicleAppService extends ApplicationService {
         const response = new ResponseManager<VehicleDto>()
 
         try {
-            const driver = await this.driverManager.get(vehicleInsert.driverId)
-            if (!driver) {
-                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.EntityNotFound))
+            const user = await this.driverManager.get(vehicleInsert.driverId)
+            if (!user) {
+                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound))
             }
 
             const entity = await this.vehicleManager.insert(vehicleInsert)
@@ -83,9 +83,9 @@ class VehicleAppService extends ApplicationService {
                 throw new ServiceException(ServiceError.getErrorByCode(VehicleErrorCodes.IdNotProvided))
             }
 
-            const driver = await this.driverManager.get(vehicleUpdate.driverId)
-            if (!driver) {
-                throw new ServiceException(ServiceError.getErrorByCode(DriverErrorCodes.EntityNotFound))
+            const user = await this.driverManager.get(vehicleUpdate.driverId)
+            if (!user) {
+                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound))
             }
 
             const entity = await this.vehicleManager.update(vehicleUpdate)

@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb"
 
-interface IDriverUpdate {
+interface IUserUpdate {
     id: ObjectId
     identification: string
     name: string
@@ -10,31 +10,31 @@ interface IDriverUpdate {
     cellPhone: string
 }
 
-interface IDriverUpdateProfilePhoto {
+interface IUserUpdateProfilePhoto {
     id: ObjectId
     profilePhoto: string
 }
 
-interface IDriverUpdateLicencePhoto {
+interface IUserUpdateLicencePhoto {
     id: ObjectId
     licencePhoto: string
 }
 
-interface IDriverUpdatePoliceRecord {
+interface IUserUpdatePoliceRecord {
     id: ObjectId
     policeRecord: string
 }
 
-interface IDriverUpdatePassword {
+interface IUserUpdatePassword {
     id: ObjectId
     currentPassword: string
     newPassword: string
 }
 
 export {
-    IDriverUpdate,
-    IDriverUpdateProfilePhoto,
-    IDriverUpdateLicencePhoto,
-    IDriverUpdatePoliceRecord,
-    IDriverUpdatePassword
+    IUserUpdate,
+    IUserUpdateProfilePhoto,
+    IUserUpdateLicencePhoto,
+    IUserUpdatePoliceRecord,
+    IUserUpdatePassword
 }

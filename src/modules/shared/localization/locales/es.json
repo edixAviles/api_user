@@ -8,10 +8,6 @@
         "VEHICLE_ERROR_ENTITY_NOT_FOUND": "El vehículo con id: {{id}} no existe",
         "VEHICLE_ERROR_ID_NOT_PROVIDED": "No podemos proceder con su solicitud porque no ha proporcionado el ID del vehículo",
 
-        "USER_ERROR_ENTITY_NOT_FOUND": "El usuario con id: {{id}} no existe",
-        "USER_ERROR_ID_NOT_PROVIDED": "No podemos proceder con su solicitud porque no ha proporcionado el ID del usuario",
-        "USER_ERROR_INCORRECT_CURRENT_PASSWORD": "La contraseña actual ingresada es incorrecta",
-
         "TRIP_ERROR_ENTITY_NOT_FOUND": "El viaje con id: {{id}} no existe",
         "TRIP_ERROR_ID_NOT_PROVIDED": "No podemos proceder con su solicitud porque no ha proporcionado el ID del viaje",
         "TRIP_ERROR_TRIP_NOT_AVAILABLE": "El viaje con id {{id}} que deseas modificar, ya no está disponible",

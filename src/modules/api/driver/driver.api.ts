@@ -5,65 +5,65 @@ import {
     Response
 } from "express"
 
-import DriverAppService from "../../application/driver/driver.app"
-import IDriverInsert from "../../contracts/driver/driver.insert"
+import UserAppService from "../../application/user/user.app"
+import IUserInsert from "../../contracts/user/user.insert"
 import {
-    IDriverUpdate,
-    IDriverUpdateProfilePhoto,
-    IDriverUpdateLicencePhoto,
-    IDriverUpdatePoliceRecord,
-    IDriverUpdatePassword
-} from "../../contracts/driver/driver.update"
+    IUserUpdate,
+    IUserUpdateProfilePhoto,
+    IUserUpdateLicencePhoto,
+    IUserUpdatePoliceRecord,
+    IUserUpdatePassword
+} from "../../contracts/user/user.update"
 
-const driverApi = express.Router()
-const driverAppService = new DriverAppService()
+const userApi = express.Router()
+const userAppService = new UserAppService()
 
-driverApi.get("/:id", async (req: Request, res: Response) => {
+userApi.get("/:id", async (req: Request, res: Response) => {
     const id = new mongo.ObjectId(req.params.id)
-    const result = await driverAppService.getDriver(id)
+    const result = await userAppService.getDriver(id)
     res.send(result)
 })
 
-driverApi.post("/", async (req: Request, res: Response) => {
-    const driverInsert = req.body as IDriverInsert
-    const result = await driverAppService.insertDriver(driverInsert)
+userApi.post("/", async (req: Request, res: Response) => {
+    const driverInsert = req.body as IUserInsert
+    const result = await userAppService.insertDriver(driverInsert)
     res.send(result)
 })
 
-driverApi.patch("/", async (req: Request, res: Response) => {
-    const driverUpdate = req.body as IDriverUpdate
-    const result = await driverAppService.updateDriver(driverUpdate)
+userApi.patch("/", async (req: Request, res: Response) => {
+    const driverUpdate = req.body as IUserUpdate
+    const result = await userAppService.updateDriver(driverUpdate)
     res.send(result)
 })
 
-driverApi.patch("/set-profile-photo", async (req: Request, res: Response) => {
-    const driverUpdate = req.body as IDriverUpdateProfilePhoto
-    const result = await driverAppService.updateDriverProfilePhoto(driverUpdate)
+userApi.patch("/set-profile-photo", async (req: Request, res: Response) => {
+    const driverUpdate = req.body as IUserUpdateProfilePhoto
+    const result = await userAppService.updateDriverProfilePhoto(driverUpdate)
     res.send(result)
 })
 
-driverApi.patch("/set-licence-photo", async (req: Request, res: Response) => {
-    const driverUpdate = req.body as IDriverUpdateLicencePhoto
-    const result = await driverAppService.updateDriverLicencePhoto(driverUpdate)
+userApi.patch("/set-licence-photo", async (req: Request, res: Response) => {
+    const driverUpdate = req.body as IUserUpdateLicencePhoto
+    const result = await userAppService.updateDriverLicencePhoto(driverUpdate)
     res.send(result)
 })
 
-driverApi.patch("/set-police-record", async (req: Request, res: Response) => {
-    const driverUpdate = req.body as IDriverUpdatePoliceRecord
-    const result = await driverAppService.updateDriverPoliceRecord(driverUpdate)
+userApi.patch("/set-police-record", async (req: Request, res: Response) => {
+    const driverUpdate = req.body as IUserUpdatePoliceRecord
+    const result = await userAppService.updateDriverPoliceRecord(driverUpdate)
     res.send(result)
 })
 
-driverApi.patch("/set-password", async (req: Request, res: Response) => {
-    const driverUpdate = req.body as IDriverUpdatePassword
-    const result = await driverAppService.updateDriverPassword(driverUpdate)
+userApi.patch("/set-password", async (req: Request, res: Response) => {
+    const driverUpdate = req.body as IUserUpdatePassword
+    const result = await userAppService.updateDriverPassword(driverUpdate)
     res.send(result)
 })
 
-driverApi.delete("/:id", async (req: Request, res: Response) => {
+userApi.delete("/:id", async (req: Request, res: Response) => {
     const id = new mongo.ObjectId(req.params.id)
-    const result = await driverAppService.deleteDriver(id)
+    const result = await userAppService.deleteDriver(id)
     res.send(result)
 })
 
-export default driverApi
+export default userApi

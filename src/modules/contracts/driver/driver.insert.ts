@@ -1,4 +1,4 @@
-interface IDriverInsert {
+interface IUserInsert {
     identification: string
     name: string
     lastName: string
@@ -11,4 +11,4 @@ interface IDriverInsert {
     password: string
 }
 
-export default IDriverInsert
+export default IUserInsert

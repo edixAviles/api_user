@@ -80,5 +80,5 @@ const properties = {
     }
 }
 
-const DriverModel = mongooseModel(CollectionsName.Driver, properties)
+const DriverModel = mongooseModel(CollectionsName.User, properties)
 export default DriverModel

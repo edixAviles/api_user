@@ -34,7 +34,7 @@ const properties = {
     driverId: {
         type: ObjectId,
         required: true,
-        ref: CollectionsName.Driver
+        ref: CollectionsName.User
     }
 }
 

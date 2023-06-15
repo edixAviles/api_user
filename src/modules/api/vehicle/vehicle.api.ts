@@ -21,7 +21,7 @@ vehicleApi.get("/:id", async (req: Request, res: Response) => {
     res.send(result)
 })
 
-vehicleApi.get("/:id/by-driver", async (req: Request, res: Response) => {
+vehicleApi.get("/:id/by-user", async (req: Request, res: Response) => {
     const id = new mongo.ObjectId(req.params.id)
     const result = await vehicleAppService.getVehiclesByDriver(id)
     res.send(result)

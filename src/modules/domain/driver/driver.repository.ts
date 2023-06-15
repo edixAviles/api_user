@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 
-import Driver from "./driver.entity"
-import DriverModel from "./driver.model"
+import User from "./user.entity"
+import DriverModel from "./user.model"
 
 import {
     Repository,
@@ -11,23 +11,23 @@ import {
 /**
  * This class, performs explicit operations of CRUD from Database
  */
-class DriverRepository extends Repository<Driver> implements IRepository<Driver> {
-    async get(id: ObjectId): Promise<Driver> {
+class DriverRepository extends Repository<User> implements IRepository<User> {
+    async get(id: ObjectId): Promise<User> {
         const document = await DriverModel.findOne(Repository.filterToGetById(id))
 
-        const entity = new Driver({ ...document })
+        const entity = new User({ ...document })
         return document ? entity : null
     }
 
-    async insert(entity: Driver): Promise<Driver> {
+    async insert(entity: User): Promise<User> {
         const document = new DriverModel({ ...entity })
         await document.save(this.optionsToInsert())
 
-        const createdEntity = new Driver({ ...document })
+        const createdEntity = new User({ ...document })
         return createdEntity
     }
 
-    async update(entity: Driver): Promise<Driver> {
+    async update(entity: User): Promise<User> {
         const dataToUpdate = this.mapObjectToUpdate(entity)
         const document = await DriverModel.findOneAndUpdate(
             { _id: entity._id },
@@ -35,7 +35,7 @@ class DriverRepository extends Repository<Driver> implements IRepository<Driver>
             this.optionsToUpdate()
         )
 
-        const updatedEntity = new Driver({ ...document })
+        const updatedEntity = new User({ ...document })
         return updatedEntity
     }
 
