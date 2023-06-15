@@ -21,6 +21,14 @@ tripApi.get("/:state/state/:id/by-driver", async (req: Request, res: Response) =
     res.send(result)
 })
 
+tripApi.get("/search/:departure/:arrival/:seats", async (req: Request, res: Response) => {
+    const departure = req.params.departure
+    const arrival = req.params.arrival
+    const requestedSeats = parseInt(req.params.seats)
+    const result = await tripAppService.searchTrips(departure, arrival, requestedSeats)
+    res.send(result)
+})
+
 tripApi.post("/publish", async (req: Request, res: Response) => {
     const tripInsert = req.body as ITripInsert
     const result = await tripAppService.publishTrip(tripInsert)

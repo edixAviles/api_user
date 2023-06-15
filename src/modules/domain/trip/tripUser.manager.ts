@@ -108,9 +108,7 @@ class TripUserManager {
 
         const available = entity.tripState.some(element => element.isCurrent && states.includes(element.state))
         if (!available) {
-            const errorParams = {
-                [SharedConsts.id]: id
-            }
+            const errorParams = { [SharedConsts.id]: id }
             const error = ServiceError.getErrorByCode(TripUserErrorCodes.NotAvailable, errorParams)
             throw new ServiceException(error)
         }
@@ -137,12 +135,10 @@ class TripUserManager {
         return states
     }
 
-    private foundEntity = async(id: ObjectId): Promise<TripUser> => {
+    private foundEntity = async (id: ObjectId): Promise<TripUser> => {
         const entity = await this.tripUserRepository.get(id)
         if (!entity) {
-            const errorParams = {
-                [SharedConsts.id]: id
-            }
+            const errorParams = { [SharedConsts.id]: id }
             const error = ServiceError.getErrorByCode(TripUserErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }

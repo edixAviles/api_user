@@ -31,10 +31,17 @@ interface IUserUpdatePassword {
     newPassword: string
 }
 
+interface IUserUpdateToDriver {
+    id: ObjectId
+    licencePhoto: string
+    policeRecord: string
+}
+
 export {
     IUserUpdate,
     IUserUpdateProfilePhoto,
     IDriverUpdateLicencePhoto,
     IDriverUpdatePoliceRecord,
-    IUserUpdatePassword
+    IUserUpdatePassword,
+    IUserUpdateToDriver
 }

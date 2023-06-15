@@ -12,7 +12,8 @@ import {
     IUserUpdateProfilePhoto,
     IDriverUpdateLicencePhoto,
     IDriverUpdatePoliceRecord,
-    IUserUpdatePassword
+    IUserUpdatePassword,
+    IUserUpdateToDriver
 } from "../../contracts/user/user.update"
 
 const userApi = express.Router()
@@ -30,9 +31,9 @@ userApi.post("/", async (req: Request, res: Response) => {
     res.send(result)
 })
 
-userApi.post("/:id/be-driver", async (req: Request, res: Response) => {
-    const id = new mongo.ObjectId(req.params.id)
-    const result = await userAppService.beDriver(id)
+userApi.post("/be-driver", async (req: Request, res: Response) => {
+    const userUpdate = req.body as IUserUpdateToDriver
+    const result = await userAppService.beDriver(userUpdate)
     res.send(result)
 })
 

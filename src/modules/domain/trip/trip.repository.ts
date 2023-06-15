@@ -6,8 +6,6 @@ import {
 } from "../../../core/domain/repository"
 import Trip from "./trip.entity"
 import TripModel from "./trip.model"
-import { PipelineStage } from "mongoose"
-import { CollectionsName } from "../../shared/shared.consts"
 import { TripState } from "../../shared.domain/trip/trip.extra"
 
 class TripRepository extends Repository<Trip> implements IRepository<Trip> {
@@ -28,6 +26,36 @@ class TripRepository extends Repository<Trip> implements IRepository<Trip> {
                 }
             }
         }
+        const documents = await TripModel.find(filter)
+
+        const entities = new Array<Trip>()
+        documents.forEach(document => {
+            if (document) {
+                delete document.vehicles;
+                entities.push(new Trip({ ...document }))
+            }
+        })
+
+        return entities
+    }
+
+    async searchTrips(departure: string, arrival: string, requestedSeats: number): Promise<Trip[]> {
+        const departureRegex = new RegExp(`${departure}`, "i")
+        const arrivalRegex = new RegExp(`${arrival}`, "i")
+
+        const filter = {
+            ...Repository.filterToGetActive(),
+            "departure.departureCity": departureRegex,
+            "arrival.arrivalCity": arrivalRegex,
+            availableSeats: { $gte : requestedSeats },
+            tripState: {
+                $elemMatch: {
+                    state: TripState.Available,
+                    isCurrent: true
+                }
+            }
+        }
+        console.log(filter)
         const documents = await TripModel.find(filter)
 
         const entities = new Array<Trip>()

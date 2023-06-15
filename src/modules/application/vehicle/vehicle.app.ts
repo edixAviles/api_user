@@ -7,9 +7,8 @@ import ResponseManager from "../../../core/response/response.manager"
 import ServiceError from "../../shared/service.error"
 import Vehicle from "../../domain/vehicle/vehicle.entity"
 import VehicleManager from "../../domain/vehicle/vehicle.manager"
-import UserManager from "../../domain/vehicle/vehicle.manager"
+import UserManager from "../../domain/user/user.manager"
 import IVehicleInsert from "../../contracts/vehicle/vehicle.insert"
-import VehicleErrorCodes from "../../shared.domain/vehicle/vehicle.error.codes"
 import UserErrorCodes from "../../shared.domain/user/user.error.codes"
 
 import { mapper } from "../../../core/mappings/mapper"
@@ -20,6 +19,7 @@ import {
 import {
     IVehicleUpdate
 } from "../../contracts/vehicle/vehicle.update"
+import { SharedConsts } from "../../shared/shared.consts"
 
 class VehicleAppService extends ApplicationService {
     private vehicleManager: VehicleManager
@@ -48,6 +48,11 @@ class VehicleAppService extends ApplicationService {
         const response = new ResponseManager<VehicleLiteDto[]>()
 
         try {
+            const user = await this.userManager.get(driverId)
+            if (!user.isDriver) {
+                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver))
+            }
+
             const entities = await this.vehicleManager.getVehiclesByDriver(driverId)
 
             const dto = mapper.mapArray(entities, Vehicle, VehicleLiteDto)
@@ -62,8 +67,8 @@ class VehicleAppService extends ApplicationService {
 
         try {
             const user = await this.userManager.get(vehicleInsert.driverId)
-            if (!user) {
-                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound))
+            if (!user.isDriver) {
+                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver))
             }
 
             const entity = await this.vehicleManager.insert(vehicleInsert)
@@ -79,10 +84,6 @@ class VehicleAppService extends ApplicationService {
         const response = new ResponseManager<VehicleDto>()
 
         try {
-            if (!vehicleUpdate.id) {
-                throw new ServiceException(ServiceError.getErrorByCode(VehicleErrorCodes.IdNotProvided))
-            }
-
             const entity = await this.vehicleManager.update(vehicleUpdate)
 
             const dto = mapper.map(entity, Vehicle, VehicleDto)

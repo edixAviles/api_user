@@ -60,22 +60,18 @@ const properties = {
     },
     licencePhoto: {
         data: {
-            type: Buffer,
-            required: true,
+            type: Buffer
         },
         isApproved: {
-            type: Boolean,
-            required: true,
+            type: Boolean
         },
     },
     policeRecord: {
         data: {
-            type: Buffer,
-            required: true,
+            type: Buffer
         },
         isApproved: {
-            type: Boolean,
-            required: true,
+            type: Boolean
         },
     },
     password: {

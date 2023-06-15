@@ -32,6 +32,11 @@ class TripManager {
         return trips
     }
 
+    async searchTrips(departure: string, arrival: string, requestedSeats: number): Promise<Trip[]> {
+        const trips = await this.tripRepository.searchTrips(departure, arrival, requestedSeats)
+        return trips
+    }
+
     async insert(tripInsert: ITripInsert): Promise<Trip> {
         const trip = new Trip()
         trip.departure = {
@@ -107,17 +112,13 @@ class TripManager {
         const tripFound = await this.validateTrip(tripId, [TripState.Available])
 
         if (numberOfSeats == 0) {
-            const errorParams = {
-                [SharedConsts.id]: tripId
-            }
+            const errorParams = { [SharedConsts.id]: tripId }
             const error = ServiceError.getErrorByCode(TripErrorCodes.EmptySeats, errorParams)
             throw new ServiceException(error)
         }
-        
+
         if (numberOfSeats > tripFound.availableSeats) {
-            const errorParams = {
-                [SharedConsts.id]: tripId
-            }
+            const errorParams = { [SharedConsts.id]: tripId }
             const error = ServiceError.getErrorByCode(TripErrorCodes.ExceededSeats, errorParams)
             throw new ServiceException(error)
         }
@@ -148,9 +149,7 @@ class TripManager {
 
         const available = entity.tripState.some(element => element.isCurrent && states.includes(element.state))
         if (!available) {
-            const errorParams = {
-                [SharedConsts.id]: id
-            }
+            const errorParams = { [SharedConsts.id]: id }
             const error = ServiceError.getErrorByCode(TripErrorCodes.NotAvailable, errorParams)
             throw new ServiceException(error)
         }
@@ -177,12 +176,10 @@ class TripManager {
         return states
     }
 
-    private foundEntity = async(id: ObjectId): Promise<Trip> => {
+    private foundEntity = async (id: ObjectId): Promise<Trip> => {
         const entity = await this.tripRepository.get(id)
         if (!entity) {
-            const errorParams = {
-                [SharedConsts.id]: id
-            }
+            const errorParams = { [SharedConsts.id]: id }
             const error = ServiceError.getErrorByCode(TripErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }

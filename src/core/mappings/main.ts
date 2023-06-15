@@ -4,7 +4,7 @@ import {
     mapFrom
 } from "@automapper/core"
 
-import User from "../../modules/domain/vehicle/vehicle.entity"
+import User from "../../modules/domain/user/user.entity"
 import Vehicle from "../../modules/domain/vehicle/vehicle.entity"
 import Trip from "../../modules/domain/trip/trip.entity"
 import TripUser from "../../modules/domain/trip/tripUser.entity"
@@ -29,7 +29,7 @@ const runMappers = () => {
         mapper,
         DataBufferApproved,
         DataBufferApprovedDto,
-        forMember(member => member.data, mapFrom(s => s.data.toString(TypeMime.base64))),
+        forMember(member => member.data, mapFrom(s => s.data?.toString(TypeMime.base64))),
         forMember(member => member.isApproved, mapFrom(s => s.isApproved))
     )
 
