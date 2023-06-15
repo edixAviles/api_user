@@ -35,6 +35,11 @@ class VehicleManager {
         return vehicle
     }
 
+    async getVehiclesByDriver(driverId: ObjectId): Promise<Vehicle[]> {
+        const vehicles = await this.vehicleRepository.getVehiclesByDriver(driverId)
+        return vehicles
+    }
+
     async insert(vehicleInsert: IVehicleInsert): Promise<Vehicle> {
         const vehicle = new Vehicle()
         vehicle.brand = vehicleInsert.brand

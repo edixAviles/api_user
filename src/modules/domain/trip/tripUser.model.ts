@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 import mongooseModel from "../../../core/domain/mongoose.model"
 import { CollectionsName } from "../../shared/shared.consts"
-import { TripStateUser, PaymentMethods } from "../../shared.domain/trip/tripUser.extra"
+import { TripUserState, PaymentMethods } from "../../shared.domain/trip/tripUser.extra"
 
 const properties = {
     numberOfSeats: {
@@ -24,7 +24,7 @@ const properties = {
     tripState: [{
         state: {
             type: String,
-            enum: TripStateUser
+            enum: TripUserState
         },
         dateTimeAudit: {
             type: Date,

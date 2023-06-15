@@ -35,6 +35,11 @@ class TripManager {
         return trip
     }
 
+    async getTripsByDriver(driverId: ObjectId, state: TripState): Promise<Trip[]> {
+        const trips = await this.tripRepository.getTripsByDriver(driverId, state)
+        return trips
+    }
+
     async insert(tripInsert: ITripInsert): Promise<Trip> {
         const trip = new Trip()
         trip.departure = {

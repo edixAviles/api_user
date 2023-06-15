@@ -6,13 +6,51 @@ import {
 } from "../../../core/domain/repository"
 import Trip from "./trip.entity"
 import TripModel from "./trip.model"
+import { PipelineStage } from "mongoose"
+import { CollectionsName } from "../../shared/shared.consts"
+import { TripState } from "../../shared.domain/trip/trip.extra"
 
 class TripRepository extends Repository<Trip> implements IRepository<Trip> {
     async get(id: ObjectId): Promise<Trip> {
-        const document = await TripModel.findOne(this.filterToGet(id))
-
+        const document = await TripModel.findOne(Repository.filterToGetById(id))
         const entity = new Trip({ ...document })
         return document ? entity : null
+    }
+
+    async getTripsByDriver(driverId: ObjectId, state: TripState): Promise<Trip[]> {
+        const filter: PipelineStage[] = [
+            {
+                $lookup: {
+                    from: CollectionsName.Vehicle,
+                    localField: "vehicleId",
+                    foreignField: "_id",
+                    as: "vehiclesList"
+                }
+            },
+            {
+                $match: {
+                    ...Repository.filterToGetActive(),
+                    "vehiclesList.driverId": driverId,
+                    tripState: {
+                        $elemMatch: {
+                            state,
+                            isCurrent: true
+                        }
+                    }
+                }
+            }
+        ]
+        const documents = await TripModel.aggregate(filter)
+
+        const entities = new Array<Trip>()
+        documents.forEach(document => {
+            if (document) {
+                delete document.vehicles;
+                entities.push(new Trip({ ...document }))
+            }
+        })
+
+        return entities
     }
 
     async insert(entity: Trip): Promise<Trip> {
@@ -38,7 +76,7 @@ class TripRepository extends Repository<Trip> implements IRepository<Trip> {
     async delete(id: ObjectId): Promise<void> {
         await TripModel.findOneAndUpdate(
             { _id: id },
-            this.paramsToDelete(),
+            Repository.paramsToDelete(),
             this.optionsToUpdate()
         )
     }

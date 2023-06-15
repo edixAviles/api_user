@@ -9,10 +9,27 @@ import {
 
 class VehicleRepository extends Repository<Vehicle> implements IRepository<Vehicle> {
     async get(id: ObjectId): Promise<Vehicle> {
-        const document = await VehicleModel.findOne(this.filterToGet(id))
+        const document = await VehicleModel.findOne(Repository.filterToGetById(id))
 
         const entity = new Vehicle({ ...document })
         return document ? entity : null
+    }
+
+    async getVehiclesByDriver(driverId: ObjectId): Promise<Vehicle[]> {
+        const filter = {
+            ...Repository.filterToGetActive(),
+            driverId
+        }
+        const documents = await VehicleModel.find(filter)
+
+        const entities = new Array<Vehicle>()
+        documents.forEach(document => {
+            if (document) {
+                entities.push(new Vehicle({ ...document }))
+            }
+        })
+
+        return entities
     }
 
     async insert(entity: Vehicle): Promise<Vehicle> {
@@ -38,7 +55,7 @@ class VehicleRepository extends Repository<Vehicle> implements IRepository<Vehic
     async delete(id: ObjectId): Promise<void> {
         await VehicleModel.findOneAndUpdate(
             { _id: id },
-            this.paramsToDelete(),
+            Repository.paramsToDelete(),
             this.optionsToUpdate()
         )
     }

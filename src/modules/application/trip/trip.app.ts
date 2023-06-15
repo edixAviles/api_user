@@ -17,8 +17,9 @@ import { mapper } from "../../../core/mappings/mapper"
 import { TripDto } from "../../contracts/trip/trip.dto"
 import { ITripCancel } from "../../contracts/trip/trip.update"
 import TripErrorCodes from "../../shared.domain/trip/trip.error.codes"
-import { TripStateUser } from "../../shared.domain/trip/tripUser.extra"
+import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
 import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
+import { TripState } from "../../shared.domain/trip/trip.extra"
 
 class TripAppService extends ApplicationService {
     private tripManager: TripManager
@@ -39,6 +40,19 @@ class TripAppService extends ApplicationService {
             const entity = await this.tripManager.get(id)
 
             const dto = mapper.map(entity, Trip, TripDto)
+            return response.onSuccess(dto)
+        } catch (error) {
+            return response.onError(ServiceError.getException(error))
+        }
+    }
+
+    async getTripsByDriver(driverId: ObjectId, state: TripState): Promise<Response<TripDto[]>> {
+        const response = new ResponseManager<TripDto[]>()
+
+        try {
+            const entities = await this.tripManager.getTripsByDriver(driverId, state)
+
+            const dto = mapper.mapArray(entities, Trip, TripDto)
             return response.onSuccess(dto)
         } catch (error) {
             return response.onError(ServiceError.getException(error))
@@ -68,7 +82,7 @@ class TripAppService extends ApplicationService {
 
         try {
             const entity = await this.tripManager.get(id)
-            const bookedTrips = await this.tripUserManager.getTripsUserByState(entity._id, TripStateUser.Booked)
+            const bookedTrips = await this.tripUserManager.getTripsUserByState(entity._id, TripUserState.Booked)
             if (bookedTrips.length === 0) {
                 throw new ServiceException(ServiceError.getErrorByCode(TripErrorCodes.NoTripsBooked))
             }
@@ -91,7 +105,7 @@ class TripAppService extends ApplicationService {
             const tripUserManagerTransaction = new TripUserManager(transaction)
 
             const entity = await tripManagerTransaction.get(id)
-            const onTheWayTrips = await tripUserManagerTransaction.getTripsUserByState(entity._id, TripStateUser.OnTheWay)
+            const onTheWayTrips = await tripUserManagerTransaction.getTripsUserByState(entity._id, TripUserState.OnTheWay)
             if (onTheWayTrips.length === 0) {
                 throw new ServiceException(ServiceError.getErrorByCode(TripErrorCodes.NoTripsOnTheWay))
             }
@@ -121,7 +135,7 @@ class TripAppService extends ApplicationService {
             const tripUserManagerTransaction = new TripUserManager(transaction)
 
             const entity = await tripManagerTransaction.get(tripCancel.id)
-            const bookedTrips = await tripUserManagerTransaction.getTripsUserByState(entity._id, TripStateUser.Booked)
+            const bookedTrips = await tripUserManagerTransaction.getTripsUserByState(entity._id, TripUserState.Booked)
             for (const trip of bookedTrips) {
                 const tripCancel = {} as ITripUserCancel
                 tripCancel.id = trip._id

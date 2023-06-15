@@ -6,29 +6,57 @@ import {
 } from "../../../core/domain/repository"
 import TripUser from "./tripUser.entity"
 import TripUserModel from "./tripUser.model"
+import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
 
 class TripUserRepository extends Repository<TripUser> implements IRepository<TripUser> {
     async get(id: ObjectId): Promise<TripUser> {
-        const document = await TripUserModel.findOne(this.filterToGet(id))
+        const document = await TripUserModel.findOne(Repository.filterToGetById(id))
 
         const entity = new TripUser({ ...document })
         return document ? entity : null
     }
 
-    async getTripsUserByState(tripId: ObjectId, state: string): Promise<TripUser[]> {
-        const documents = await TripUserModel.find({
-            tripId: tripId,
+    async getTripsUserByState(tripId: ObjectId, state: TripUserState): Promise<TripUser[]> {
+        const filter = {
+            ...Repository.filterToGetActive(),
+            tripId,
             tripState: {
                 $elemMatch: {
-                    state: state,
+                    state,
                     isCurrent: true
                 }
             }
-        })
+        }
+        const documents = await TripUserModel.find(filter)
 
         const entities = new Array<TripUser>()
         documents.forEach(document => {
-            entities.push(new TripUser({ ...document }))
+            if (document) {
+                entities.push(new TripUser({ ...document }))
+            }
+        })
+
+        return entities
+    }
+
+    async getTripsUserByUser(userId: ObjectId, state: TripUserState): Promise<TripUser[]> {
+        const filter = {
+            ...Repository.filterToGetActive(),
+            userId,
+            tripState: {
+                $elemMatch: {
+                    state,
+                    isCurrent: true
+                }
+            }
+        }
+        const documents = await TripUserModel.find(filter)
+
+        const entities = new Array<TripUser>()
+        documents.forEach(document => {
+            if (document) {
+                entities.push(new TripUser({ ...document }))
+            }
         })
 
         return entities
@@ -57,7 +85,7 @@ class TripUserRepository extends Repository<TripUser> implements IRepository<Tri
     async delete(id: ObjectId): Promise<void> {
         await TripUserModel.findOneAndUpdate(
             { _id: id },
-            this.paramsToDelete(),
+            Repository.paramsToDelete(),
             this.optionsToUpdate()
         )
     }

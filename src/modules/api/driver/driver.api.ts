@@ -19,42 +19,50 @@ const driverApi = express.Router()
 const driverAppService = new DriverAppService()
 
 driverApi.get("/:id", async (req: Request, res: Response) => {
-    const result = await driverAppService.getDriver(new mongo.ObjectId(req.params.id))
+    const id = new mongo.ObjectId(req.params.id)
+    const result = await driverAppService.getDriver(id)
     res.send(result)
 })
 
 driverApi.post("/", async (req: Request, res: Response) => {
-    const result = await driverAppService.insertDriver(req.body as IDriverInsert)
+    const driverInsert = req.body as IDriverInsert
+    const result = await driverAppService.insertDriver(driverInsert)
     res.send(result)
 })
 
 driverApi.patch("/", async (req: Request, res: Response) => {
-    const result = await driverAppService.updateDriver(req.body as IDriverUpdate)
+    const driverUpdate = req.body as IDriverUpdate
+    const result = await driverAppService.updateDriver(driverUpdate)
     res.send(result)
 })
 
 driverApi.patch("/set-profile-photo", async (req: Request, res: Response) => {
-    const result = await driverAppService.updateDriverProfilePhoto(req.body as IDriverUpdateProfilePhoto)
+    const driverUpdate = req.body as IDriverUpdateProfilePhoto
+    const result = await driverAppService.updateDriverProfilePhoto(driverUpdate)
     res.send(result)
 })
 
 driverApi.patch("/set-licence-photo", async (req: Request, res: Response) => {
-    const result = await driverAppService.updateDriverLicencePhoto(req.body as IDriverUpdateLicencePhoto)
+    const driverUpdate = req.body as IDriverUpdateLicencePhoto
+    const result = await driverAppService.updateDriverLicencePhoto(driverUpdate)
     res.send(result)
 })
 
 driverApi.patch("/set-police-record", async (req: Request, res: Response) => {
-    const result = await driverAppService.updateDriverPoliceRecord(req.body as IDriverUpdatePoliceRecord)
+    const driverUpdate = req.body as IDriverUpdatePoliceRecord
+    const result = await driverAppService.updateDriverPoliceRecord(driverUpdate)
     res.send(result)
 })
 
 driverApi.patch("/set-password", async (req: Request, res: Response) => {
-    const result = await driverAppService.updateDriverPassword(req.body as IDriverUpdatePassword)
+    const driverUpdate = req.body as IDriverUpdatePassword
+    const result = await driverAppService.updateDriverPassword(driverUpdate)
     res.send(result)
 })
 
 driverApi.delete("/:id", async (req: Request, res: Response) => {
-    const result = await driverAppService.deleteDriver(new mongo.ObjectId(req.params.id))
+    const id = new mongo.ObjectId(req.params.id)
+    const result = await driverAppService.deleteDriver(id)
     res.send(result)
 })
 

@@ -17,32 +17,38 @@ const userApi = express.Router()
 const userAppService = new UserAppService()
 
 userApi.get("/:id", async (req: Request, res: Response) => {
-    const result = await userAppService.getUser(new mongo.ObjectId(req.params.id))
+    const id = new mongo.ObjectId(req.params.id)
+    const result = await userAppService.getUser(id)
     res.send(result)
 })
 
 userApi.post("/", async (req: Request, res: Response) => {
-    const result = await userAppService.insertUser(req.body as IUserInsert)
+    const userInsert = req.body as IUserInsert
+    const result = await userAppService.insertUser(userInsert)
     res.send(result)
 })
 
 userApi.patch("/", async (req: Request, res: Response) => {
-    const result = await userAppService.updateUser(req.body as IUserUpdate)
+    const userUpdate = req.body as IUserUpdate
+    const result = await userAppService.updateUser(userUpdate)
     res.send(result)
 })
 
 userApi.patch("/set-profile-photo", async (req: Request, res: Response) => {
-    const result = await userAppService.updateUserProfilePhoto(req.body as IUserUpdateProfilePhoto)
+    const userUpdate = req.body as IUserUpdateProfilePhoto
+    const result = await userAppService.updateUserProfilePhoto(userUpdate)
     res.send(result)
 })
 
 userApi.patch("/set-password", async (req: Request, res: Response) => {
-    const result = await userAppService.updateUserPassword(req.body as IUserUpdatePassword)
+    const userUpdate = req.body as IUserUpdatePassword
+    const result = await userAppService.updateUserPassword(userUpdate)
     res.send(result)
 })
 
 userApi.delete("/:id", async (req: Request, res: Response) => {
-    const result = await userAppService.deleteUser(new mongo.ObjectId(req.params.id))
+    const id = new mongo.ObjectId(req.params.id)
+    const result = await userAppService.deleteUser(id)
     res.send(result)
 })
 

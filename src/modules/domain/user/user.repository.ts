@@ -10,7 +10,7 @@ import {
 
 class UserRepository extends Repository<User> implements IRepository<User> {
     async get(id: ObjectId): Promise<User | null> {
-        const document = await UserModel.findOne(this.filterToGet(id))
+        const document = await UserModel.findOne(Repository.filterToGetById(id))
 
         const entity = new User({ ...document })
         return document ? entity : null
@@ -39,7 +39,7 @@ class UserRepository extends Repository<User> implements IRepository<User> {
     async delete(id: ObjectId): Promise<void> {
         await UserModel.findOneAndUpdate(
             { _id: id },
-            this.paramsToDelete(),
+            Repository.paramsToDelete(),
             this.optionsToUpdate()
         )
     }
