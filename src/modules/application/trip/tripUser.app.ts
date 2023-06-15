@@ -10,12 +10,13 @@ import TripUser from "../../domain/trip/tripUser.entity"
 import TripUserManager from "../../domain/trip/tripUser.manager"
 import TripManager from "../../domain/trip/trip.manager"
 import TripErrorCodes from "../../shared.domain/trip/trip.error.codes"
+import UserManager from "../../domain/user/user.manager"
+import UserErrorCodes from "../../shared.domain/user/user.error.codes"
 
 import { mapper } from "../../../core/mappings/mapper"
 import { TripUserDto, TripUserStartTrip } from "../../contracts/trip/tripUser.dto"
 import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
 import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
-import UserErrorCodes from "../../shared.domain/user/user.error.codes"
 
 class TripUserAppService extends ApplicationService {
     private tripUserManager: TripUserManager

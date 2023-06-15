@@ -4,7 +4,7 @@ import {
     mapFrom
 } from "@automapper/core"
 
-import User from "../../modules/domain/user/user.entity"
+import User from "../../modules/domain/vehicle/vehicle.entity"
 import Vehicle from "../../modules/domain/vehicle/vehicle.entity"
 import Trip from "../../modules/domain/trip/trip.entity"
 import TripUser from "../../modules/domain/trip/tripUser.entity"
