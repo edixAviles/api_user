@@ -3,6 +3,9 @@ import { ObjectId } from "mongodb"
 
 class VehicleDto {
     @AutoMap()
+    public _id: ObjectId
+
+    @AutoMap()
     public brand: string
 
     @AutoMap()

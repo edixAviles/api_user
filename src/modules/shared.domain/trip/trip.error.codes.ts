@@ -5,6 +5,7 @@ enum TripErrorCodes {
     ExceededSeats = "TRIP_ERROR_EXCEEDED_SEATS",
     NoTripsBooked = "TRIP_ERROR_NO_TRIPS_BOOKED",
     NoTripsOnTheWay = "TRIP_ERROR_NO_TRIPS_ON_THE_WAY",
+    TripNotFinished = "TRIP_NOT_FINISHED",
 }
 
 export default TripErrorCodes

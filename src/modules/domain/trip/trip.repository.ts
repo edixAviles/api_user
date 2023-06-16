@@ -31,7 +31,7 @@ class TripRepository extends Repository<Trip> implements IRepository<Trip> {
         const entities = new Array<Trip>()
         documents.forEach(document => {
             if (document) {
-                delete document.vehicles;
+                delete document.vehicles
                 entities.push(new Trip({ ...document }))
             }
         })
@@ -55,13 +55,12 @@ class TripRepository extends Repository<Trip> implements IRepository<Trip> {
                 }
             }
         }
-        console.log(filter)
         const documents = await TripModel.find(filter)
 
         const entities = new Array<Trip>()
         documents.forEach(document => {
             if (document) {
-                delete document.vehicles;
+                delete document.vehicles
                 entities.push(new Trip({ ...document }))
             }
         })

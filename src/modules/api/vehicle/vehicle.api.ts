@@ -5,7 +5,6 @@ import {
     Response
 } from "express"
 
-
 import VehicleAppService from "../../application/vehicle/vehicle.app"
 import IVehicleInsert from "../../contracts/vehicle/vehicle.insert"
 import {

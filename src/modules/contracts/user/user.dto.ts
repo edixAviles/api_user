@@ -1,8 +1,13 @@
 import { AutoMap } from "@automapper/classes"
+import { ObjectId } from "mongodb"
+
 import { DataStringVerified } from "../../shared.domain/user/user.extra"
 import { DataBufferApprovedDto } from "../../shared.domain/user/user.extra"
 
 class UserDto {
+    @AutoMap()
+    public _id: ObjectId
+    
     @AutoMap()
     public identification: DataStringVerified
 

@@ -9,6 +9,9 @@ import {
 
 class TripUserDto {
     @AutoMap()
+    public _id: ObjectId
+    
+    @AutoMap()
     public numberOfSeats: number
 
     @AutoMap()
