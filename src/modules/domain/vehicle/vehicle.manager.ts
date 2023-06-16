@@ -48,7 +48,7 @@ class VehicleManager {
     }
 
     async update(vehicleUpdate: IVehicleUpdate): Promise<Vehicle> {
-        const entity = await this.foundEntity(vehicleUpdate.id)
+        await this.foundEntity(vehicleUpdate.id)
 
         const vehicle = new Vehicle()
         vehicle._id = vehicleUpdate.id
@@ -58,7 +58,6 @@ class VehicleManager {
         vehicle.color = vehicleUpdate.color
         vehicle.year = vehicleUpdate.year
         vehicle.licencePlatePhoto = Buffer.from(vehicleUpdate.licencePlatePhoto, TypeMime.base64)
-        vehicle.isVerified = entity.isVerified
 
         const entityUpdated = await this.vehicleRepository.update(vehicle)
         return entityUpdated

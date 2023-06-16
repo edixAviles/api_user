@@ -106,8 +106,8 @@ class TripUserManager {
     private validateTrip = async (id: ObjectId, states: string[]): Promise<TripUser> => {
         const entity = await this.foundEntity(id)
 
-        const available = entity.tripState.some(element => element.isCurrent && states.includes(element.state))
-        if (!available) {
+        const isAvailable = entity.tripState.some(element => element.isCurrent && states.includes(element.state))
+        if (!isAvailable) {
             const errorParams = { [SharedConsts.id]: id }
             const error = ServiceError.getErrorByCode(TripUserErrorCodes.NotAvailable, errorParams)
             throw new ServiceException(error)

@@ -1,13 +1,15 @@
-
 import { AutoMap } from "@automapper/classes"
 import { ObjectId } from "mongodb"
 import {
     DataDeparture,
     DataArrival,
-    DataTripStates
+    DataTripStates,
 } from "../../shared.domain/trip/trip.extra"
 
 class TripDto {
+    @AutoMap()
+    public _id: ObjectId
+
     @AutoMap()
     public departure: DataDeparture
 
@@ -39,7 +41,15 @@ class TripDto {
     public driverId: ObjectId
 }
 
+class TripDriverDataDto {
+    public _id: ObjectId
+    public name: string
+    public lastName: string
+    public profilePhoto: string
+}
+
 class TripsAvailablesDto {
+    public _id: ObjectId
     public departure: DataDeparture
     public arrival: string
     public price: number
@@ -47,7 +57,7 @@ class TripsAvailablesDto {
     public availableSeats: number
     public description: string
     public vehicleId: ObjectId
-    public driverId: ObjectId
+    public driver: TripDriverDataDto
 }
 
 export {

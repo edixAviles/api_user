@@ -1,7 +1,10 @@
+import { AutoMap } from "@automapper/classes"
 import { ObjectId } from "mongodb"
 
 abstract class BaseModel {
+    @AutoMap()
     _id?: ObjectId
+    
     createdAt: Date
     creatorUser?: string
     updatedAt: Date

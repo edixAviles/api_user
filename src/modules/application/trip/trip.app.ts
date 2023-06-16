@@ -22,7 +22,7 @@ import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
 import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
 import { TripState } from "../../shared.domain/trip/trip.extra"
 import UserErrorCodes from "../../shared.domain/user/user.error.codes"
-import { SharedConsts } from "../../shared/shared.consts"
+import { SharedConsts, TypeMime } from "../../shared/shared.consts"
 
 class TripAppService extends ApplicationService {
     private tripManager: TripManager
@@ -74,10 +74,13 @@ class TripAppService extends ApplicationService {
 
         try {
             const entities = await this.tripManager.searchTrips(departure, arrival, requestedSeats)
-            
+
             const tripsAvailables = new Array<TripsAvailablesDto>()
-            entities.forEach(entity => {
+            for (const entity of entities) {
+                const user = await this.userManager.get(entity.driverId)
+
                 const trip = new TripsAvailablesDto()
+                trip._id = entity._id
                 trip.departure = entity.departure
                 trip.arrival = entity.arrival.arrivalCity
                 trip.price = entity.price
@@ -85,10 +88,15 @@ class TripAppService extends ApplicationService {
                 trip.availableSeats = entity.availableSeats
                 trip.description = entity.description
                 trip.vehicleId = entity.vehicleId
-                trip.driverId = entity.driverId
+                trip.driver = {
+                    _id: user._id,
+                    name: user.name,
+                    lastName: user.lastName,
+                    profilePhoto: user.profilePhoto.data.toString(TypeMime.base64),
+                }
 
                 tripsAvailables.push(trip)
-            })
+            }
 
             return response.onSuccess(tripsAvailables)
         } catch (error) {
@@ -101,7 +109,7 @@ class TripAppService extends ApplicationService {
 
         try {
             await this.vehicleManager.get(tripInsert.vehicleId)
-            
+
             const user = await this.userManager.get(tripInsert.driverId)
             if (!user.isDriver) {
                 throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver))
