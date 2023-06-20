@@ -31,6 +31,9 @@ class TripDto {
     @AutoMap()
     public passengersToPickUp: number
 
+    @AutoMap(() => [String])
+    public features: string[]
+
     @AutoMap()
     public description: string
 
@@ -55,7 +58,7 @@ class TripsAvailablesDto {
     public price: number
     public offeredSeats: number
     public availableSeats: number
-    public description: string
+    public features: string[]
     public vehicleId: ObjectId
     public driver: TripDriverDataDto
 }

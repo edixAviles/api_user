@@ -30,6 +30,9 @@ class Trip extends BaseBasicModel {
     @AutoMap()
     public passengersToPickUp: number
 
+    @AutoMap(() => [String])
+    public features: string[]
+
     @AutoMap()
     public description: string
 

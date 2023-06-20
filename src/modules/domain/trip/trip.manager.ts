@@ -44,8 +44,10 @@ class TripManager {
             departureTime: new Date(tripInsert.departure.departureTime)
         }
         trip.arrival = {
-            arrivalCity: tripInsert.arrivalCity,
-            arrivalTime: null
+            arrivalCity: tripInsert.arrival.arrivalCity,
+            arrivalDescription: tripInsert.arrival.arrivalDescription,
+            latitude: tripInsert.arrival.latitude,
+            longitude: tripInsert.arrival.longitude,
         }
         trip.tripState = [{
             state: TripState.Available,
@@ -58,6 +60,7 @@ class TripManager {
         trip.offeredSeats = tripInsert.offeredSeats
         trip.availableSeats = tripInsert.offeredSeats
         trip.passengersToPickUp = null
+        trip.features = tripInsert.features
         trip.description = tripInsert.description
         trip.vehicleId = tripInsert.vehicleId
         trip.driverId = tripInsert.driverId
@@ -92,6 +95,12 @@ class TripManager {
 
         const trip = new Trip()
         trip._id = id
+        trip.arrival = {
+            arrivalCity: tripFound.arrival.arrivalCity,
+            arrivalDescription: tripFound.arrival.arrivalDescription,
+            latitude: tripFound.arrival.latitude,
+            longitude: tripFound.arrival.longitude,
+        }
         trip.tripState = this.getNewState(tripFound.tripState, TripState.Finished)
 
         await this.tripRepository.update(trip)
