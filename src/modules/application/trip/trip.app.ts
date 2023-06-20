@@ -9,7 +9,6 @@ import ServiceError from "../../shared/service.error"
 import ITripInsert from "../../contracts/trip/trip.insert"
 import Trip from "../../domain/trip/trip.entity"
 import TripManager from "../../domain/trip/trip.manager"
-import VehicleErrorCodes from "../../shared.domain/vehicle/vehicle.error.codes"
 import VehicleManager from "../../domain/vehicle/vehicle.manager"
 import TripUserManager from "../../domain/trip/tripUser.manager"
 import UserManager from "../../domain/user/user.manager"
@@ -22,7 +21,7 @@ import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
 import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
 import { TripState } from "../../shared.domain/trip/trip.extra"
 import UserErrorCodes from "../../shared.domain/user/user.error.codes"
-import { SharedConsts, TypeMime } from "../../shared/shared.consts"
+import { TypeMime } from "../../shared/shared.consts"
 
 class TripAppService extends ApplicationService {
     private tripManager: TripManager
@@ -86,7 +85,7 @@ class TripAppService extends ApplicationService {
                 trip.price = entity.price
                 trip.offeredSeats = entity.offeredSeats
                 trip.availableSeats = entity.availableSeats
-                trip.description = entity.description
+                trip.features = entity.features
                 trip.vehicleId = entity.vehicleId
                 trip.driver = {
                     _id: user._id,

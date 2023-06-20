@@ -5,9 +5,15 @@ interface ITripInsert {
         departureCity: string
         departureTime: Date
     }
-    arrivalCity: string
+    arrival: {
+        arrivalCity: string
+        arrivalDescription: string
+        latitude: number
+        longitude: number
+    }
     price: number
     offeredSeats: number
+    features: string[]
     description: string
     vehicleId: ObjectId
     driverId: ObjectId

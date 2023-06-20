@@ -5,7 +5,9 @@ class DataDeparture {
 
 class DataArrival {
     arrivalCity: string
-    arrivalTime: Date
+    arrivalDescription: string
+    latitude: number
+    longitude: number
 }
 
 class DataTripStates {
@@ -24,9 +26,16 @@ enum TripState {
     Cancelled = "CANCELLED"
 }
 
+enum TripFeatures {
+    MaxTwoPeopleBehind = "MAX_TWO_PEOPLE_BEHIND",
+    SmokingAllowed = "SMOKING_ALLOWED",
+    PetsAllowed = "PETS_ALLOWED"
+}
+
 export {
     DataDeparture,
     DataArrival,
     DataTripStates,
-    TripState
+    TripState,
+    TripFeatures
 }
