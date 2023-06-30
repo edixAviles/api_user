@@ -10,7 +10,7 @@ import RatingErrorCodes from "../../shared.domain/rating/rating.error.codes"
 import IRatingInsert from "../../contracts/rating/rating.insert"
 
 import {
-    SharedConsts
+    EntityFields
 } from "../../shared/shared.consts"
 
 class RatingManager {
@@ -59,7 +59,7 @@ class RatingManager {
     private foundEntity = async (id: ObjectId): Promise<Rating> => {
         const rating = await this.ratingRepository.get(id)
         if (!rating) {
-            const errorParams = { [SharedConsts.id]: id }
+            const errorParams = { [EntityFields.id]: id }
             const error = ServiceError.getErrorByCode(RatingErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }

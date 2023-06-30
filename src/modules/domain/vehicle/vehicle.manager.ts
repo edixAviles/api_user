@@ -10,7 +10,7 @@ import VehicleErrorCodes from "../../shared.domain/vehicle/vehicle.error.codes"
 import IVehicleInsert from "../../contracts/vehicle/vehicle.insert"
 
 import {
-    SharedConsts,
+    EntityFields,
     TypeMime
 } from "../../shared/shared.consts"
 import { IVehicleUpdate } from "../../contracts/vehicle/vehicle.update"
@@ -71,7 +71,7 @@ class VehicleManager {
     private foundEntity = async (id: ObjectId): Promise<Vehicle> => {
         const vehicle = await this.vehicleRepository.get(id)
         if (!vehicle) {
-            const errorParams = { [SharedConsts.id]: id }
+            const errorParams = { [EntityFields.id]: id }
             const error = ServiceError.getErrorByCode(VehicleErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }

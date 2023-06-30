@@ -19,7 +19,13 @@ class Trip extends BaseBasicModel {
     public tripState: DataTripStates[]
 
     @AutoMap()
-    public price: number
+    public tripPrice: number
+
+    @AutoMap()
+    public servicePrice: number
+
+    @AutoMap()
+    public finalPrice: number
 
     @AutoMap()
     public offeredSeats: number
@@ -27,14 +33,14 @@ class Trip extends BaseBasicModel {
     @AutoMap()
     public availableSeats: number
 
-    @AutoMap()
-    public passengersToPickUp: number
-
     @AutoMap(() => [String])
     public features: string[]
 
     @AutoMap()
     public description: string
+
+    @AutoMap()
+    public passengersToPickUp: number
 
     @AutoMap()
     public vehicleId: ObjectId

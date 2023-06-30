@@ -11,12 +11,6 @@ class DataTripUserStates {
     isCurrent: boolean
 }
 
-class DataPayment {
-    price: number
-    isPaid: boolean
-    method: string
-}
-
 enum TripUserState {
     Booked = "BOOKED",
     OnTheWayToYou = "ON_THE_WAY_TO_YOU",
@@ -25,16 +19,8 @@ enum TripUserState {
     Cancelled = "CANCELLED"
 }
 
-enum PaymentMethods {
-    Cash = "CASH",
-    CreditCard = "CREDIT_CARD",
-    BankTransfer = "BANK_TRANSFER"
-}
-
 export {
     DataPickupLocation,
     DataTripUserStates,
-    DataPayment,
-    TripUserState,
-    PaymentMethods
+    TripUserState
 }

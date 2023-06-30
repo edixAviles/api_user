@@ -27,6 +27,7 @@ enum TripState {
 }
 
 enum TripFeatures {
+    DoorToDoor = "DOOR_TO_DOOR",
     MaxTwoPeopleBehind = "MAX_TWO_PEOPLE_BEHIND",
     SmokingAllowed = "SMOKING_ALLOWED",
     PetsAllowed = "PETS_ALLOWED"

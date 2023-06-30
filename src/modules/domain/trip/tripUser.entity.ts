@@ -5,7 +5,6 @@ import BaseBasicModel from "../../../core/domain/base.model"
 import {
     DataPickupLocation,
     DataTripUserStates,
-    DataPayment
 } from "../../shared.domain/trip/tripUser.extra"
 
 class TripUser extends BaseBasicModel {
@@ -17,9 +16,6 @@ class TripUser extends BaseBasicModel {
 
     @AutoMap(() => [DataTripUserStates])
     public tripState: DataTripUserStates[]
-
-    @AutoMap()
-    public payment: DataPayment
 
     @AutoMap()
     public tripId: ObjectId
