@@ -3,8 +3,7 @@ import { ObjectId } from "mongodb"
 
 import {
     DataPickupLocation,
-    DataTripUserStates,
-    DataPayment
+    DataTripUserStates
 } from "../../shared.domain/trip/tripUser.extra"
 
 class TripUserDto {
@@ -19,9 +18,6 @@ class TripUserDto {
 
     @AutoMap(() => [DataTripUserStates])
     public tripState: DataTripUserStates[]
-
-    @AutoMap()
-    public payment: DataPayment
 
     @AutoMap()
     public tripId: ObjectId

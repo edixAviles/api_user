@@ -49,7 +49,15 @@ const properties = {
             required: true
         },
     }],
-    price: {
+    tripPrice: {
+        type: Number,
+        required: true,
+    },
+    servicePrice: {
+        type: Number,
+        required: true,
+    },
+    finalPrice: {
         type: Number,
         required: true,
     },
@@ -61,15 +69,15 @@ const properties = {
         type: Number,
         required: true
     },
-    passengersToPickUp: {
-        type: Number
-    },
     features: [{
         type: String,
         enum: TripFeatures
     }],
     description: {
         type: String
+    },
+    passengersToPickUp: {
+        type: Number
     },
     vehicleId: {
         type: ObjectId,

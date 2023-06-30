@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 import mongooseModel from "../../../core/domain/mongoose.model"
 import { CollectionsName } from "../../shared/shared.consts"
-import { TripUserState, PaymentMethods } from "../../shared.domain/trip/tripUser.extra"
+import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
 
 const properties = {
     numberOfSeats: {
@@ -38,20 +38,6 @@ const properties = {
             required: true
         },
     }],
-    payment: {
-        price: {
-            type: Number,
-            required: true
-        },
-        isPaid: {
-            type: Boolean,
-            required: true
-        },
-        method: {
-            type: String,
-            enum: PaymentMethods
-        }
-    },
     tripId: {
         type: ObjectId,
         required: true,

@@ -10,7 +10,7 @@ import IUserInsert from "../../contracts/user/user.insert"
 import UserErrorCodes from "../../shared.domain/user/user.error.codes"
 
 import {
-    SharedConsts,
+    EntityFields,
     TypeMime
 } from "../../shared/shared.consts"
 import {
@@ -204,7 +204,7 @@ class UserManager {
     private foundEntity = async (id: ObjectId): Promise<User> => {
         const entity = await this.userRepository.get(id)
         if (!entity) {
-            const errorParams = { [SharedConsts.id]: id }
+            const errorParams = { [EntityFields.id]: id }
             const error = ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }

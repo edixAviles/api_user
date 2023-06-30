@@ -19,7 +19,7 @@ import {
 import {
     IVehicleUpdate
 } from "../../contracts/vehicle/vehicle.update"
-import { SharedConsts } from "../../shared/shared.consts"
+import { EntityFields } from "../../shared/shared.consts"
 
 class VehicleAppService extends ApplicationService {
     private vehicleManager: VehicleManager

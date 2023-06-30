@@ -12,16 +12,23 @@ import TripManager from "../../domain/trip/trip.manager"
 import VehicleManager from "../../domain/vehicle/vehicle.manager"
 import TripUserManager from "../../domain/trip/tripUser.manager"
 import UserManager from "../../domain/user/user.manager"
+import IInvoiceInsert from "../../contracts/invoice/invoice.insert"
+import Invoice from "../../domain/invoice/invoice.entity"
+import UserErrorCodes from "../../shared.domain/user/user.error.codes"
+import TripErrorCodes from "../../shared.domain/trip/trip.error.codes"
 
 import { mapper } from "../../../core/mappings/mapper"
 import { TripDto, TripsAvailablesDto } from "../../contracts/trip/trip.dto"
 import { ITripCancel } from "../../contracts/trip/trip.update"
-import TripErrorCodes from "../../shared.domain/trip/trip.error.codes"
 import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
 import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
 import { TripState } from "../../shared.domain/trip/trip.extra"
-import UserErrorCodes from "../../shared.domain/user/user.error.codes"
-import { TypeMime } from "../../shared/shared.consts"
+import { TypeMime, servicePrice, taxLocal } from "../../shared/shared.consts"
+import { InvoiceDto } from "../../contracts/invoice/invoice.dto"
+import { DataTaxDetails, PaymentMethods } from "../../shared.domain/invoice/invoice.extra"
+import TransactionSession from "../../../core/database/transactionSession"
+import InvoiceManager from "../../domain/invoice/invoice.manager"
+import InvoiceErrorCodes from "../../shared.domain/invoice/invoice.error.codes"
 
 class TripAppService extends ApplicationService {
     private tripManager: TripManager
@@ -82,7 +89,7 @@ class TripAppService extends ApplicationService {
                 trip._id = entity._id
                 trip.departure = entity.departure
                 trip.arrival = entity.arrival.arrivalCity
-                trip.price = entity.price
+                trip.price = entity.finalPrice
                 trip.offeredSeats = entity.offeredSeats
                 trip.availableSeats = entity.availableSeats
                 trip.features = entity.features
@@ -114,7 +121,7 @@ class TripAppService extends ApplicationService {
                 throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver))
             }
 
-            const entity = await this.tripManager.insert(tripInsert)
+            const entity = await this.tripManager.insert(tripInsert, servicePrice)
 
             const dto = mapper.map(entity, Trip, TripDto)
             return response.onSuccess(dto)
@@ -151,13 +158,14 @@ class TripAppService extends ApplicationService {
             const tripUserManagerTransaction = new TripUserManager(transaction)
 
             const entity = await tripManagerTransaction.get(id)
-            const onTheWayTrips = await tripUserManagerTransaction.getTripsUserByState(entity._id, TripUserState.OnTheWay)
-            if (onTheWayTrips.length === 0) {
+            const onTheWayTripsUSer = await tripUserManagerTransaction.getTripsUserByState(entity._id, TripUserState.OnTheWay)
+            if (onTheWayTripsUSer.length === 0) {
                 throw new ServiceException(ServiceError.getErrorByCode(TripErrorCodes.NoTripsOnTheWay))
             }
 
-            for (const trip of onTheWayTrips) {
-                await tripUserManagerTransaction.finish(trip._id)
+            for (const tripUser of onTheWayTripsUSer) {
+                await tripUserManagerTransaction.finish(tripUser._id)
+                await this.insertInvoice(tripUser._id, transaction)
             }
 
             await tripManagerTransaction.finish(id)
@@ -168,6 +176,7 @@ class TripAppService extends ApplicationService {
             return response.onSuccess(id)
         } catch (error) {
             transaction.cancellTransaction()
+            console.log(error)
             return response.onError(ServiceError.getException(error))
         }
     }
@@ -197,6 +206,52 @@ class TripAppService extends ApplicationService {
         } catch (error) {
             transaction.cancellTransaction()
             return response.onError(ServiceError.getException(error))
+        }
+    }
+
+    private async insertInvoice(tripUserId: ObjectId, transaction: TransactionSession): Promise<void> {
+        try {
+            const tripManagerTransaction = new TripManager(transaction)
+            const tripUserManagerTransaction = new TripUserManager(transaction)
+            const invoiceManagerTransaction = new InvoiceManager(transaction)
+
+            const tripUser = await tripUserManagerTransaction.get(tripUserId)
+            const trip = await tripManagerTransaction.get(tripUser.tripId)
+
+            let taxes: number = 0
+            const taxDetails: DataTaxDetails[] = [
+                taxLocal
+            ]
+
+            const invoiceInsert = {} as IInvoiceInsert
+            invoiceInsert.departure = trip.departure.departureCity
+            invoiceInsert.arrival = trip.arrival.arrivalCity
+            invoiceInsert.paymentMethod = PaymentMethods.Cash
+
+            invoiceInsert.numberOfSeats = tripUser.numberOfSeats
+            invoiceInsert.unitPriceOfTrip = trip.tripPrice
+            invoiceInsert.netPriceOfTrip = trip.tripPrice * tripUser.numberOfSeats
+            invoiceInsert.unitPriceOfService = trip.servicePrice
+            invoiceInsert.netPriceOfService = trip.servicePrice * tripUser.numberOfSeats
+            invoiceInsert.netPrice = trip.finalPrice * tripUser.numberOfSeats
+            invoiceInsert.discount = 0
+            invoiceInsert.subtotal = invoiceInsert.netPrice - invoiceInsert.discount
+
+            // CALCULATE TAX LOCAL
+            const valueTaxLocal = parseFloat((invoiceInsert.subtotal * taxLocal.tax).toFixed(2))
+            taxes += valueTaxLocal
+
+            invoiceInsert.taxes = taxes
+            invoiceInsert.total = invoiceInsert.subtotal + invoiceInsert.taxes
+
+            invoiceInsert.taxDetails = taxDetails
+            invoiceInsert.isPaid = true
+            invoiceInsert.tripUserId = tripUserId
+
+            await invoiceManagerTransaction.insert(invoiceInsert)
+        } catch (error) {
+            console.log(error)
+            throw new ServiceException(ServiceError.getErrorByCode(InvoiceErrorCodes.UnexpectedErrorWhenTryingToBill))
         }
     }
 }

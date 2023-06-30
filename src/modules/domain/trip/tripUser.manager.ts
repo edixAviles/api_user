@@ -5,12 +5,12 @@ import TransactionSession from "../../../core/database/transactionSession"
 import ServiceError from "../../shared/service.error"
 
 import {
-    SharedConsts
+    EntityFields
 } from "../../shared/shared.consts"
 import TripUser from "./tripUser.entity"
 import TripUserErrorCodes from "../../shared.domain/trip/tripUser.error.codes"
 import ITripUserInsert from "../../contracts/trip/tripUser.insert"
-import { DataTripUserStates, PaymentMethods, TripUserState } from "../../shared.domain/trip/tripUser.extra"
+import { DataTripUserStates, TripUserState } from "../../shared.domain/trip/tripUser.extra"
 import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
 import TripUserRepository from "./tripUser.repository"
 
@@ -36,7 +36,7 @@ class TripUserManager {
         return tripsUser
     }
 
-    async bookTrip(tripInsert: ITripUserInsert, price: number): Promise<TripUser> {
+    async bookTrip(tripInsert: ITripUserInsert): Promise<TripUser> {
         const tripUser = new TripUser()
         tripUser.numberOfSeats = tripInsert.numberOfSeats
         tripUser.pickupLocation = {
@@ -50,11 +50,6 @@ class TripUserManager {
             observation: null,
             isCurrent: true
         }]
-        tripUser.payment = {
-            price: price * tripInsert.numberOfSeats,
-            isPaid: false,
-            method: PaymentMethods.Cash,
-        }
         tripUser.tripId = tripInsert.tripId
         tripUser.userId = tripInsert.userId
 
@@ -108,7 +103,7 @@ class TripUserManager {
 
         const isAvailable = entity.tripState.some(element => element.isCurrent && states.includes(element.state))
         if (!isAvailable) {
-            const errorParams = { [SharedConsts.id]: id }
+            const errorParams = { [EntityFields.id]: id }
             const error = ServiceError.getErrorByCode(TripUserErrorCodes.NotAvailable, errorParams)
             throw new ServiceException(error)
         }
@@ -138,7 +133,7 @@ class TripUserManager {
     private foundEntity = async (id: ObjectId): Promise<TripUser> => {
         const entity = await this.tripUserRepository.get(id)
         if (!entity) {
-            const errorParams = { [SharedConsts.id]: id }
+            const errorParams = { [EntityFields.id]: id }
             const error = ServiceError.getErrorByCode(TripUserErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
