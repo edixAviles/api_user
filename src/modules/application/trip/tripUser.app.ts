@@ -9,15 +9,14 @@ import ITripUserInsert from "../../contracts/trip/tripUser.insert"
 import TripUser from "../../domain/trip/tripUser.entity"
 import TripUserManager from "../../domain/trip/tripUser.manager"
 import TripManager from "../../domain/trip/trip.manager"
-import TripErrorCodes from "../../shared.domain/trip/trip.error.codes"
 import UserManager from "../../domain/user/user.manager"
-import UserErrorCodes from "../../shared.domain/user/user.error.codes"
 
 import { mapper } from "../../../core/mappings/mapper"
 import { TripUserDto, TripUserStartTrip } from "../../contracts/trip/tripUser.dto"
 import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
 import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
-import { EntityFields } from "../../shared/shared.consts"
+import { TripFeatures } from "../../shared.domain/trip/trip.extra"
+import TripUserErrorCodes from "../../shared.domain/trip/tripUser.error.codes"
 
 class TripUserAppService extends ApplicationService {
     private tripUserManager: TripUserManager
@@ -79,6 +78,15 @@ class TripUserAppService extends ApplicationService {
             const tripUserManagerTransaction = new TripUserManager(transaction)
 
             await this.userManager.get(tripInsert.userId)
+
+            const trip = await tripManagerTransaction.get(tripInsert.tripId)
+            const isDoorToToor = trip.features.includes(TripFeatures.DoorToDoor)
+            if (!isDoorToToor) {
+                tripInsert.pickupLocation = null
+            } else if (isDoorToToor && (!tripInsert.pickupLocation?.latitude || !tripInsert.pickupLocation?.longitude)) {
+                throw new ServiceException(ServiceError.getErrorByCode(TripUserErrorCodes.WithOutPickupLocation))
+            }
+
             await tripManagerTransaction.updateAvailableSeats(tripInsert.tripId, tripInsert.numberOfSeats)
             const entity = await tripUserManagerTransaction.bookTrip(tripInsert)
 
@@ -97,6 +105,13 @@ class TripUserAppService extends ApplicationService {
         const response = new ResponseManager<ObjectId>()
 
         try {
+            const tripUser = await this.tripUserManager.get(id)
+            const trip = await this.tripManager.get(tripUser.tripId)
+            const isDoorToToor = trip.features.includes(TripFeatures.DoorToDoor)
+            if (!isDoorToToor) {
+                throw new ServiceException(ServiceError.getErrorByCode(TripUserErrorCodes.NotIsDoorToDoor))
+            }
+
             await this.tripUserManager.pickUpPassenger(id)
             // TODO: Se debe notificar al usuarios que va en camino
 
@@ -115,10 +130,15 @@ class TripUserAppService extends ApplicationService {
             const tripUserManagerTransaction = new TripUserManager(transaction)
 
             const tripUser = await tripUserManagerTransaction.get(id)
-            await tripUserManagerTransaction.startTrip(id)
-            
-            let isAllPassengersPickedUp = false
             const trip = await tripManagerTransaction.get(tripUser.tripId)
+            const isDoorToToor = trip.features.includes(TripFeatures.DoorToDoor)
+            if (!isDoorToToor) {
+                throw new ServiceException(ServiceError.getErrorByCode(TripUserErrorCodes.NotIsDoorToDoor))
+            }
+
+            await tripUserManagerTransaction.startTrip(id)
+
+            let isAllPassengersPickedUp = false
             if (trip.passengersToPickUp === 1) {
                 await tripManagerTransaction.startTrip(tripUser.tripId)
                 isAllPassengersPickedUp = true

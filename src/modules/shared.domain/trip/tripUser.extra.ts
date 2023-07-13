@@ -1,7 +1,6 @@
 class DataPickupLocation {
     latitude: number
     longitude: number
-    dateTimeAudit: Date
 }
 
 class DataTripUserStates {

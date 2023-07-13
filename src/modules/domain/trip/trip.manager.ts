@@ -39,22 +39,9 @@ class TripManager {
 
     async insert(tripInsert: ITripInsert, servicePrice: number): Promise<Trip> {
         const trip = new Trip()
-        trip.departure = {
-            departureCity: tripInsert.departure.departureCity,
-            departureTime: new Date(tripInsert.departure.departureTime)
-        }
-        trip.arrival = {
-            arrivalCity: tripInsert.arrival.arrivalCity,
-            arrivalDescription: tripInsert.arrival.arrivalDescription,
-            latitude: tripInsert.arrival.latitude,
-            longitude: tripInsert.arrival.longitude,
-        }
-        trip.tripState = [{
-            state: TripState.Available,
-            dateTimeAudit: new Date(),
-            observation: null,
-            isCurrent: true
-        }]
+        trip.departure = tripInsert.departure
+        trip.arrival = tripInsert.arrival
+        trip.tripState = this.getNewState([], TripState.Available)
 
         trip.tripPrice = tripInsert.price
         trip.servicePrice = servicePrice
@@ -62,9 +49,9 @@ class TripManager {
 
         trip.offeredSeats = tripInsert.offeredSeats
         trip.availableSeats = tripInsert.offeredSeats
-        trip.features = tripInsert.features
-        trip.description = tripInsert.description
         trip.passengersToPickUp = null
+        trip.description = tripInsert.description
+        trip.features = tripInsert.features
         trip.vehicleId = tripInsert.vehicleId
         trip.driverId = tripInsert.driverId
 
@@ -99,8 +86,8 @@ class TripManager {
         const trip = new Trip()
         trip._id = id
         trip.arrival = {
-            arrivalCity: tripFound.arrival.arrivalCity,
-            arrivalDescription: tripFound.arrival.arrivalDescription,
+            city: tripFound.arrival.city,
+            description: tripFound.arrival.description,
             latitude: tripFound.arrival.latitude,
             longitude: tripFound.arrival.longitude,
         }
@@ -152,6 +139,14 @@ class TripManager {
         const trip = new Trip()
         trip._id = id
         trip.passengersToPickUp = tripFound.passengersToPickUp - 1
+
+        await this.tripRepository.update(trip)
+    }
+
+    async reduceAllPassengersToPickUp(id: ObjectId): Promise<void> {
+        const trip = new Trip()
+        trip._id = id
+        trip.passengersToPickUp = 0
 
         await this.tripRepository.update(trip)
     }

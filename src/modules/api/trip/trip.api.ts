@@ -41,6 +41,12 @@ tripApi.post("/pick-up-passengers/:id", async (req: Request, res: Response) => {
     res.send(result)
 })
 
+tripApi.post("/start-trip/:id", async (req: Request, res: Response) => {
+    const id = new mongo.ObjectId(req.params.id)
+    const result = await tripAppService.startTrip(id)
+    res.send(result)
+})
+
 tripApi.post("/finish/:id", async (req: Request, res: Response) => {
     const id = new mongo.ObjectId(req.params.id)
     const result = await tripAppService.finishTrip(id)

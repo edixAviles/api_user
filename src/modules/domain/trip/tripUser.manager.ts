@@ -39,17 +39,8 @@ class TripUserManager {
     async bookTrip(tripInsert: ITripUserInsert): Promise<TripUser> {
         const tripUser = new TripUser()
         tripUser.numberOfSeats = tripInsert.numberOfSeats
-        tripUser.pickupLocation = {
-            latitude: tripInsert.pickupLocation.latitude,
-            longitude: tripInsert.pickupLocation.longitude,
-            dateTimeAudit: null
-        }
-        tripUser.tripState = [{
-            state: TripUserState.Booked,
-            dateTimeAudit: new Date(),
-            observation: null,
-            isCurrent: true
-        }]
+        tripUser.pickupLocation = tripInsert.pickupLocation
+        tripUser.tripState = this.getNewState([], TripUserState.Booked)
         tripUser.tripId = tripInsert.tripId
         tripUser.userId = tripInsert.userId
 
@@ -63,6 +54,16 @@ class TripUserManager {
         const tripUser = new TripUser()
         tripUser._id = id
         tripUser.tripState = this.getNewState(tripUserFound.tripState, TripUserState.OnTheWayToYou)
+
+        await this.tripUserRepository.update(tripUser)
+    }
+
+    async startTripDoorToDoor(id: ObjectId): Promise<void> {
+        const tripUserFound = await this.validateTrip(id, [TripUserState.Booked])
+
+        const tripUser = new TripUser()
+        tripUser._id = id
+        tripUser.tripState = this.getNewState(tripUserFound.tripState, TripUserState.OnTheWay)
 
         await this.tripUserRepository.update(tripUser)
     }
