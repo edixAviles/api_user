@@ -6,6 +6,8 @@ enum TripErrorCodes {
     NoTripsBooked = "TRIP_ERROR_NO_TRIPS_BOOKED",
     NoTripsOnTheWay = "TRIP_ERROR_NO_TRIPS_ON_THE_WAY",
     TripNotFinished = "TRIP_NOT_FINISHED",
+    WithOutDepartureLocation = "WITH_OUT_DEPARTURE_LOCATION",
+    IsDoorToDoor = "IS_DOOR_TO_DOOR"
 }
 
 export default TripErrorCodes

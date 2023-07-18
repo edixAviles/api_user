@@ -1,11 +1,14 @@
 class DataDeparture {
-    departureCity: string
-    departureTime: Date
+    city: string
+    dateAndTime: Date
+    description: string
+    latitude: number
+    longitude: number
 }
 
 class DataArrival {
-    arrivalCity: string
-    arrivalDescription: string
+    city: string
+    description: string
     latitude: number
     longitude: number
 }

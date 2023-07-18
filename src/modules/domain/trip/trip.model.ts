@@ -5,23 +5,31 @@ import { TripFeatures, TripState } from "../../shared.domain/trip/trip.extra"
 
 const properties = {
     departure: {
-        departureCity: {
+        city: {
             type: String,
             required: true
         },
-        departureTime: {
+        dateAndTime: {
             type: Date,
             required: true
         },
+        description: {
+            type: String
+        },
+        latitude: {
+            type: Number
+        },
+        longitude: {
+            type: Number
+        }
     },
     arrival: {
-        arrivalCity: {
+        city: {
             type: String,
             required: true
         },
-        arrivalDescription: {
-            type: String,
-            required: true
+        description: {
+            type: String
         },
         latitude: {
             type: Number,
@@ -69,16 +77,16 @@ const properties = {
         type: Number,
         required: true
     },
+    passengersToPickUp: {
+        type: Number
+    },
+    description: {
+        type: String
+    },
     features: [{
         type: String,
         enum: TripFeatures
     }],
-    description: {
-        type: String
-    },
-    passengersToPickUp: {
-        type: Number
-    },
     vehicleId: {
         type: ObjectId,
         required: true,

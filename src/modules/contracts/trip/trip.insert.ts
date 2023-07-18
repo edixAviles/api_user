@@ -2,12 +2,15 @@ import { ObjectId } from "mongodb"
 
 interface ITripInsert {
     departure: {
-        departureCity: string
-        departureTime: Date
+        city: string
+        dateAndTime: Date
+        description: string
+        latitude: number
+        longitude: number
     }
     arrival: {
-        arrivalCity: string
-        arrivalDescription: string
+        city: string
+        description: string
         latitude: number
         longitude: number
     }

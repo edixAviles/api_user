@@ -1,34 +1,31 @@
 import { ObjectId } from "mongodb"
 
-import ServiceException from "../../shared/service.exception"
 import ApplicationService from "../../../core/application/applicationService"
+import TransactionSession from "../../../core/database/transactionSession"
 import Response from "../../../core/response/response"
 import ResponseManager from "../../../core/response/response.manager"
-import ServiceError from "../../shared/service.error"
-
+import IInvoiceInsert from "../../contracts/invoice/invoice.insert"
 import ITripInsert from "../../contracts/trip/trip.insert"
+import InvoiceManager from "../../domain/invoice/invoice.manager"
 import Trip from "../../domain/trip/trip.entity"
 import TripManager from "../../domain/trip/trip.manager"
-import VehicleManager from "../../domain/vehicle/vehicle.manager"
 import TripUserManager from "../../domain/trip/tripUser.manager"
 import UserManager from "../../domain/user/user.manager"
-import IInvoiceInsert from "../../contracts/invoice/invoice.insert"
-import Invoice from "../../domain/invoice/invoice.entity"
-import UserErrorCodes from "../../shared.domain/user/user.error.codes"
+import VehicleManager from "../../domain/vehicle/vehicle.manager"
+import InvoiceErrorCodes from "../../shared.domain/invoice/invoice.error.codes"
 import TripErrorCodes from "../../shared.domain/trip/trip.error.codes"
+import UserErrorCodes from "../../shared.domain/user/user.error.codes"
+import ServiceError from "../../shared/service.error"
+import ServiceException from "../../shared/service.exception"
 
 import { mapper } from "../../../core/mappings/mapper"
 import { TripDto, TripsAvailablesDto } from "../../contracts/trip/trip.dto"
 import { ITripCancel } from "../../contracts/trip/trip.update"
-import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
 import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
-import { TripState } from "../../shared.domain/trip/trip.extra"
-import { TypeMime, servicePrice, taxLocal } from "../../shared/shared.consts"
-import { InvoiceDto } from "../../contracts/invoice/invoice.dto"
 import { DataTaxDetails, PaymentMethods } from "../../shared.domain/invoice/invoice.extra"
-import TransactionSession from "../../../core/database/transactionSession"
-import InvoiceManager from "../../domain/invoice/invoice.manager"
-import InvoiceErrorCodes from "../../shared.domain/invoice/invoice.error.codes"
+import { TripFeatures, TripState } from "../../shared.domain/trip/trip.extra"
+import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
+import { TypeMime, servicePrice, taxLocal } from "../../shared/shared.consts"
 
 class TripAppService extends ApplicationService {
     private tripManager: TripManager
@@ -88,7 +85,7 @@ class TripAppService extends ApplicationService {
                 const trip = new TripsAvailablesDto()
                 trip._id = entity._id
                 trip.departure = entity.departure
-                trip.arrival = entity.arrival.arrivalCity
+                trip.arrival = entity.arrival.city
                 trip.price = entity.finalPrice
                 trip.offeredSeats = entity.offeredSeats
                 trip.availableSeats = entity.availableSeats
@@ -121,6 +118,14 @@ class TripAppService extends ApplicationService {
                 throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver))
             }
 
+            const isDoorToToor = tripInsert.features.includes(TripFeatures.DoorToDoor)
+            if (isDoorToToor) {
+                tripInsert.departure.latitude = null
+                tripInsert.departure.longitude = null
+            } else if (!isDoorToToor && (!tripInsert.departure.latitude || !tripInsert.departure.longitude)) {
+                throw new ServiceException(ServiceError.getErrorByCode(TripErrorCodes.WithOutDepartureLocation))
+            }
+
             const entity = await this.tripManager.insert(tripInsert, servicePrice)
 
             const dto = mapper.map(entity, Trip, TripDto)
@@ -142,9 +147,40 @@ class TripAppService extends ApplicationService {
 
             await this.tripManager.pickUpPassengers(id, bookedTrips.length)
             // TODO: Se debe notificar a los usuarios que esta recogiendo a los pasajeros
+            // Se debe enviar la notificacion, segun si es Door to Door o no
 
             return response.onSuccess(id)
         } catch (error) {
+            return response.onError(ServiceError.getException(error))
+        }
+    }
+
+    async startTrip(id: ObjectId): Promise<Response<ObjectId>> {
+        const response = new ResponseManager<ObjectId>()
+        const transaction = await this.transactionManager.beginTransaction()
+
+        try {
+            const tripManagerTransaction = new TripManager(transaction)
+            const tripUserManagerTransaction = new TripUserManager(transaction)
+
+            const trip = await tripManagerTransaction.get(id)
+            const isDoorToToor = trip.features.includes(TripFeatures.DoorToDoor)
+            if (isDoorToToor) {
+                throw new ServiceException(ServiceError.getErrorByCode(TripErrorCodes.IsDoorToDoor))
+            }
+
+            const bookedTripsUser = await tripUserManagerTransaction.getTripsUserByState(id, TripUserState.Booked)
+            for (const tripUser of bookedTripsUser) {
+                await tripUserManagerTransaction.startTripDoorToDoor(tripUser._id)
+            }
+
+            await tripManagerTransaction.reduceAllPassengersToPickUp(id)
+            await tripManagerTransaction.startTrip(id)
+            await transaction.completeTransaction()
+
+            return response.onSuccess(id)
+        } catch (error) {
+            transaction.cancellTransaction()
             return response.onError(ServiceError.getException(error))
         }
     }
@@ -158,12 +194,12 @@ class TripAppService extends ApplicationService {
             const tripUserManagerTransaction = new TripUserManager(transaction)
 
             const entity = await tripManagerTransaction.get(id)
-            const onTheWayTripsUSer = await tripUserManagerTransaction.getTripsUserByState(entity._id, TripUserState.OnTheWay)
-            if (onTheWayTripsUSer.length === 0) {
+            const onTheWayTripsUser = await tripUserManagerTransaction.getTripsUserByState(entity._id, TripUserState.OnTheWay)
+            if (onTheWayTripsUser.length === 0) {
                 throw new ServiceException(ServiceError.getErrorByCode(TripErrorCodes.NoTripsOnTheWay))
             }
 
-            for (const tripUser of onTheWayTripsUSer) {
+            for (const tripUser of onTheWayTripsUser) {
                 await tripUserManagerTransaction.finish(tripUser._id)
                 await this.insertInvoice(tripUser._id, transaction)
             }
@@ -176,7 +212,6 @@ class TripAppService extends ApplicationService {
             return response.onSuccess(id)
         } catch (error) {
             transaction.cancellTransaction()
-            console.log(error)
             return response.onError(ServiceError.getException(error))
         }
     }
@@ -224,8 +259,8 @@ class TripAppService extends ApplicationService {
             ]
 
             const invoiceInsert = {} as IInvoiceInsert
-            invoiceInsert.departure = trip.departure.departureCity
-            invoiceInsert.arrival = trip.arrival.arrivalCity
+            invoiceInsert.departure = trip.departure.city
+            invoiceInsert.arrival = trip.arrival.city
             invoiceInsert.paymentMethod = PaymentMethods.Cash
 
             invoiceInsert.numberOfSeats = tripUser.numberOfSeats
@@ -250,7 +285,6 @@ class TripAppService extends ApplicationService {
 
             await invoiceManagerTransaction.insert(invoiceInsert)
         } catch (error) {
-            console.log(error)
             throw new ServiceException(ServiceError.getErrorByCode(InvoiceErrorCodes.UnexpectedErrorWhenTryingToBill))
         }
     }

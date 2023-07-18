@@ -45,8 +45,8 @@ class TripRepository extends Repository<Trip> implements IRepository<Trip> {
 
         const filter = {
             ...Repository.filterToGetActive(),
-            "departure.departureCity": departureRegex,
-            "arrival.arrivalCity": arrivalRegex,
+            "departure.city": departureRegex,
+            "arrival.city": arrivalRegex,
             availableSeats: { $gte : requestedSeats },
             tripState: {
                 $elemMatch: {

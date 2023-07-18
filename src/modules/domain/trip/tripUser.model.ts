@@ -10,16 +10,11 @@ const properties = {
     },
     pickupLocation: {
         latitude: {
-            type: Number,
-            required: true
+            type: Number
         },
         longitude: {
-            type: Number,
-            required: true
-        },
-        dateTimeAudit: {
-            type: Date
-        },
+            type: Number
+        }
     },
     tripState: [{
         state: {
