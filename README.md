@@ -2,7 +2,7 @@
   API to manage the business regarding the logic of the drivers side.
 </h1>
 <h2 align="center">
-  🚙 Hexagonal Architecture and DDD with MongoDB in Typescript
+  🚙 Clean Architecture and DDD with MongoDB in Typescript
 </h1>
 <br/><br/>
 
