@@ -1,5 +1,4 @@
 interface IUserInsert {
-    identification: string
     name: string
     lastName: string
     birthdate: Date

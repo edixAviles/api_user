@@ -2,7 +2,6 @@ import { ObjectId } from "mongodb"
 
 interface IUserUpdate {
     id: ObjectId
-    identification: string
     name: string
     lastName: string
     birthdate: Date

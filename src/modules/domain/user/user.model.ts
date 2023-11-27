@@ -2,16 +2,6 @@ import mongooseModel from "../../../core/domain/mongoose.model"
 import { CollectionsName } from "../../shared/shared.consts"
 
 const properties = {
-    identification: {
-        data: {
-            type: String,
-            required: true,
-        },
-        isVerified: {
-            type: Boolean,
-            required: true,
-        },
-    },
     name: {
         type: String,
         required: true,

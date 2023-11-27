@@ -5,9 +5,6 @@ import { DataStringVerified, DataBufferApproved } from "../../shared.domain/user
 
 class User extends BaseBasicModel {
     @AutoMap()
-    public identification: DataStringVerified
-
-    @AutoMap()
     public name: string
 
     @AutoMap()

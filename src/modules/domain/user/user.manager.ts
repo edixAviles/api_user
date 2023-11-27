@@ -41,10 +41,6 @@ class UserManager {
         const encryptedPassword = CryptoJS.SHA256(userInsert.password).toString()
 
         const user = new User()
-        user.identification = {
-            data: userInsert.identification,
-            isVerified: false
-        }
         user.name = userInsert.name
         user.lastName = userInsert.lastName
         user.birthdate = userInsert.birthdate
@@ -83,20 +79,17 @@ class UserManager {
 
         const user = new User()
         user._id = userUpdate.id
-        user.identification = {
-            data: userUpdate.identification,
-            isVerified: entity.identification.isVerified
-        }
         user.name = userUpdate.name
         user.lastName = userUpdate.lastName
         user.birthdate = userUpdate.birthdate
+
         user.email = {
             data: userUpdate.email,
-            isVerified: entity.email.isVerified
+            isVerified: userUpdate.email === entity.email.data ? entity.email.isVerified : false
         }
         user.cellPhone = {
             data: userUpdate.cellPhone,
-            isVerified: entity.cellPhone.isVerified
+            isVerified: userUpdate.cellPhone === entity.cellPhone.data ? entity.cellPhone.isVerified : false
         }
 
         const entityUpdated = await this.userRepository.update(user)
@@ -134,7 +127,7 @@ class UserManager {
         user._id = userUpdate.id
         user.profilePhoto = {
             data: Buffer.from(userUpdate.profilePhoto, TypeMime.base64),
-            isApproved: entity.profilePhoto.isApproved
+            isApproved: false
         }
 
         const entityUpdated = await this.userRepository.update(user)
@@ -153,7 +146,7 @@ class UserManager {
         user._id = userUpdate.id
         user.profilePhoto = {
             data: Buffer.from(userUpdate.licencePhoto, TypeMime.base64),
-            isApproved: entity.licencePhoto.isApproved
+            isApproved: false
         }
 
         const entityUpdated = await this.userRepository.update(user)
@@ -172,7 +165,7 @@ class UserManager {
         user._id = userUpdate.id
         user.profilePhoto = {
             data: Buffer.from(userUpdate.policeRecord, TypeMime.base64),
-            isApproved: entity.policeRecord.isApproved
+            isApproved: false
         }
 
         const entityUpdated = await this.userRepository.update(user)

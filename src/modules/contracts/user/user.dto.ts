@@ -7,9 +7,6 @@ import { DataBufferApprovedDto } from "../../shared.domain/user/user.extra"
 class UserDto {
     @AutoMap()
     public _id: ObjectId
-    
-    @AutoMap()
-    public identification: DataStringVerified
 
     @AutoMap()
     public name: string
