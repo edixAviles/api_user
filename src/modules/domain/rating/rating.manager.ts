@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb"
 
 import ServiceException from "../../shared/service.exception"
 import TransactionSession from "../../../core/database/transactionSession"
-import ServiceError from "../../shared/service.error"
+import LocalizeError from "../../shared/localize_error"
 
 import Rating from "./rating.entity"
 import RatingRepository from "./rating.repository"
@@ -38,7 +38,7 @@ class RatingManager {
     async insert(ratingInsert: IRatingInsert): Promise<Rating> {
         const ratingFound = await this.getRatingByUserAndTrip(ratingInsert.userId, ratingInsert.tripId)
         if (ratingFound) {
-            throw new ServiceException(ServiceError.getErrorByCode(RatingErrorCodes.TripIsAlreadyRated))
+            throw new ServiceException(LocalizeError.getErrorByCode(RatingErrorCodes.TripIsAlreadyRated))
         }
 
         const rating = new Rating()
@@ -60,7 +60,7 @@ class RatingManager {
         const rating = await this.ratingRepository.get(id)
         if (!rating) {
             const errorParams = { [EntityFields.id]: id }
-            const error = ServiceError.getErrorByCode(RatingErrorCodes.EntityNotFound, errorParams)
+            const error = LocalizeError.getErrorByCode(RatingErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 

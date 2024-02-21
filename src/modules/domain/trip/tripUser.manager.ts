@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb"
 
 import ServiceException from "../../shared/service.exception"
 import TransactionSession from "../../../core/database/transactionSession"
-import ServiceError from "../../shared/service.error"
+import LocalizeError from "../../shared/localize_error"
 
 import {
     EntityFields
@@ -105,7 +105,7 @@ class TripUserManager {
         const isAvailable = entity.tripState.some(element => element.isCurrent && states.includes(element.state))
         if (!isAvailable) {
             const errorParams = { [EntityFields.id]: id }
-            const error = ServiceError.getErrorByCode(TripUserErrorCodes.NotAvailable, errorParams)
+            const error = LocalizeError.getErrorByCode(TripUserErrorCodes.NotAvailable, errorParams)
             throw new ServiceException(error)
         }
 
@@ -135,7 +135,7 @@ class TripUserManager {
         const entity = await this.tripUserRepository.get(id)
         if (!entity) {
             const errorParams = { [EntityFields.id]: id }
-            const error = ServiceError.getErrorByCode(TripUserErrorCodes.EntityNotFound, errorParams)
+            const error = LocalizeError.getErrorByCode(TripUserErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 

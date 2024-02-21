@@ -4,7 +4,7 @@ import ServiceException from "../../shared/service.exception"
 import ApplicationService from "../../../core/application/applicationService"
 import Response from "../../../core/response/response"
 import ResponseManager from "../../../core/response/response.manager"
-import ServiceError from "../../shared/service.error"
+import LocalizeError from "../../shared/localize_error"
 import User from "../../domain/user/user.entity"
 import UserManager from "../../domain/user/user.manager"
 import IUserInsert from "../../contracts/user/user.insert"
@@ -47,7 +47,7 @@ class UserAppService extends ApplicationService {
 
         try {
             if (userInsert.isDriver && (!userInsert.licencePhoto || !userInsert.policeRecord)) {
-                const error = ServiceError.getErrorByCode(UserErrorCodes.DriverDataNotComplete)
+                const error = LocalizeError.getErrorByCode(UserErrorCodes.DriverDataNotComplete)
                 throw new ServiceException(error)
             }
             const entity = await this.userManager.insert(userInsert)

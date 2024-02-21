@@ -3,7 +3,7 @@ import CryptoJS from "crypto-js"
 
 import ServiceException from "../../shared/service.exception"
 import TransactionSession from "../../../core/database/transactionSession"
-import ServiceError from "../../shared/service.error"
+import LocalizeError from "../../shared/localize_error"
 import User from "./user.entity"
 import UserRepository from "./user.repository"
 import IUserInsert from "../../contracts/user/user.insert"
@@ -100,7 +100,7 @@ class UserManager {
         const entity = await this.foundEntity(userUpdate.id)
 
         if (entity.isDriver) {
-            const error = ServiceError.getErrorByCode(UserErrorCodes.IsAlreadyDriver)
+            const error = LocalizeError.getErrorByCode(UserErrorCodes.IsAlreadyDriver)
             throw new ServiceException(error)
         }
 
@@ -138,7 +138,7 @@ class UserManager {
         const entity = await this.foundEntity(userUpdate.id)
 
         if (!entity.isDriver) {
-            const error = ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver)
+            const error = LocalizeError.getErrorByCode(UserErrorCodes.IsNotDriver)
             throw new ServiceException(error)
         }
 
@@ -157,7 +157,7 @@ class UserManager {
         const entity = await this.foundEntity(userUpdate.id)
 
         if (!entity.isDriver) {
-            const error = ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver)
+            const error = LocalizeError.getErrorByCode(UserErrorCodes.IsNotDriver)
             throw new ServiceException(error)
         }
 
@@ -177,7 +177,7 @@ class UserManager {
 
         const currentEncryptedPassword = CryptoJS.SHA256(userUpdate.currentPassword).toString()
         if (entity.password != currentEncryptedPassword) {
-            const error = ServiceError.getErrorByCode(UserErrorCodes.IncorrectCurrentPassword)
+            const error = LocalizeError.getErrorByCode(UserErrorCodes.IncorrectCurrentPassword)
             throw new ServiceException(error)
         }
 
@@ -198,7 +198,7 @@ class UserManager {
         const entity = await this.userRepository.get(id)
         if (!entity) {
             const errorParams = { [EntityFields.id]: id }
-            const error = ServiceError.getErrorByCode(UserErrorCodes.EntityNotFound, errorParams)
+            const error = LocalizeError.getErrorByCode(UserErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 

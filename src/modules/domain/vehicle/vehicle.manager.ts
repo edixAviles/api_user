@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb"
 
 import ServiceException from "../../shared/service.exception"
 import TransactionSession from "../../../core/database/transactionSession"
-import ServiceError from "../../shared/service.error"
+import LocalizeError from "../../shared/localize_error"
 
 import Vehicle from "./vehicle.entity"
 import VehicleRepository from "./vehicle.repository"
@@ -72,7 +72,7 @@ class VehicleManager {
         const vehicle = await this.vehicleRepository.get(id)
         if (!vehicle) {
             const errorParams = { [EntityFields.id]: id }
-            const error = ServiceError.getErrorByCode(VehicleErrorCodes.EntityNotFound, errorParams)
+            const error = LocalizeError.getErrorByCode(VehicleErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 

@@ -1,13 +1,5 @@
 import { DataTaxDetails } from "../shared.domain/invoice/invoice.extra"
 
-enum EntityFields {
-    id = "id"
-}
-
-enum TypeMime {
-    base64 = "base64"
-}
-
 enum CollectionsName {
     User = "users",
     Vehicle = "vehicles",
@@ -25,8 +17,6 @@ const taxLocal: DataTaxDetails = {
 }
 
 export {
-    EntityFields,
-    TypeMime,
     CollectionsName,
     servicePrice,
     taxLocal

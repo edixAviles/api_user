@@ -4,7 +4,7 @@ import ServiceException from "../../shared/service.exception"
 import ApplicationService from "../../../core/application/applicationService"
 import Response from "../../../core/response/response"
 import ResponseManager from "../../../core/response/response.manager"
-import ServiceError from "../../shared/service.error"
+import LocalizeError from "../../shared/localize_error"
 import Vehicle from "../../domain/vehicle/vehicle.entity"
 import VehicleManager from "../../domain/vehicle/vehicle.manager"
 import UserManager from "../../domain/user/user.manager"
@@ -50,7 +50,7 @@ class VehicleAppService extends ApplicationService {
         try {
             const user = await this.userManager.get(driverId)
             if (!user.isDriver) {
-                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver))
+                throw new ServiceException(LocalizeError.getErrorByCode(UserErrorCodes.IsNotDriver))
             }
 
             const entities = await this.vehicleManager.getVehiclesByDriver(driverId)
@@ -68,7 +68,7 @@ class VehicleAppService extends ApplicationService {
         try {
             const user = await this.userManager.get(vehicleInsert.driverId)
             if (!user.isDriver) {
-                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver))
+                throw new ServiceException(LocalizeError.getErrorByCode(UserErrorCodes.IsNotDriver))
             }
 
             const entity = await this.vehicleManager.insert(vehicleInsert)

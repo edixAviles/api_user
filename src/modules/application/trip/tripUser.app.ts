@@ -4,7 +4,7 @@ import ServiceException from "../../shared/service.exception"
 import ApplicationService from "../../../core/application/applicationService"
 import Response from "../../../core/response/response"
 import ResponseManager from "../../../core/response/response.manager"
-import ServiceError from "../../shared/service.error"
+import LocalizeError from "../../shared/localize_error"
 import ITripUserInsert from "../../contracts/trip/tripUser.insert"
 import TripUser from "../../domain/trip/tripUser.entity"
 import TripUserManager from "../../domain/trip/tripUser.manager"
@@ -84,7 +84,7 @@ class TripUserAppService extends ApplicationService {
             if (!isDoorToToor) {
                 tripInsert.pickupLocation = null
             } else if (isDoorToToor && (!tripInsert.pickupLocation?.latitude || !tripInsert.pickupLocation?.longitude)) {
-                throw new ServiceException(ServiceError.getErrorByCode(TripUserErrorCodes.WithOutPickupLocation))
+                throw new ServiceException(LocalizeError.getErrorByCode(TripUserErrorCodes.WithOutPickupLocation))
             }
 
             await tripManagerTransaction.updateAvailableSeats(tripInsert.tripId, tripInsert.numberOfSeats)
@@ -109,7 +109,7 @@ class TripUserAppService extends ApplicationService {
             const trip = await this.tripManager.get(tripUser.tripId)
             const isDoorToToor = trip.features.includes(TripFeatures.DoorToDoor)
             if (!isDoorToToor) {
-                throw new ServiceException(ServiceError.getErrorByCode(TripUserErrorCodes.NotIsDoorToDoor))
+                throw new ServiceException(LocalizeError.getErrorByCode(TripUserErrorCodes.NotIsDoorToDoor))
             }
 
             await this.tripUserManager.pickUpPassenger(id)
@@ -133,7 +133,7 @@ class TripUserAppService extends ApplicationService {
             const trip = await tripManagerTransaction.get(tripUser.tripId)
             const isDoorToToor = trip.features.includes(TripFeatures.DoorToDoor)
             if (!isDoorToToor) {
-                throw new ServiceException(ServiceError.getErrorByCode(TripUserErrorCodes.NotIsDoorToDoor))
+                throw new ServiceException(LocalizeError.getErrorByCode(TripUserErrorCodes.NotIsDoorToDoor))
             }
 
             await tripUserManagerTransaction.startTrip(id)
