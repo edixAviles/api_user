@@ -15,7 +15,7 @@ import VehicleManager from "../../domain/vehicle/vehicle.manager"
 import InvoiceErrorCodes from "../../shared.domain/invoice/invoice.error.codes"
 import TripErrorCodes from "../../shared.domain/trip/trip.error.codes"
 import UserErrorCodes from "../../shared.domain/user/user.error.codes"
-import ServiceError from "../../shared/service.error"
+import LocalizeError from "../../shared/localize_error"
 import ServiceException from "../../shared/service.exception"
 
 import { mapper } from "../../../core/mappings/mapper"
@@ -60,7 +60,7 @@ class TripAppService extends ApplicationService {
         try {
             const user = await this.userManager.get(driverId)
             if (!user.isDriver) {
-                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver))
+                throw new ServiceException(LocalizeError.getErrorByCode(UserErrorCodes.IsNotDriver))
             }
 
             const entities = await this.tripManager.getTripsByDriver(driverId, state)
@@ -115,7 +115,7 @@ class TripAppService extends ApplicationService {
 
             const user = await this.userManager.get(tripInsert.driverId)
             if (!user.isDriver) {
-                throw new ServiceException(ServiceError.getErrorByCode(UserErrorCodes.IsNotDriver))
+                throw new ServiceException(LocalizeError.getErrorByCode(UserErrorCodes.IsNotDriver))
             }
 
             const isDoorToToor = tripInsert.features.includes(TripFeatures.DoorToDoor)
@@ -123,7 +123,7 @@ class TripAppService extends ApplicationService {
                 tripInsert.departure.latitude = null
                 tripInsert.departure.longitude = null
             } else if (!isDoorToToor && (!tripInsert.departure.latitude || !tripInsert.departure.longitude)) {
-                throw new ServiceException(ServiceError.getErrorByCode(TripErrorCodes.WithOutDepartureLocation))
+                throw new ServiceException(LocalizeError.getErrorByCode(TripErrorCodes.WithOutDepartureLocation))
             }
 
             const entity = await this.tripManager.insert(tripInsert, servicePrice)
@@ -142,7 +142,7 @@ class TripAppService extends ApplicationService {
             const entity = await this.tripManager.get(id)
             const bookedTrips = await this.tripUserManager.getTripsUserByState(entity._id, TripUserState.Booked)
             if (bookedTrips.length === 0) {
-                throw new ServiceException(ServiceError.getErrorByCode(TripErrorCodes.NoTripsBooked))
+                throw new ServiceException(LocalizeError.getErrorByCode(TripErrorCodes.NoTripsBooked))
             }
 
             await this.tripManager.pickUpPassengers(id, bookedTrips.length)
@@ -166,7 +166,7 @@ class TripAppService extends ApplicationService {
             const trip = await tripManagerTransaction.get(id)
             const isDoorToToor = trip.features.includes(TripFeatures.DoorToDoor)
             if (isDoorToToor) {
-                throw new ServiceException(ServiceError.getErrorByCode(TripErrorCodes.IsDoorToDoor))
+                throw new ServiceException(LocalizeError.getErrorByCode(TripErrorCodes.IsDoorToDoor))
             }
 
             const bookedTripsUser = await tripUserManagerTransaction.getTripsUserByState(id, TripUserState.Booked)
@@ -196,7 +196,7 @@ class TripAppService extends ApplicationService {
             const entity = await tripManagerTransaction.get(id)
             const onTheWayTripsUser = await tripUserManagerTransaction.getTripsUserByState(entity._id, TripUserState.OnTheWay)
             if (onTheWayTripsUser.length === 0) {
-                throw new ServiceException(ServiceError.getErrorByCode(TripErrorCodes.NoTripsOnTheWay))
+                throw new ServiceException(LocalizeError.getErrorByCode(TripErrorCodes.NoTripsOnTheWay))
             }
 
             for (const tripUser of onTheWayTripsUser) {
@@ -285,7 +285,7 @@ class TripAppService extends ApplicationService {
 
             await invoiceManagerTransaction.insert(invoiceInsert)
         } catch (error) {
-            throw new ServiceException(ServiceError.getErrorByCode(InvoiceErrorCodes.UnexpectedErrorWhenTryingToBill))
+            throw new ServiceException(LocalizeError.getErrorByCode(InvoiceErrorCodes.UnexpectedErrorWhenTryingToBill))
         }
     }
 }

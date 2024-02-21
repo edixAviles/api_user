@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb"
 import ApplicationService from "../../../core/application/applicationService"
 import Response from "../../../core/response/response"
 import ResponseManager from "../../../core/response/response.manager"
-import ServiceError from "../../shared/service.error"
+import LocalizeError from "../../shared/localize_error"
 import Invoice from "../../domain/invoice/invoice.entity"
 import InvoiceManager from "../../domain/invoice/invoice.manager"
 

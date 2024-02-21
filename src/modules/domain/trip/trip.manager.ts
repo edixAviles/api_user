@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb"
 
 import ServiceException from "../../shared/service.exception"
 import TransactionSession from "../../../core/database/transactionSession"
-import ServiceError from "../../shared/service.error"
+import LocalizeError from "../../shared/localize_error"
 import Trip from "./trip.entity"
 import ITripInsert from "../../contracts/trip/trip.insert"
 
@@ -112,13 +112,13 @@ class TripManager {
 
         if (numberOfSeats == 0) {
             const errorParams = { [EntityFields.id]: tripId }
-            const error = ServiceError.getErrorByCode(TripErrorCodes.EmptySeats, errorParams)
+            const error = LocalizeError.getErrorByCode(TripErrorCodes.EmptySeats, errorParams)
             throw new ServiceException(error)
         }
 
         if (numberOfSeats > tripFound.availableSeats) {
             const errorParams = { [EntityFields.id]: tripId }
-            const error = ServiceError.getErrorByCode(TripErrorCodes.ExceededSeats, errorParams)
+            const error = LocalizeError.getErrorByCode(TripErrorCodes.ExceededSeats, errorParams)
             throw new ServiceException(error)
         }
 
@@ -157,7 +157,7 @@ class TripManager {
         const isAvailable = entity.tripState.some(element => element.isCurrent && states.includes(element.state))
         if (!isAvailable) {
             const errorParams = { [EntityFields.id]: id }
-            const error = ServiceError.getErrorByCode(TripErrorCodes.NotAvailable, errorParams)
+            const error = LocalizeError.getErrorByCode(TripErrorCodes.NotAvailable, errorParams)
             throw new ServiceException(error)
         }
 
@@ -187,7 +187,7 @@ class TripManager {
         const entity = await this.tripRepository.get(id)
         if (!entity) {
             const errorParams = { [EntityFields.id]: id }
-            const error = ServiceError.getErrorByCode(TripErrorCodes.EntityNotFound, errorParams)
+            const error = LocalizeError.getErrorByCode(TripErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 

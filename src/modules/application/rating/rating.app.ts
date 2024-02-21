@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb"
 import ApplicationService from "../../../core/application/applicationService"
 import Response from "../../../core/response/response"
 import ResponseManager from "../../../core/response/response.manager"
-import ServiceError from "../../shared/service.error"
+import LocalizeError from "../../shared/localize_error"
 import Rating from "../../domain/rating/rating.entity"
 import RatingManager from "../../domain/rating/rating.manager"
 import UserManager from "../../domain/user/user.manager"
@@ -65,7 +65,7 @@ class RatingAppService extends ApplicationService {
             const trip = await this.tripManager.get(ratingInsert.tripId)
             const isFinished = trip.tripState.some(element => element.isCurrent && element.state === TripState.Finished)
             if (!isFinished) {
-                throw new ServiceException(ServiceError.getErrorByCode(TripErrorCodes.TripNotFinished))
+                throw new ServiceException(LocalizeError.getErrorByCode(TripErrorCodes.TripNotFinished))
             }
 
             const entity = await this.ratingManager.insert(ratingInsert)

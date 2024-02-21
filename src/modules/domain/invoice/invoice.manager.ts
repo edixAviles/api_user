@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb"
 
 import ServiceException from "../../shared/service.exception"
 import TransactionSession from "../../../core/database/transactionSession"
-import ServiceError from "../../shared/service.error"
+import LocalizeError from "../../shared/localize_error"
 
 import Invoice from "./invoice.entity"
 import InvoiceRepository from "./invoice.repository"
@@ -64,7 +64,7 @@ class InvoiceManager {
         const invoice = await this.invoiceRepository.get(id)
         if (!invoice) {
             const errorParams = { [EntityFields.id]: id }
-            const error = ServiceError.getErrorByCode(InvoiceErrorCodes.EntityNotFound, errorParams)
+            const error = LocalizeError.getErrorByCode(InvoiceErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }
 
