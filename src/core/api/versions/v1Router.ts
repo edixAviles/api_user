@@ -3,8 +3,8 @@ import {
     Request,
     Response
 } from "express"
+import HttpStatusCode from "api_utility/src/consts/http_status_code"
 
-import statesCodes from "../statesCodes"
 import userApi from "../../../modules/api/user/user.api"
 import vehicleApi from "../../../modules/api/vehicle/vehicle.api"
 import tripApi from "../../../modules/api/trip/trip.api"
@@ -12,7 +12,7 @@ import tripUserApi from "../../../modules/api/trip/tripUser.api"
 import ratingApi from "../../../modules/api/rating/rating.api"
 
 const v1Router = express.Router()
-const { NOT_FOUND } = statesCodes
+const { NOT_FOUND } = HttpStatusCode
 
 v1Router.use("/user", userApi)
 v1Router.use("/vehicle", vehicleApi)

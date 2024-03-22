@@ -1,15 +1,11 @@
 import { ObjectId } from "mongodb"
+import ServiceException from "api_utility/src/exception/service_exception"
+import TransactionSession from "api_utility/src/database/transaction_session"
+import EntityFields from "api_utility/src/domain/entity_fields"
 
-import ServiceException from "../../shared/service.exception"
-import TransactionSession from "../../../core/database/transactionSession"
 import LocalizeError from "../../shared/localize_error"
-
 import Invoice from "./invoice.entity"
 import InvoiceRepository from "./invoice.repository"
-
-import {
-    EntityFields
-} from "../../shared/shared.consts"
 import IInvoiceInsert from "../../contracts/invoice/invoice.insert"
 import InvoiceErrorCodes from "../../shared.domain/invoice/invoice.error.codes"
 
@@ -25,7 +21,7 @@ class InvoiceManager {
         return entity
     }
 
-    async getInvoiceByTripUser(tripUserId: ObjectId): Promise<Invoice> {
+    async getInvoiceByTripUser(tripUserId: ObjectId): Promise<Invoice | null> {
         const invoice = await this.invoiceRepository.getInvoiceByTripUser(tripUserId)
         return invoice
     }
@@ -46,7 +42,7 @@ class InvoiceManager {
         invoice.subtotal = invoiceInsert.subtotal
         invoice.taxes = invoiceInsert.taxes
         invoice.total = invoiceInsert.total
-        
+
         invoice.taxDetails = invoiceInsert.taxDetails
         invoice.isPaid = invoiceInsert.isPaid
         invoice.tripUserId = invoiceInsert.tripUserId
@@ -63,7 +59,7 @@ class InvoiceManager {
     private foundEntity = async (id: ObjectId): Promise<Invoice> => {
         const invoice = await this.invoiceRepository.get(id)
         if (!invoice) {
-            const errorParams = { [EntityFields.id]: id }
+            const errorParams = new Map<string, string>([[EntityFields.id, id.toString()]])
             const error = LocalizeError.getErrorByCode(InvoiceErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }

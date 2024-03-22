@@ -1,9 +1,10 @@
 import { ObjectId } from "mongodb"
+import ApplicationService from "api_utility/src/application/application_service"
+import Response from "api_utility/src/response/response"
+import ResponseManager from "api_utility/src/response/response_manager"
+import ServiceException from "api_utility/src/exception/service_exception"
+import ServiceError from "api_utility/src/error/service_error"
 
-import ServiceException from "../../shared/service.exception"
-import ApplicationService from "../../../core/application/applicationService"
-import Response from "../../../core/response/response"
-import ResponseManager from "../../../core/response/response.manager"
 import LocalizeError from "../../shared/localize_error"
 import ITripUserInsert from "../../contracts/trip/tripUser.insert"
 import TripUser from "../../domain/trip/tripUser.entity"
@@ -82,7 +83,7 @@ class TripUserAppService extends ApplicationService {
             const trip = await tripManagerTransaction.get(tripInsert.tripId)
             const isDoorToToor = trip.features.includes(TripFeatures.DoorToDoor)
             if (!isDoorToToor) {
-                tripInsert.pickupLocation = null
+                tripInsert.pickupLocation = undefined
             } else if (isDoorToToor && (!tripInsert.pickupLocation?.latitude || !tripInsert.pickupLocation?.longitude)) {
                 throw new ServiceException(LocalizeError.getErrorByCode(TripUserErrorCodes.WithOutPickupLocation))
             }

@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb"
-import mongooseModel from "../../../core/domain/mongoose.model"
+import mongooseModel from "api_utility/src/domain/mongoose_model"
+
 import { CollectionsName } from "../../shared/shared.consts"
 import { PaymentMethods } from "../../shared.domain/invoice/invoice.extra"
 

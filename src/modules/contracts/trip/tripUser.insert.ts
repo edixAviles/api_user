@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb"
 
 interface ITripUserInsert {
     numberOfSeats: number
-    pickupLocation: {
+    pickupLocation?: {
         latitude: number
         longitude: number
     }

@@ -1,14 +1,14 @@
 import { AutoMap } from "@automapper/classes"
 import { ObjectId } from "mongodb"
 
-import BaseBasicModel from "../../../core/domain/base.model"
+import BaseModel from "api_utility/src/domain/base_model"
 import {
     DataDeparture,
     DataArrival,
     DataTripStates
 } from "../../shared.domain/trip/trip.extra"
 
-class Trip extends BaseBasicModel {
+class Trip extends BaseModel {
     @AutoMap()
     public departure: DataDeparture
 
@@ -34,7 +34,7 @@ class Trip extends BaseBasicModel {
     public availableSeats: number
 
     @AutoMap()
-    public passengersToPickUp: number
+    public passengersToPickUp?: number
 
     @AutoMap()
     public description: string

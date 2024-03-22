@@ -1,9 +1,12 @@
 import { ObjectId } from "mongodb"
+import ApplicationService from "api_utility/src/application/application_service"
+import TransactionSession from "api_utility/src/database/transaction_session"
+import Response from "api_utility/src/response/response"
+import ResponseManager from "api_utility/src/response/response_manager"
+import ServiceException from "api_utility/src/exception/service_exception"
+import ServiceError from "api_utility/src/error/service_error"
+import MediaTypeNames from "api_utility/src/consts/media_type_names"
 
-import ApplicationService from "../../../core/application/applicationService"
-import TransactionSession from "../../../core/database/transactionSession"
-import Response from "../../../core/response/response"
-import ResponseManager from "../../../core/response/response.manager"
 import IInvoiceInsert from "../../contracts/invoice/invoice.insert"
 import ITripInsert from "../../contracts/trip/trip.insert"
 import InvoiceManager from "../../domain/invoice/invoice.manager"
@@ -16,7 +19,6 @@ import InvoiceErrorCodes from "../../shared.domain/invoice/invoice.error.codes"
 import TripErrorCodes from "../../shared.domain/trip/trip.error.codes"
 import UserErrorCodes from "../../shared.domain/user/user.error.codes"
 import LocalizeError from "../../shared/localize_error"
-import ServiceException from "../../shared/service.exception"
 
 import { mapper } from "../../../core/mappings/mapper"
 import { TripDto, TripsAvailablesDto } from "../../contracts/trip/trip.dto"
@@ -25,7 +27,7 @@ import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
 import { DataTaxDetails, PaymentMethods } from "../../shared.domain/invoice/invoice.extra"
 import { TripFeatures, TripState } from "../../shared.domain/trip/trip.extra"
 import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
-import { TypeMime, servicePrice, taxLocal } from "../../shared/shared.consts"
+import { servicePrice, taxLocal } from "../../shared/shared.consts"
 
 class TripAppService extends ApplicationService {
     private tripManager: TripManager
@@ -95,7 +97,7 @@ class TripAppService extends ApplicationService {
                     _id: user._id,
                     name: user.name,
                     lastName: user.lastName,
-                    profilePhoto: user.profilePhoto.data.toString(TypeMime.base64),
+                    profilePhoto: user.profilePhoto.data.toString(MediaTypeNames.Text.base64),
                 }
 
                 tripsAvailables.push(trip)
@@ -120,8 +122,8 @@ class TripAppService extends ApplicationService {
 
             const isDoorToToor = tripInsert.features.includes(TripFeatures.DoorToDoor)
             if (isDoorToToor) {
-                tripInsert.departure.latitude = null
-                tripInsert.departure.longitude = null
+                tripInsert.departure.latitude = undefined
+                tripInsert.departure.longitude = undefined
             } else if (!isDoorToToor && (!tripInsert.departure.latitude || !tripInsert.departure.longitude)) {
                 throw new ServiceException(LocalizeError.getErrorByCode(TripErrorCodes.WithOutDepartureLocation))
             }

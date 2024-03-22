@@ -129,4 +129,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-src/core/database/credentials.ts
+src/core/credentials.ts

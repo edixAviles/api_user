@@ -1,9 +1,9 @@
 import { AutoMap } from "@automapper/classes"
 
-import BaseBasicModel from "../../../core/domain/base.model"
+import BaseModel from "api_utility/src/domain/base_model"
 import { DataStringVerified, DataBufferApproved } from "../../shared.domain/user/user.extra"
 
-class User extends BaseBasicModel {
+class User extends BaseModel {
     @AutoMap()
     public name: string
 

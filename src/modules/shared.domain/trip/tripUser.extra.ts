@@ -6,7 +6,7 @@ class DataPickupLocation {
 class DataTripUserStates {
     state: string
     dateTimeAudit: Date
-    observation: string
+    observation?: string
     isCurrent: boolean
 }
 

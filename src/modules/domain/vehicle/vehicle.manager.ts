@@ -1,18 +1,14 @@
 import { ObjectId } from "mongodb"
+import ServiceException from "api_utility/src/exception/service_exception"
+import TransactionSession from "api_utility/src/database/transaction_session"
+import EntityFields from "api_utility/src/domain/entity_fields"
+import MediaTypeNames from "api_utility/src/consts/media_type_names"
 
-import ServiceException from "../../shared/service.exception"
-import TransactionSession from "../../../core/database/transactionSession"
 import LocalizeError from "../../shared/localize_error"
-
 import Vehicle from "./vehicle.entity"
 import VehicleRepository from "./vehicle.repository"
 import VehicleErrorCodes from "../../shared.domain/vehicle/vehicle.error.codes"
 import IVehicleInsert from "../../contracts/vehicle/vehicle.insert"
-
-import {
-    EntityFields,
-    TypeMime
-} from "../../shared/shared.consts"
 import { IVehicleUpdate } from "../../contracts/vehicle/vehicle.update"
 
 class VehicleManager {
@@ -39,7 +35,7 @@ class VehicleManager {
         vehicle.plate = vehicleInsert.plate
         vehicle.color = vehicleInsert.color
         vehicle.year = vehicleInsert.year
-        vehicle.licencePlatePhoto = Buffer.from(vehicleInsert.licencePlatePhoto, TypeMime.base64)
+        vehicle.licencePlatePhoto = Buffer.from(vehicleInsert.licencePlatePhoto, MediaTypeNames.Text.base64)
         vehicle.isVerified = false
         vehicle.driverId = vehicleInsert.driverId
 
@@ -57,7 +53,7 @@ class VehicleManager {
         vehicle.plate = vehicleUpdate.plate
         vehicle.color = vehicleUpdate.color
         vehicle.year = vehicleUpdate.year
-        vehicle.licencePlatePhoto = Buffer.from(vehicleUpdate.licencePlatePhoto, TypeMime.base64)
+        vehicle.licencePlatePhoto = Buffer.from(vehicleUpdate.licencePlatePhoto, MediaTypeNames.Text.base64)
 
         const entityUpdated = await this.vehicleRepository.update(vehicle)
         return entityUpdated
@@ -71,7 +67,7 @@ class VehicleManager {
     private foundEntity = async (id: ObjectId): Promise<Vehicle> => {
         const vehicle = await this.vehicleRepository.get(id)
         if (!vehicle) {
-            const errorParams = { [EntityFields.id]: id }
+            const errorParams = new Map<string, string>([[EntityFields.id, id.toString()]])
             const error = LocalizeError.getErrorByCode(VehicleErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }

@@ -5,8 +5,8 @@ interface ITripInsert {
         city: string
         dateAndTime: Date
         description: string
-        latitude: number
-        longitude: number
+        latitude?: number
+        longitude?: number
     }
     arrival: {
         city: string

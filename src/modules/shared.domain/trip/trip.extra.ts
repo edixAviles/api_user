@@ -2,8 +2,8 @@ class DataDeparture {
     city: string
     dateAndTime: Date
     description: string
-    latitude: number
-    longitude: number
+    latitude?: number
+    longitude?: number
 }
 
 class DataArrival {
@@ -16,7 +16,7 @@ class DataArrival {
 class DataTripStates {
     state: string
     dateTimeAudit: Date
-    observation: string
+    observation?: string
     isCurrent: boolean
 }
 

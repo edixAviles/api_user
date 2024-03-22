@@ -1,12 +1,9 @@
 import { ObjectId } from "mongodb"
+import ServiceException from "api_utility/src/exception/service_exception"
+import TransactionSession from "api_utility/src/database/transaction_session"
+import EntityFields from "api_utility/src/domain/entity_fields"
 
-import ServiceException from "../../shared/service.exception"
-import TransactionSession from "../../../core/database/transactionSession"
 import LocalizeError from "../../shared/localize_error"
-
-import {
-    EntityFields
-} from "../../shared/shared.consts"
 import TripUser from "./tripUser.entity"
 import TripUserErrorCodes from "../../shared.domain/trip/tripUser.error.codes"
 import ITripUserInsert from "../../contracts/trip/tripUser.insert"
@@ -104,7 +101,7 @@ class TripUserManager {
 
         const isAvailable = entity.tripState.some(element => element.isCurrent && states.includes(element.state))
         if (!isAvailable) {
-            const errorParams = { [EntityFields.id]: id }
+            const errorParams = new Map<string, string>([[EntityFields.id, id.toString()]])
             const error = LocalizeError.getErrorByCode(TripUserErrorCodes.NotAvailable, errorParams)
             throw new ServiceException(error)
         }
@@ -134,7 +131,7 @@ class TripUserManager {
     private foundEntity = async (id: ObjectId): Promise<TripUser> => {
         const entity = await this.tripUserRepository.get(id)
         if (!entity) {
-            const errorParams = { [EntityFields.id]: id }
+            const errorParams = new Map<string, string>([[EntityFields.id, id.toString()]])
             const error = LocalizeError.getErrorByCode(TripUserErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }

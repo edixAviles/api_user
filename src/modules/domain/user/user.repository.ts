@@ -1,18 +1,15 @@
 import { ObjectId } from "mongodb"
+import Repository from "api_utility/src/domain/repository"
+import IRepository from "api_utility/src/domain/i_repository"
 
 import User from "./user.entity"
 import UserModel from "./user.model"
-
-import {
-    Repository,
-    IRepository
-} from "../../../core/domain/repository"
 
 /**
  * This class, performs explicit operations of CRUD from Database
  */
 class UserRepository extends Repository<User> implements IRepository<User> {
-    async get(id: ObjectId): Promise<User> {
+    async get(id: ObjectId): Promise<User | null> {
         const document = await UserModel.findOne(Repository.filterToGetById(id))
 
         const entity = new User({ ...document })

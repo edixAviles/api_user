@@ -1,9 +1,9 @@
 import { ObjectId } from "mongodb"
+import ApplicationService from "api_utility/src/application/application_service"
+import Response from "api_utility/src/response/response"
+import ResponseManager from "api_utility/src/response/response_manager"
+import ServiceError from "api_utility/src/error/service_error"
 
-import ApplicationService from "../../../core/application/applicationService"
-import Response from "../../../core/response/response"
-import ResponseManager from "../../../core/response/response.manager"
-import LocalizeError from "../../shared/localize_error"
 import Invoice from "../../domain/invoice/invoice.entity"
 import InvoiceManager from "../../domain/invoice/invoice.manager"
 
@@ -33,11 +33,11 @@ class InvoiceAppService extends ApplicationService {
         }
     }
 
-    async getInvoiceByTripUser(userId: ObjectId): Promise<Response<InvoiceDto>> {
+    async getInvoiceByTripUser(tripUserId: ObjectId): Promise<Response<InvoiceDto>> {
         const response = new ResponseManager<InvoiceDto>()
 
         try {
-            const entity = await this.invoiceManager.getInvoiceByTripUser(userId)
+            const entity = await this.invoiceManager.getInvoiceByTripUser(tripUserId)
 
             const dto = mapper.map(entity, Invoice, InvoiceDto)
             return response.onSuccess(dto)

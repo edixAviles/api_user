@@ -2,8 +2,8 @@ import localizer from "i18next"
 import backend from "i18next-fs-backend"
 import middleware from "i18next-http-middleware"
 
-import en from "./locales/en.json"
-import es from "./locales/es.json"
+const en = require("./locales/en.json")
+const es = require("./locales/es.json")
 
 const resources = {
     en,

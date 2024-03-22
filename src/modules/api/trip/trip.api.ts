@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express"
 import { mongo } from "mongoose"
+
 import ITripInsert from "../../contracts/trip/trip.insert"
 import TripAppService from "../../application/trip/trip.app"
 import { ITripCancel } from "../../contracts/trip/trip.update"
