@@ -1,20 +1,16 @@
 class DataStringVerified {
-    data: string
-    isVerified: boolean
+  data: string
+  isVerified: boolean
 }
 
 class DataBufferApproved {
-    data: Buffer
-    isApproved: boolean
+  data: Buffer
+  isApproved: boolean
 }
 
 class DataBufferApprovedDto {
-    data: String
-    isApproved: boolean
+  data: String
+  isApproved: boolean
 }
 
-export {
-    DataStringVerified,
-    DataBufferApproved,
-    DataBufferApprovedDto
-}
+export { DataStringVerified, DataBufferApproved, DataBufferApprovedDto }

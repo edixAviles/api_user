@@ -10,40 +10,46 @@ const tripUserApi = express.Router()
 const tripUserAppService = new TripUserAppService()
 
 tripUserApi.get("/:id", async (req: Request, res: Response) => {
-    const id = new mongo.ObjectId(req.params.id)
-    const result = await tripUserAppService.getTripUser(id)
-    res.send(result)
+  const id = new mongo.ObjectId(req.params.id)
+  const result = await tripUserAppService.getTripUser(id)
+  res.send(result)
 })
 
-tripUserApi.get("/:state/state/:id/by-user", async (req: Request, res: Response) => {
+tripUserApi.get(
+  "/:state/state/:id/by-user",
+  async (req: Request, res: Response) => {
     const userId = new mongo.ObjectId(req.params.id)
     const state = req.params.state as TripUserState
     const result = await tripUserAppService.getTripsUserByUser(userId, state)
     res.send(result)
-})
+  },
+)
 
 tripUserApi.post("/book", async (req: Request, res: Response) => {
-    const tripInsert = req.body as ITripUserInsert
-    const result = await tripUserAppService.bookTripUser(tripInsert)
-    res.send(result)
+  const tripInsert = req.body as ITripUserInsert
+  const result = await tripUserAppService.bookTripUser(tripInsert)
+  res.send(result)
 })
 
-tripUserApi.post("/pick-up-passenger/:id", async (req: Request, res: Response) => {
+tripUserApi.post(
+  "/pick-up-passenger/:id",
+  async (req: Request, res: Response) => {
     const id = new mongo.ObjectId(req.params.id)
     const result = await tripUserAppService.pickUpPassenger(id)
     res.send(result)
-})
+  },
+)
 
 tripUserApi.post("/start-trip/:id", async (req: Request, res: Response) => {
-    const id = new mongo.ObjectId(req.params.id)
-    const result = await tripUserAppService.startTripUser(id)
-    res.send(result)
+  const id = new mongo.ObjectId(req.params.id)
+  const result = await tripUserAppService.startTripUser(id)
+  res.send(result)
 })
 
 tripUserApi.post("/cancel", async (req: Request, res: Response) => {
-    const tripCancel = req.body as ITripUserCancel
-    const result = await tripUserAppService.cancelTripUser(tripCancel)
-    res.send(result)
+  const tripCancel = req.body as ITripUserCancel
+  const result = await tripUserAppService.cancelTripUser(tripCancel)
+  res.send(result)
 })
 
 export default tripUserApi

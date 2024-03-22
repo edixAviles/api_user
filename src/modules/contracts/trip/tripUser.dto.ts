@@ -2,37 +2,34 @@ import { AutoMap } from "@automapper/classes"
 import { ObjectId } from "mongodb"
 
 import {
-    DataPickupLocation,
-    DataTripUserStates
+  DataPickupLocation,
+  DataTripUserStates,
 } from "../../shared.domain/trip/tripUser.extra"
 
 class TripUserDto {
-    @AutoMap()
-    public _id: ObjectId
-    
-    @AutoMap()
-    public numberOfSeats: number
+  @AutoMap()
+  public _id: ObjectId
 
-    @AutoMap()
-    public pickupLocation: DataPickupLocation
+  @AutoMap()
+  public numberOfSeats: number
 
-    @AutoMap(() => [DataTripUserStates])
-    public tripState: DataTripUserStates[]
+  @AutoMap()
+  public pickupLocation: DataPickupLocation
 
-    @AutoMap()
-    public tripId: ObjectId
+  @AutoMap(() => [DataTripUserStates])
+  public tripState: DataTripUserStates[]
 
-    @AutoMap()
-    public userId: ObjectId
+  @AutoMap()
+  public tripId: ObjectId
+
+  @AutoMap()
+  public userId: ObjectId
 }
 
 class TripUserStartTrip {
-    public tripUserId: ObjectId
-    public tripId: ObjectId
-    public isAllPassengersPickedUp: boolean
+  public tripUserId: ObjectId
+  public tripId: ObjectId
+  public isAllPassengersPickedUp: boolean
 }
 
-export {
-    TripUserDto,
-    TripUserStartTrip
-}
+export { TripUserDto, TripUserStartTrip }

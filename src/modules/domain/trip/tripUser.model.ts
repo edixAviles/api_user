@@ -4,45 +4,47 @@ import { CollectionsName } from "../../shared/shared.consts"
 import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
 
 const properties = {
-    numberOfSeats: {
-        type: Number,
-        required: true
+  numberOfSeats: {
+    type: Number,
+    required: true,
+  },
+  pickupLocation: {
+    latitude: {
+      type: Number,
     },
-    pickupLocation: {
-        latitude: {
-            type: Number
-        },
-        longitude: {
-            type: Number
-        }
+    longitude: {
+      type: Number,
     },
-    tripState: [{
-        state: {
-            type: String,
-            enum: TripUserState
-        },
-        dateTimeAudit: {
-            type: Date,
-            required: true
-        },
-        observation: {
-            type: String
-        },
-        isCurrent: {
-            type: Boolean,
-            required: true
-        },
-    }],
-    tripId: {
-        type: ObjectId,
+  },
+  tripState: [
+    {
+      state: {
+        type: String,
+        enum: TripUserState,
+      },
+      dateTimeAudit: {
+        type: Date,
         required: true,
-        ref: CollectionsName.Trip
-    },
-    userId: {
-        type: ObjectId,
+      },
+      observation: {
+        type: String,
+      },
+      isCurrent: {
+        type: Boolean,
         required: true,
-        ref: CollectionsName.User
-    }
+      },
+    },
+  ],
+  tripId: {
+    type: ObjectId,
+    required: true,
+    ref: CollectionsName.Trip,
+  },
+  userId: {
+    type: ObjectId,
+    required: true,
+    ref: CollectionsName.User,
+  },
 }
 
 const TripUserModel = mongooseModel(CollectionsName.TripUser, properties)

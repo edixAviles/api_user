@@ -1,45 +1,39 @@
 class DataDeparture {
-    city: string
-    dateAndTime: Date
-    description: string
-    latitude?: number
-    longitude?: number
+  city: string
+  dateAndTime: Date
+  description: string
+  latitude?: number
+  longitude?: number
 }
 
 class DataArrival {
-    city: string
-    description: string
-    latitude: number
-    longitude: number
+  city: string
+  description: string
+  latitude: number
+  longitude: number
 }
 
 class DataTripStates {
-    state: string
-    dateTimeAudit: Date
-    observation?: string
-    isCurrent: boolean
+  state: string
+  dateTimeAudit: Date
+  observation?: string
+  isCurrent: boolean
 }
 
 enum TripState {
-    Available = "AVAILABLE",
-    Full = "FULL",
-    PickingUpPassengers = "PICKING_UP_PASSANGERS",
-    OnTheWay = "ON_THE_WAY",
-    Finished = "FINISHED",
-    Cancelled = "CANCELLED"
+  Available = "AVAILABLE",
+  Full = "FULL",
+  PickingUpPassengers = "PICKING_UP_PASSANGERS",
+  OnTheWay = "ON_THE_WAY",
+  Finished = "FINISHED",
+  Cancelled = "CANCELLED",
 }
 
 enum TripFeatures {
-    DoorToDoor = "DOOR_TO_DOOR",
-    MaxTwoPeopleBehind = "MAX_TWO_PEOPLE_BEHIND",
-    SmokingAllowed = "SMOKING_ALLOWED",
-    PetsAllowed = "PETS_ALLOWED"
+  DoorToDoor = "DOOR_TO_DOOR",
+  MaxTwoPeopleBehind = "MAX_TWO_PEOPLE_BEHIND",
+  SmokingAllowed = "SMOKING_ALLOWED",
+  PetsAllowed = "PETS_ALLOWED",
 }
 
-export {
-    DataDeparture,
-    DataArrival,
-    DataTripStates,
-    TripState,
-    TripFeatures
-}
+export { DataDeparture, DataArrival, DataTripStates, TripState, TripFeatures }

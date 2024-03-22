@@ -1,8 +1,5 @@
 import express from "express"
-import {
-    Request,
-    Response
-} from "express"
+import { Request, Response } from "express"
 import HttpStatusCode from "api_utility/src/consts/http_status_code"
 
 import userApi from "../../../modules/api/user/user.api"
@@ -21,7 +18,7 @@ v1Router.use("/trip-user", tripUserApi)
 v1Router.use("/rating", ratingApi)
 
 v1Router.all("*", (req: Request, res: Response) => {
-    res.sendStatus(NOT_FOUND)
+  res.sendStatus(NOT_FOUND)
 })
 
 export default v1Router

@@ -1,46 +1,46 @@
 import { ObjectId } from "mongodb"
 
 interface IUserUpdate {
-    id: ObjectId
-    name: string
-    lastName: string
-    birthdate: Date
-    email: string
-    cellPhone: string
+  id: ObjectId
+  name: string
+  lastName: string
+  birthdate: Date
+  email: string
+  cellPhone: string
 }
 
 interface IUserUpdateProfilePhoto {
-    id: ObjectId
-    profilePhoto: string
+  id: ObjectId
+  profilePhoto: string
 }
 
 interface IDriverUpdateLicencePhoto {
-    id: ObjectId
-    licencePhoto: string
+  id: ObjectId
+  licencePhoto: string
 }
 
 interface IDriverUpdatePoliceRecord {
-    id: ObjectId
-    policeRecord: string
+  id: ObjectId
+  policeRecord: string
 }
 
 interface IUserUpdatePassword {
-    id: ObjectId
-    currentPassword: string
-    newPassword: string
+  id: ObjectId
+  currentPassword: string
+  newPassword: string
 }
 
 interface IUserUpdateToDriver {
-    id: ObjectId
-    licencePhoto: string
-    policeRecord: string
+  id: ObjectId
+  licencePhoto: string
+  policeRecord: string
 }
 
 export {
-    IUserUpdate,
-    IUserUpdateProfilePhoto,
-    IDriverUpdateLicencePhoto,
-    IDriverUpdatePoliceRecord,
-    IUserUpdatePassword,
-    IUserUpdateToDriver
+  IUserUpdate,
+  IUserUpdateProfilePhoto,
+  IDriverUpdateLicencePhoto,
+  IDriverUpdatePoliceRecord,
+  IUserUpdatePassword,
+  IUserUpdateToDriver,
 }
