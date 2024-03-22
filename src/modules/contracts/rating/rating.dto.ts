@@ -2,22 +2,20 @@ import { AutoMap } from "@automapper/classes"
 import { ObjectId } from "mongodb"
 
 class RatingDto {
-    @AutoMap()
-    public _id: ObjectId
+  @AutoMap()
+  public _id: ObjectId
 
-    @AutoMap()
-    public rating: number
+  @AutoMap()
+  public rating: number
 
-    @AutoMap()
-    public comment: string
+  @AutoMap()
+  public comment: string
 
-    @AutoMap()
-    public userId: ObjectId
+  @AutoMap()
+  public userId: ObjectId
 
-    @AutoMap()
-    public tripId: ObjectId
+  @AutoMap()
+  public tripId: ObjectId
 }
 
-export {
-    RatingDto
-}
+export { RatingDto }

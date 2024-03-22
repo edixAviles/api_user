@@ -13,183 +13,246 @@ import TripRepository from "./trip.repository"
 import { DataTripStates } from "../../shared.domain/trip/trip.extra"
 
 class TripManager {
-    private tripRepository: TripRepository
+  private tripRepository: TripRepository
 
-    constructor(transaction?: TransactionSession) {
-        this.tripRepository = new TripRepository(transaction)
+  constructor(transaction?: TransactionSession) {
+    this.tripRepository = new TripRepository(transaction)
+  }
+
+  async get(id: ObjectId): Promise<Trip> {
+    const entity = await this.foundEntity(id)
+    return entity
+  }
+
+  async getTripsByDriver(
+    driverId: ObjectId,
+    state: TripState,
+  ): Promise<Trip[]> {
+    const trips = await this.tripRepository.getTripsByDriver(driverId, state)
+    return trips
+  }
+
+  async searchTrips(
+    departure: string,
+    arrival: string,
+    requestedSeats: number,
+  ): Promise<Trip[]> {
+    const trips = await this.tripRepository.searchTrips(
+      departure,
+      arrival,
+      requestedSeats,
+    )
+    return trips
+  }
+
+  async insert(tripInsert: ITripInsert, servicePrice: number): Promise<Trip> {
+    const trip = new Trip()
+    trip.departure = tripInsert.departure
+    trip.arrival = tripInsert.arrival
+    trip.tripState = this.getNewState([], TripState.Available)
+
+    trip.tripPrice = tripInsert.price
+    trip.servicePrice = servicePrice
+    trip.finalPrice = tripInsert.price + servicePrice
+
+    trip.offeredSeats = tripInsert.offeredSeats
+    trip.availableSeats = tripInsert.offeredSeats
+    trip.passengersToPickUp = undefined
+    trip.description = tripInsert.description
+    trip.features = tripInsert.features
+    trip.vehicleId = tripInsert.vehicleId
+    trip.driverId = tripInsert.driverId
+
+    const entity = await this.tripRepository.insert(trip)
+    return entity
+  }
+
+  async pickUpPassengers(
+    id: ObjectId,
+    passengersToPickUp: number,
+  ): Promise<void> {
+    const tripFound = await this.validateTrip(id, [
+      TripState.Available,
+      TripState.Full,
+    ])
+
+    const trip = new Trip()
+    trip._id = id
+    trip.tripState = this.getNewState(
+      tripFound.tripState,
+      TripState.PickingUpPassengers,
+    )
+    trip.passengersToPickUp = passengersToPickUp
+
+    await this.tripRepository.update(trip)
+  }
+
+  async startTrip(id: ObjectId): Promise<void> {
+    const tripFound = await this.validateTrip(id, [
+      TripState.PickingUpPassengers,
+    ])
+
+    const trip = new Trip()
+    trip._id = id
+    trip.tripState = this.getNewState(tripFound.tripState, TripState.OnTheWay)
+
+    await this.tripRepository.update(trip)
+  }
+
+  async finish(id: ObjectId): Promise<void> {
+    const tripFound = await this.validateTrip(id, [TripState.OnTheWay])
+
+    const trip = new Trip()
+    trip._id = id
+    trip.arrival = {
+      city: tripFound.arrival.city,
+      description: tripFound.arrival.description,
+      latitude: tripFound.arrival.latitude,
+      longitude: tripFound.arrival.longitude,
+    }
+    trip.tripState = this.getNewState(tripFound.tripState, TripState.Finished)
+
+    await this.tripRepository.update(trip)
+  }
+
+  async cancel(tripCancel: ITripCancel): Promise<void> {
+    const tripFound = await this.validateTrip(tripCancel.id, [
+      TripState.Available,
+      TripState.Full,
+    ])
+
+    const trip = new Trip()
+    trip._id = tripCancel.id
+    trip.tripState = this.getNewState(
+      tripFound.tripState,
+      TripState.Cancelled,
+      tripCancel.observation,
+    )
+
+    await this.tripRepository.update(trip)
+    await this.tripRepository.delete(trip._id)
+  }
+
+  async updateAvailableSeats(
+    tripId: ObjectId,
+    numberOfSeats: number,
+  ): Promise<void> {
+    const tripFound = await this.validateTrip(tripId, [TripState.Available])
+
+    if (numberOfSeats == 0) {
+      const errorParams = new Map<string, string>([
+        [EntityFields.id, tripId.toString()],
+      ])
+      const error = LocalizeError.getErrorByCode(
+        TripErrorCodes.EmptySeats,
+        errorParams,
+      )
+      throw new ServiceException(error)
     }
 
-    async get(id: ObjectId): Promise<Trip> {
-        const entity = await this.foundEntity(id)
-        return entity
+    if (numberOfSeats > tripFound.availableSeats) {
+      const errorParams = new Map<string, string>([
+        [EntityFields.id, tripId.toString()],
+      ])
+      const error = LocalizeError.getErrorByCode(
+        TripErrorCodes.ExceededSeats,
+        errorParams,
+      )
+      throw new ServiceException(error)
     }
 
-    async getTripsByDriver(driverId: ObjectId, state: TripState): Promise<Trip[]> {
-        const trips = await this.tripRepository.getTripsByDriver(driverId, state)
-        return trips
+    const trip = new Trip()
+    trip._id = tripId
+    trip.availableSeats = tripFound.availableSeats - numberOfSeats
+
+    if (trip.availableSeats == 0) {
+      trip.tripState = this.getNewState(tripFound.tripState, TripState.Full)
     }
 
-    async searchTrips(departure: string, arrival: string, requestedSeats: number): Promise<Trip[]> {
-        const trips = await this.tripRepository.searchTrips(departure, arrival, requestedSeats)
-        return trips
+    await this.tripRepository.update(trip)
+  }
+
+  async reducePassengersToPickUp(id: ObjectId): Promise<void> {
+    const tripFound = await this.validateTrip(id, [
+      TripState.PickingUpPassengers,
+    ])
+
+    const trip = new Trip()
+    trip._id = id
+    trip.passengersToPickUp = (tripFound.passengersToPickUp || 0) - 1
+
+    await this.tripRepository.update(trip)
+  }
+
+  async reduceAllPassengersToPickUp(id: ObjectId): Promise<void> {
+    const trip = new Trip()
+    trip._id = id
+    trip.passengersToPickUp = 0
+
+    await this.tripRepository.update(trip)
+  }
+
+  private validateTrip = async (
+    id: ObjectId,
+    states: string[],
+  ): Promise<Trip> => {
+    const entity = await this.foundEntity(id)
+
+    const isAvailable = entity.tripState.some(
+      (element) => element.isCurrent && states.includes(element.state),
+    )
+    if (!isAvailable) {
+      const errorParams = new Map<string, string>([
+        [EntityFields.id, id.toString()],
+      ])
+      const error = LocalizeError.getErrorByCode(
+        TripErrorCodes.NotAvailable,
+        errorParams,
+      )
+      throw new ServiceException(error)
     }
 
-    async insert(tripInsert: ITripInsert, servicePrice: number): Promise<Trip> {
-        const trip = new Trip()
-        trip.departure = tripInsert.departure
-        trip.arrival = tripInsert.arrival
-        trip.tripState = this.getNewState([], TripState.Available)
+    return entity
+  }
 
-        trip.tripPrice = tripInsert.price
-        trip.servicePrice = servicePrice
-        trip.finalPrice = tripInsert.price + servicePrice
+  private getNewState = (
+    tripState: DataTripStates[],
+    state: string,
+    observation?: string,
+  ) => {
+    const states = tripState.map((element) => {
+      if (element.isCurrent) {
+        element.isCurrent = false
+      }
 
-        trip.offeredSeats = tripInsert.offeredSeats
-        trip.availableSeats = tripInsert.offeredSeats
-        trip.passengersToPickUp = undefined
-        trip.description = tripInsert.description
-        trip.features = tripInsert.features
-        trip.vehicleId = tripInsert.vehicleId
-        trip.driverId = tripInsert.driverId
+      return element
+    })
 
-        const entity = await this.tripRepository.insert(trip)
-        return entity
+    states.push({
+      state: state,
+      dateTimeAudit: new Date(),
+      observation: observation,
+      isCurrent: true,
+    })
+
+    return states
+  }
+
+  private foundEntity = async (id: ObjectId): Promise<Trip> => {
+    const entity = await this.tripRepository.get(id)
+    if (!entity) {
+      const errorParams = new Map<string, string>([
+        [EntityFields.id, id.toString()],
+      ])
+      const error = LocalizeError.getErrorByCode(
+        TripErrorCodes.EntityNotFound,
+        errorParams,
+      )
+      throw new ServiceException(error)
     }
 
-    async pickUpPassengers(id: ObjectId, passengersToPickUp: number): Promise<void> {
-        const tripFound = await this.validateTrip(id, [TripState.Available, TripState.Full])
-
-        const trip = new Trip()
-        trip._id = id
-        trip.tripState = this.getNewState(tripFound.tripState, TripState.PickingUpPassengers)
-        trip.passengersToPickUp = passengersToPickUp
-
-        await this.tripRepository.update(trip)
-    }
-
-    async startTrip(id: ObjectId): Promise<void> {
-        const tripFound = await this.validateTrip(id, [TripState.PickingUpPassengers])
-
-        const trip = new Trip()
-        trip._id = id
-        trip.tripState = this.getNewState(tripFound.tripState, TripState.OnTheWay)
-
-        await this.tripRepository.update(trip)
-    }
-
-    async finish(id: ObjectId): Promise<void> {
-        const tripFound = await this.validateTrip(id, [TripState.OnTheWay])
-
-        const trip = new Trip()
-        trip._id = id
-        trip.arrival = {
-            city: tripFound.arrival.city,
-            description: tripFound.arrival.description,
-            latitude: tripFound.arrival.latitude,
-            longitude: tripFound.arrival.longitude,
-        }
-        trip.tripState = this.getNewState(tripFound.tripState, TripState.Finished)
-
-        await this.tripRepository.update(trip)
-    }
-
-    async cancel(tripCancel: ITripCancel): Promise<void> {
-        const tripFound = await this.validateTrip(tripCancel.id, [TripState.Available, TripState.Full])
-
-        const trip = new Trip()
-        trip._id = tripCancel.id
-        trip.tripState = this.getNewState(tripFound.tripState, TripState.Cancelled, tripCancel.observation)
-
-        await this.tripRepository.update(trip)
-        await this.tripRepository.delete(trip._id)
-    }
-
-    async updateAvailableSeats(tripId: ObjectId, numberOfSeats: number): Promise<void> {
-        const tripFound = await this.validateTrip(tripId, [TripState.Available])
-
-        if (numberOfSeats == 0) {
-            const errorParams = new Map<string, string>([[EntityFields.id, tripId.toString()]])
-            const error = LocalizeError.getErrorByCode(TripErrorCodes.EmptySeats, errorParams)
-            throw new ServiceException(error)
-        }
-
-        if (numberOfSeats > tripFound.availableSeats) {
-            const errorParams = new Map<string, string>([[EntityFields.id, tripId.toString()]])
-            const error = LocalizeError.getErrorByCode(TripErrorCodes.ExceededSeats, errorParams)
-            throw new ServiceException(error)
-        }
-
-        const trip = new Trip()
-        trip._id = tripId
-        trip.availableSeats = tripFound.availableSeats - numberOfSeats
-
-        if (trip.availableSeats == 0) {
-            trip.tripState = this.getNewState(tripFound.tripState, TripState.Full)
-        }
-
-        await this.tripRepository.update(trip)
-    }
-
-    async reducePassengersToPickUp(id: ObjectId): Promise<void> {
-        const tripFound = await this.validateTrip(id, [TripState.PickingUpPassengers])
-
-        const trip = new Trip()
-        trip._id = id
-        trip.passengersToPickUp = (tripFound.passengersToPickUp || 0) - 1
-
-        await this.tripRepository.update(trip)
-    }
-
-    async reduceAllPassengersToPickUp(id: ObjectId): Promise<void> {
-        const trip = new Trip()
-        trip._id = id
-        trip.passengersToPickUp = 0
-
-        await this.tripRepository.update(trip)
-    }
-
-    private validateTrip = async (id: ObjectId, states: string[]): Promise<Trip> => {
-        const entity = await this.foundEntity(id)
-
-        const isAvailable = entity.tripState.some(element => element.isCurrent && states.includes(element.state))
-        if (!isAvailable) {
-            const errorParams = new Map<string, string>([[EntityFields.id, id.toString()]])
-            const error = LocalizeError.getErrorByCode(TripErrorCodes.NotAvailable, errorParams)
-            throw new ServiceException(error)
-        }
-
-        return entity
-    }
-
-    private getNewState = (tripState: DataTripStates[], state: string, observation?: string) => {
-        const states = tripState.map(element => {
-            if (element.isCurrent) {
-                element.isCurrent = false
-            }
-
-            return element
-        })
-
-        states.push({
-            state: state,
-            dateTimeAudit: new Date(),
-            observation: observation,
-            isCurrent: true
-        })
-
-        return states
-    }
-
-    private foundEntity = async (id: ObjectId): Promise<Trip> => {
-        const entity = await this.tripRepository.get(id)
-        if (!entity) {
-            const errorParams = new Map<string, string>([[EntityFields.id, id.toString()]])
-            const error = LocalizeError.getErrorByCode(TripErrorCodes.EntityNotFound, errorParams)
-            throw new ServiceException(error)
-        }
-
-        return entity
-    }
+    return entity
+  }
 }
 
 export default TripManager

@@ -6,16 +6,18 @@ const en = require("./locales/en.json")
 const es = require("./locales/es.json")
 
 const resources = {
-    en,
-    es
+  en,
+  es,
 }
 
-const preload = Object.entries(resources).map(resource => resource[1].culture)
+const preload = Object.entries(resources).map(
+  (resource) => resource[1].culture,
+)
 
 localizer.use(backend).use(middleware.LanguageDetector).init({
-    fallbackLng: "en",
-    preload,
-    resources
+  fallbackLng: "en",
+  preload,
+  resources,
 })
 
 export default localizer

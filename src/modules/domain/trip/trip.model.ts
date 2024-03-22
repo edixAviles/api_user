@@ -4,99 +4,103 @@ import { CollectionsName } from "../../shared/shared.consts"
 import { TripFeatures, TripState } from "../../shared.domain/trip/trip.extra"
 
 const properties = {
-    departure: {
-        city: {
-            type: String,
-            required: true
-        },
-        dateAndTime: {
-            type: Date,
-            required: true
-        },
-        description: {
-            type: String
-        },
-        latitude: {
-            type: Number
-        },
-        longitude: {
-            type: Number
-        }
+  departure: {
+    city: {
+      type: String,
+      required: true,
     },
-    arrival: {
-        city: {
-            type: String,
-            required: true
-        },
-        description: {
-            type: String
-        },
-        latitude: {
-            type: Number,
-            required: true
-        },
-        longitude: {
-            type: Number,
-            required: true
-        }
-    },
-    tripState: [{
-        state: {
-            type: String,
-            enum: TripState
-        },
-        dateTimeAudit: {
-            type: Date,
-            required: true
-        },
-        observation: {
-            type: String
-        },
-        isCurrent: {
-            type: Boolean,
-            required: true
-        },
-    }],
-    tripPrice: {
-        type: Number,
-        required: true,
-    },
-    servicePrice: {
-        type: Number,
-        required: true,
-    },
-    finalPrice: {
-        type: Number,
-        required: true,
-    },
-    offeredSeats: {
-        type: Number,
-        required: true
-    },
-    availableSeats: {
-        type: Number,
-        required: true
-    },
-    passengersToPickUp: {
-        type: Number
+    dateAndTime: {
+      type: Date,
+      required: true,
     },
     description: {
-        type: String
+      type: String,
     },
-    features: [{
+    latitude: {
+      type: Number,
+    },
+    longitude: {
+      type: Number,
+    },
+  },
+  arrival: {
+    city: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+    },
+    latitude: {
+      type: Number,
+      required: true,
+    },
+    longitude: {
+      type: Number,
+      required: true,
+    },
+  },
+  tripState: [
+    {
+      state: {
         type: String,
-        enum: TripFeatures
-    }],
-    vehicleId: {
-        type: ObjectId,
+        enum: TripState,
+      },
+      dateTimeAudit: {
+        type: Date,
         required: true,
-        ref: CollectionsName.Vehicle
+      },
+      observation: {
+        type: String,
+      },
+      isCurrent: {
+        type: Boolean,
+        required: true,
+      },
     },
-    driverId: {
-        type: ObjectId,
-        required: true,
-        ref: CollectionsName.User
-    }
+  ],
+  tripPrice: {
+    type: Number,
+    required: true,
+  },
+  servicePrice: {
+    type: Number,
+    required: true,
+  },
+  finalPrice: {
+    type: Number,
+    required: true,
+  },
+  offeredSeats: {
+    type: Number,
+    required: true,
+  },
+  availableSeats: {
+    type: Number,
+    required: true,
+  },
+  passengersToPickUp: {
+    type: Number,
+  },
+  description: {
+    type: String,
+  },
+  features: [
+    {
+      type: String,
+      enum: TripFeatures,
+    },
+  ],
+  vehicleId: {
+    type: ObjectId,
+    required: true,
+    ref: CollectionsName.Vehicle,
+  },
+  driverId: {
+    type: ObjectId,
+    required: true,
+    ref: CollectionsName.User,
+  },
 }
 
 const TripModel = mongooseModel(CollectionsName.Trip, properties)

@@ -6,9 +6,7 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "inlineSourceMap": true,
-    "lib": [
-      "es6"
-    ],
+    "lib": ["es5"],
     "module": "CommonJS",
     "moduleResolution": "node",
     "noEmit": false,
@@ -21,17 +19,10 @@
     "sourceMap": false,
     "strict": true,
     "strictPropertyInitialization": false,
-    "target": "es6",
-    "types": [
-      "node"
-    ]
+    "target": "es5",
+    "types": ["node"]
   },
-  "exclude": [
-    "dist",
-    "node_modules"
-  ],
-  "include": [
-    "src/**/*.ts"
-  ],
+  "exclude": ["dist", "node_modules"],
+  "include": ["src/**/*.ts"],
   "skipLibCheck": true
 }

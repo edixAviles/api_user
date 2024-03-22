@@ -1,8 +1,4 @@
-import {
-    createMap,
-    forMember,
-    mapFrom
-} from "@automapper/core"
+import { createMap, forMember, mapFrom } from "@automapper/core"
 import MediaTypeNames from "api_utility/src/consts/media_type_names"
 
 import User from "../../modules/domain/user/user.entity"
@@ -13,46 +9,48 @@ import Rating from "../../modules/domain/rating/rating.entity"
 
 import { mapper } from "./mapper"
 
+import { UserDto } from "../../modules/contracts/user/user.dto"
 import {
-    UserDto
-} from "../../modules/contracts/user/user.dto"
-import {
-    VehicleDto,
-    VehicleLiteDto
+  VehicleDto,
+  VehicleLiteDto,
 } from "../../modules/contracts/vehicle/vehicle.dto"
+import { TripDto } from "../../modules/contracts/trip/trip.dto"
+import { TripUserDto } from "../../modules/contracts/trip/tripUser.dto"
 import {
-    TripDto
-} from "../../modules/contracts/trip/trip.dto"
-import {
-    TripUserDto
-} from "../../modules/contracts/trip/tripUser.dto"
-import {
-    DataBufferApproved,
-    DataBufferApprovedDto
+  DataBufferApproved,
+  DataBufferApprovedDto,
 } from "../../modules/shared.domain/user/user.extra"
-import {
-    RatingDto
-} from "../../modules/contracts/rating/rating.dto"
+import { RatingDto } from "../../modules/contracts/rating/rating.dto"
 
 const runMappers = () => {
-    createMap(
-        mapper,
-        DataBufferApproved,
-        DataBufferApprovedDto,
-        forMember(member => member.data, mapFrom(s => s.data?.toString(MediaTypeNames.Text.base64))),
-        forMember(member => member.isApproved, mapFrom(s => s.isApproved))
-    )
+  createMap(
+    mapper,
+    DataBufferApproved,
+    DataBufferApprovedDto,
+    forMember(
+      (member) => member.data,
+      mapFrom((s) => s.data?.toString(MediaTypeNames.Text.base64)),
+    ),
+    forMember(
+      (member) => member.isApproved,
+      mapFrom((s) => s.isApproved),
+    ),
+  )
 
-    createMap(mapper, User, UserDto)
-    createMap(mapper,
-        Vehicle,
-        VehicleDto,
-        forMember(member => member.licencePlatePhoto, mapFrom(s => s.licencePlatePhoto.toString(MediaTypeNames.Text.base64)))
-    )
-    createMap(mapper, Vehicle, VehicleLiteDto)
-    createMap(mapper, Trip, TripDto)
-    createMap(mapper, TripUser, TripUserDto)
-    createMap(mapper, Rating, RatingDto)
+  createMap(mapper, User, UserDto)
+  createMap(
+    mapper,
+    Vehicle,
+    VehicleDto,
+    forMember(
+      (member) => member.licencePlatePhoto,
+      mapFrom((s) => s.licencePlatePhoto.toString(MediaTypeNames.Text.base64)),
+    ),
+  )
+  createMap(mapper, Vehicle, VehicleLiteDto)
+  createMap(mapper, Trip, TripDto)
+  createMap(mapper, TripUser, TripUserDto)
+  createMap(mapper, Rating, RatingDto)
 }
 
 export default runMappers

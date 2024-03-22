@@ -1,10 +1,8 @@
 import { ObjectId } from "mongodb"
 
 interface ITripCancel {
-    id: ObjectId
-    observation: string
+  id: ObjectId
+  observation: string
 }
 
-export {
-    ITripCancel
-}
+export { ITripCancel }

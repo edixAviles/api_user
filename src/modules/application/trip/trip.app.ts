@@ -24,272 +24,327 @@ import { mapper } from "../../../core/mappings/mapper"
 import { TripDto, TripsAvailablesDto } from "../../contracts/trip/trip.dto"
 import { ITripCancel } from "../../contracts/trip/trip.update"
 import { ITripUserCancel } from "../../contracts/trip/tripUser.update"
-import { DataTaxDetails, PaymentMethods } from "../../shared.domain/invoice/invoice.extra"
+import {
+  DataTaxDetails,
+  PaymentMethods,
+} from "../../shared.domain/invoice/invoice.extra"
 import { TripFeatures, TripState } from "../../shared.domain/trip/trip.extra"
 import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
 import { servicePrice, taxLocal } from "../../shared/shared.consts"
 
 class TripAppService extends ApplicationService {
-    private tripManager: TripManager
-    private tripUserManager: TripUserManager
-    private vehicleManager: VehicleManager
-    private userManager: UserManager
+  private tripManager: TripManager
+  private tripUserManager: TripUserManager
+  private vehicleManager: VehicleManager
+  private userManager: UserManager
 
-    constructor() {
-        super()
-        this.tripManager = new TripManager()
-        this.tripUserManager = new TripUserManager()
-        this.vehicleManager = new VehicleManager()
-        this.userManager = new UserManager()
+  constructor() {
+    super()
+    this.tripManager = new TripManager()
+    this.tripUserManager = new TripUserManager()
+    this.vehicleManager = new VehicleManager()
+    this.userManager = new UserManager()
+  }
+
+  async getTrip(id: ObjectId): Promise<Response<TripDto>> {
+    const response = new ResponseManager<TripDto>()
+
+    try {
+      const entity = await this.tripManager.get(id)
+
+      const dto = mapper.map(entity, Trip, TripDto)
+      return response.onSuccess(dto)
+    } catch (error) {
+      return response.onError(ServiceError.getException(error))
     }
+  }
 
-    async getTrip(id: ObjectId): Promise<Response<TripDto>> {
-        const response = new ResponseManager<TripDto>()
+  async getTripsByDriver(
+    driverId: ObjectId,
+    state: TripState,
+  ): Promise<Response<TripDto[]>> {
+    const response = new ResponseManager<TripDto[]>()
 
-        try {
-            const entity = await this.tripManager.get(id)
+    try {
+      const user = await this.userManager.get(driverId)
+      if (!user.isDriver) {
+        throw new ServiceException(
+          LocalizeError.getErrorByCode(UserErrorCodes.IsNotDriver),
+        )
+      }
 
-            const dto = mapper.map(entity, Trip, TripDto)
-            return response.onSuccess(dto)
-        } catch (error) {
-            return response.onError(ServiceError.getException(error))
+      const entities = await this.tripManager.getTripsByDriver(driverId, state)
+
+      const dto = mapper.mapArray(entities, Trip, TripDto)
+      return response.onSuccess(dto)
+    } catch (error) {
+      return response.onError(ServiceError.getException(error))
+    }
+  }
+
+  async searchTrips(
+    departure: string,
+    arrival: string,
+    requestedSeats: number,
+  ): Promise<Response<TripsAvailablesDto[]>> {
+    const response = new ResponseManager<TripsAvailablesDto[]>()
+
+    try {
+      const entities = await this.tripManager.searchTrips(
+        departure,
+        arrival,
+        requestedSeats,
+      )
+
+      const tripsAvailables = new Array<TripsAvailablesDto>()
+      for (const entity of entities) {
+        const user = await this.userManager.get(entity.driverId)
+
+        const trip = new TripsAvailablesDto()
+        trip._id = entity._id
+        trip.departure = entity.departure
+        trip.arrival = entity.arrival.city
+        trip.price = entity.finalPrice
+        trip.offeredSeats = entity.offeredSeats
+        trip.availableSeats = entity.availableSeats
+        trip.features = entity.features
+        trip.vehicleId = entity.vehicleId
+        trip.driver = {
+          _id: user._id,
+          name: user.name,
+          lastName: user.lastName,
+          profilePhoto: user.profilePhoto.data.toString(
+            MediaTypeNames.Text.base64,
+          ),
         }
+
+        tripsAvailables.push(trip)
+      }
+
+      return response.onSuccess(tripsAvailables)
+    } catch (error) {
+      return response.onError(ServiceError.getException(error))
     }
+  }
 
-    async getTripsByDriver(driverId: ObjectId, state: TripState): Promise<Response<TripDto[]>> {
-        const response = new ResponseManager<TripDto[]>()
+  async publishTrip(tripInsert: ITripInsert): Promise<Response<TripDto>> {
+    const response = new ResponseManager<TripDto>()
 
-        try {
-            const user = await this.userManager.get(driverId)
-            if (!user.isDriver) {
-                throw new ServiceException(LocalizeError.getErrorByCode(UserErrorCodes.IsNotDriver))
-            }
+    try {
+      await this.vehicleManager.get(tripInsert.vehicleId)
 
-            const entities = await this.tripManager.getTripsByDriver(driverId, state)
+      const user = await this.userManager.get(tripInsert.driverId)
+      if (!user.isDriver) {
+        throw new ServiceException(
+          LocalizeError.getErrorByCode(UserErrorCodes.IsNotDriver),
+        )
+      }
 
-            const dto = mapper.mapArray(entities, Trip, TripDto)
-            return response.onSuccess(dto)
-        } catch (error) {
-            return response.onError(ServiceError.getException(error))
-        }
+      const isDoorToToor = tripInsert.features.includes(
+        TripFeatures.DoorToDoor,
+      )
+      if (isDoorToToor) {
+        tripInsert.departure.latitude = undefined
+        tripInsert.departure.longitude = undefined
+      } else if (
+        !isDoorToToor &&
+        (!tripInsert.departure.latitude || !tripInsert.departure.longitude)
+      ) {
+        throw new ServiceException(
+          LocalizeError.getErrorByCode(TripErrorCodes.WithOutDepartureLocation),
+        )
+      }
+
+      const entity = await this.tripManager.insert(tripInsert, servicePrice)
+
+      const dto = mapper.map(entity, Trip, TripDto)
+      return response.onSuccess(dto)
+    } catch (error) {
+      return response.onError(ServiceError.getException(error))
     }
+  }
 
-    async searchTrips(departure: string, arrival: string, requestedSeats: number): Promise<Response<TripsAvailablesDto[]>> {
-        const response = new ResponseManager<TripsAvailablesDto[]>()
+  async pickUpPassengers(id: ObjectId): Promise<Response<ObjectId>> {
+    const response = new ResponseManager<ObjectId>()
 
-        try {
-            const entities = await this.tripManager.searchTrips(departure, arrival, requestedSeats)
+    try {
+      const entity = await this.tripManager.get(id)
+      const bookedTrips = await this.tripUserManager.getTripsUserByState(
+        entity._id,
+        TripUserState.Booked,
+      )
+      if (bookedTrips.length === 0) {
+        throw new ServiceException(
+          LocalizeError.getErrorByCode(TripErrorCodes.NoTripsBooked),
+        )
+      }
 
-            const tripsAvailables = new Array<TripsAvailablesDto>()
-            for (const entity of entities) {
-                const user = await this.userManager.get(entity.driverId)
+      await this.tripManager.pickUpPassengers(id, bookedTrips.length)
+      // TODO: Se debe notificar a los usuarios que esta recogiendo a los pasajeros
+      // Se debe enviar la notificacion, segun si es Door to Door o no
 
-                const trip = new TripsAvailablesDto()
-                trip._id = entity._id
-                trip.departure = entity.departure
-                trip.arrival = entity.arrival.city
-                trip.price = entity.finalPrice
-                trip.offeredSeats = entity.offeredSeats
-                trip.availableSeats = entity.availableSeats
-                trip.features = entity.features
-                trip.vehicleId = entity.vehicleId
-                trip.driver = {
-                    _id: user._id,
-                    name: user.name,
-                    lastName: user.lastName,
-                    profilePhoto: user.profilePhoto.data.toString(MediaTypeNames.Text.base64),
-                }
-
-                tripsAvailables.push(trip)
-            }
-
-            return response.onSuccess(tripsAvailables)
-        } catch (error) {
-            return response.onError(ServiceError.getException(error))
-        }
+      return response.onSuccess(id)
+    } catch (error) {
+      return response.onError(ServiceError.getException(error))
     }
+  }
 
-    async publishTrip(tripInsert: ITripInsert): Promise<Response<TripDto>> {
-        const response = new ResponseManager<TripDto>()
+  async startTrip(id: ObjectId): Promise<Response<ObjectId>> {
+    const response = new ResponseManager<ObjectId>()
+    const transaction = await this.transactionManager.beginTransaction()
 
-        try {
-            await this.vehicleManager.get(tripInsert.vehicleId)
+    try {
+      const tripManagerTransaction = new TripManager(transaction)
+      const tripUserManagerTransaction = new TripUserManager(transaction)
 
-            const user = await this.userManager.get(tripInsert.driverId)
-            if (!user.isDriver) {
-                throw new ServiceException(LocalizeError.getErrorByCode(UserErrorCodes.IsNotDriver))
-            }
+      const trip = await tripManagerTransaction.get(id)
+      const isDoorToToor = trip.features.includes(TripFeatures.DoorToDoor)
+      if (isDoorToToor) {
+        throw new ServiceException(
+          LocalizeError.getErrorByCode(TripErrorCodes.IsDoorToDoor),
+        )
+      }
 
-            const isDoorToToor = tripInsert.features.includes(TripFeatures.DoorToDoor)
-            if (isDoorToToor) {
-                tripInsert.departure.latitude = undefined
-                tripInsert.departure.longitude = undefined
-            } else if (!isDoorToToor && (!tripInsert.departure.latitude || !tripInsert.departure.longitude)) {
-                throw new ServiceException(LocalizeError.getErrorByCode(TripErrorCodes.WithOutDepartureLocation))
-            }
+      const bookedTripsUser =
+        await tripUserManagerTransaction.getTripsUserByState(
+          id,
+          TripUserState.Booked,
+        )
+      for (const tripUser of bookedTripsUser) {
+        await tripUserManagerTransaction.startTripDoorToDoor(tripUser._id)
+      }
 
-            const entity = await this.tripManager.insert(tripInsert, servicePrice)
+      await tripManagerTransaction.reduceAllPassengersToPickUp(id)
+      await tripManagerTransaction.startTrip(id)
+      await transaction.completeTransaction()
 
-            const dto = mapper.map(entity, Trip, TripDto)
-            return response.onSuccess(dto)
-        } catch (error) {
-            return response.onError(ServiceError.getException(error))
-        }
+      return response.onSuccess(id)
+    } catch (error) {
+      transaction.cancellTransaction()
+      return response.onError(ServiceError.getException(error))
     }
+  }
 
-    async pickUpPassengers(id: ObjectId): Promise<Response<ObjectId>> {
-        const response = new ResponseManager<ObjectId>()
+  async finishTrip(id: ObjectId): Promise<Response<ObjectId>> {
+    const response = new ResponseManager<ObjectId>()
+    const transaction = await this.transactionManager.beginTransaction()
 
-        try {
-            const entity = await this.tripManager.get(id)
-            const bookedTrips = await this.tripUserManager.getTripsUserByState(entity._id, TripUserState.Booked)
-            if (bookedTrips.length === 0) {
-                throw new ServiceException(LocalizeError.getErrorByCode(TripErrorCodes.NoTripsBooked))
-            }
+    try {
+      const tripManagerTransaction = new TripManager(transaction)
+      const tripUserManagerTransaction = new TripUserManager(transaction)
 
-            await this.tripManager.pickUpPassengers(id, bookedTrips.length)
-            // TODO: Se debe notificar a los usuarios que esta recogiendo a los pasajeros
-            // Se debe enviar la notificacion, segun si es Door to Door o no
+      const entity = await tripManagerTransaction.get(id)
+      const onTheWayTripsUser =
+        await tripUserManagerTransaction.getTripsUserByState(
+          entity._id,
+          TripUserState.OnTheWay,
+        )
+      if (onTheWayTripsUser.length === 0) {
+        throw new ServiceException(
+          LocalizeError.getErrorByCode(TripErrorCodes.NoTripsOnTheWay),
+        )
+      }
 
-            return response.onSuccess(id)
-        } catch (error) {
-            return response.onError(ServiceError.getException(error))
-        }
+      for (const tripUser of onTheWayTripsUser) {
+        await tripUserManagerTransaction.finish(tripUser._id)
+        await this.insertInvoice(tripUser._id, transaction)
+      }
+
+      await tripManagerTransaction.finish(id)
+      // TODO: Se debe notificar a los usuarios que se finalizo el viaje
+
+      await transaction.completeTransaction()
+
+      return response.onSuccess(id)
+    } catch (error) {
+      transaction.cancellTransaction()
+      return response.onError(ServiceError.getException(error))
     }
+  }
 
-    async startTrip(id: ObjectId): Promise<Response<ObjectId>> {
-        const response = new ResponseManager<ObjectId>()
-        const transaction = await this.transactionManager.beginTransaction()
+  async cancelTrip(tripCancel: ITripCancel): Promise<Response<ObjectId>> {
+    const response = new ResponseManager<ObjectId>()
+    const transaction = await this.transactionManager.beginTransaction()
 
-        try {
-            const tripManagerTransaction = new TripManager(transaction)
-            const tripUserManagerTransaction = new TripUserManager(transaction)
+    try {
+      const tripManagerTransaction = new TripManager(transaction)
+      const tripUserManagerTransaction = new TripUserManager(transaction)
 
-            const trip = await tripManagerTransaction.get(id)
-            const isDoorToToor = trip.features.includes(TripFeatures.DoorToDoor)
-            if (isDoorToToor) {
-                throw new ServiceException(LocalizeError.getErrorByCode(TripErrorCodes.IsDoorToDoor))
-            }
+      const entity = await tripManagerTransaction.get(tripCancel.id)
+      const bookedTrips = await tripUserManagerTransaction.getTripsUserByState(
+        entity._id,
+        TripUserState.Booked,
+      )
+      for (const trip of bookedTrips) {
+        const tripCancel = {} as ITripUserCancel
+        tripCancel.id = trip._id
+        await tripUserManagerTransaction.cancel(tripCancel)
+      }
 
-            const bookedTripsUser = await tripUserManagerTransaction.getTripsUserByState(id, TripUserState.Booked)
-            for (const tripUser of bookedTripsUser) {
-                await tripUserManagerTransaction.startTripDoorToDoor(tripUser._id)
-            }
+      await tripManagerTransaction.cancel(tripCancel)
+      // TODO: Se debe notificar a los usuarios que se cancelo el viaje
 
-            await tripManagerTransaction.reduceAllPassengersToPickUp(id)
-            await tripManagerTransaction.startTrip(id)
-            await transaction.completeTransaction()
+      await transaction.completeTransaction()
 
-            return response.onSuccess(id)
-        } catch (error) {
-            transaction.cancellTransaction()
-            return response.onError(ServiceError.getException(error))
-        }
+      return response.onSuccess(tripCancel.id)
+    } catch (error) {
+      transaction.cancellTransaction()
+      return response.onError(ServiceError.getException(error))
     }
+  }
 
-    async finishTrip(id: ObjectId): Promise<Response<ObjectId>> {
-        const response = new ResponseManager<ObjectId>()
-        const transaction = await this.transactionManager.beginTransaction()
+  private async insertInvoice(
+    tripUserId: ObjectId,
+    transaction: TransactionSession,
+  ): Promise<void> {
+    try {
+      const tripManagerTransaction = new TripManager(transaction)
+      const tripUserManagerTransaction = new TripUserManager(transaction)
+      const invoiceManagerTransaction = new InvoiceManager(transaction)
 
-        try {
-            const tripManagerTransaction = new TripManager(transaction)
-            const tripUserManagerTransaction = new TripUserManager(transaction)
+      const tripUser = await tripUserManagerTransaction.get(tripUserId)
+      const trip = await tripManagerTransaction.get(tripUser.tripId)
 
-            const entity = await tripManagerTransaction.get(id)
-            const onTheWayTripsUser = await tripUserManagerTransaction.getTripsUserByState(entity._id, TripUserState.OnTheWay)
-            if (onTheWayTripsUser.length === 0) {
-                throw new ServiceException(LocalizeError.getErrorByCode(TripErrorCodes.NoTripsOnTheWay))
-            }
+      let taxes: number = 0
+      const taxDetails: DataTaxDetails[] = [taxLocal]
 
-            for (const tripUser of onTheWayTripsUser) {
-                await tripUserManagerTransaction.finish(tripUser._id)
-                await this.insertInvoice(tripUser._id, transaction)
-            }
+      const invoiceInsert = {} as IInvoiceInsert
+      invoiceInsert.departure = trip.departure.city
+      invoiceInsert.arrival = trip.arrival.city
+      invoiceInsert.paymentMethod = PaymentMethods.Cash
 
-            await tripManagerTransaction.finish(id)
-            // TODO: Se debe notificar a los usuarios que se finalizo el viaje
+      invoiceInsert.numberOfSeats = tripUser.numberOfSeats
+      invoiceInsert.unitPriceOfTrip = trip.tripPrice
+      invoiceInsert.netPriceOfTrip = trip.tripPrice * tripUser.numberOfSeats
+      invoiceInsert.unitPriceOfService = trip.servicePrice
+      invoiceInsert.netPriceOfService =
+        trip.servicePrice * tripUser.numberOfSeats
+      invoiceInsert.netPrice = trip.finalPrice * tripUser.numberOfSeats
+      invoiceInsert.discount = 0
+      invoiceInsert.subtotal = invoiceInsert.netPrice - invoiceInsert.discount
 
-            await transaction.completeTransaction()
+      // CALCULATE TAX LOCAL
+      const valueTaxLocal = parseFloat(
+        (invoiceInsert.subtotal * taxLocal.tax).toFixed(2),
+      )
+      taxes += valueTaxLocal
 
-            return response.onSuccess(id)
-        } catch (error) {
-            transaction.cancellTransaction()
-            return response.onError(ServiceError.getException(error))
-        }
+      invoiceInsert.taxes = taxes
+      invoiceInsert.total = invoiceInsert.subtotal + invoiceInsert.taxes
+
+      invoiceInsert.taxDetails = taxDetails
+      invoiceInsert.isPaid = true
+      invoiceInsert.tripUserId = tripUserId
+
+      await invoiceManagerTransaction.insert(invoiceInsert)
+    } catch (error) {
+      throw new ServiceException(
+        LocalizeError.getErrorByCode(
+          InvoiceErrorCodes.UnexpectedErrorWhenTryingToBill,
+        ),
+      )
     }
-
-    async cancelTrip(tripCancel: ITripCancel): Promise<Response<ObjectId>> {
-        const response = new ResponseManager<ObjectId>()
-        const transaction = await this.transactionManager.beginTransaction()
-
-        try {
-            const tripManagerTransaction = new TripManager(transaction)
-            const tripUserManagerTransaction = new TripUserManager(transaction)
-
-            const entity = await tripManagerTransaction.get(tripCancel.id)
-            const bookedTrips = await tripUserManagerTransaction.getTripsUserByState(entity._id, TripUserState.Booked)
-            for (const trip of bookedTrips) {
-                const tripCancel = {} as ITripUserCancel
-                tripCancel.id = trip._id
-                await tripUserManagerTransaction.cancel(tripCancel)
-            }
-
-            await tripManagerTransaction.cancel(tripCancel)
-            // TODO: Se debe notificar a los usuarios que se cancelo el viaje
-
-            await transaction.completeTransaction()
-
-            return response.onSuccess(tripCancel.id)
-        } catch (error) {
-            transaction.cancellTransaction()
-            return response.onError(ServiceError.getException(error))
-        }
-    }
-
-    private async insertInvoice(tripUserId: ObjectId, transaction: TransactionSession): Promise<void> {
-        try {
-            const tripManagerTransaction = new TripManager(transaction)
-            const tripUserManagerTransaction = new TripUserManager(transaction)
-            const invoiceManagerTransaction = new InvoiceManager(transaction)
-
-            const tripUser = await tripUserManagerTransaction.get(tripUserId)
-            const trip = await tripManagerTransaction.get(tripUser.tripId)
-
-            let taxes: number = 0
-            const taxDetails: DataTaxDetails[] = [
-                taxLocal
-            ]
-
-            const invoiceInsert = {} as IInvoiceInsert
-            invoiceInsert.departure = trip.departure.city
-            invoiceInsert.arrival = trip.arrival.city
-            invoiceInsert.paymentMethod = PaymentMethods.Cash
-
-            invoiceInsert.numberOfSeats = tripUser.numberOfSeats
-            invoiceInsert.unitPriceOfTrip = trip.tripPrice
-            invoiceInsert.netPriceOfTrip = trip.tripPrice * tripUser.numberOfSeats
-            invoiceInsert.unitPriceOfService = trip.servicePrice
-            invoiceInsert.netPriceOfService = trip.servicePrice * tripUser.numberOfSeats
-            invoiceInsert.netPrice = trip.finalPrice * tripUser.numberOfSeats
-            invoiceInsert.discount = 0
-            invoiceInsert.subtotal = invoiceInsert.netPrice - invoiceInsert.discount
-
-            // CALCULATE TAX LOCAL
-            const valueTaxLocal = parseFloat((invoiceInsert.subtotal * taxLocal.tax).toFixed(2))
-            taxes += valueTaxLocal
-
-            invoiceInsert.taxes = taxes
-            invoiceInsert.total = invoiceInsert.subtotal + invoiceInsert.taxes
-
-            invoiceInsert.taxDetails = taxDetails
-            invoiceInsert.isPaid = true
-            invoiceInsert.tripUserId = tripUserId
-
-            await invoiceManagerTransaction.insert(invoiceInsert)
-        } catch (error) {
-            throw new ServiceException(LocalizeError.getErrorByCode(InvoiceErrorCodes.UnexpectedErrorWhenTryingToBill))
-        }
-    }
+  }
 }
 
 export default TripAppService
