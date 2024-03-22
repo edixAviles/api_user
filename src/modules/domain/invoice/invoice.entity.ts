@@ -1,10 +1,10 @@
 import { AutoMap } from "@automapper/classes"
 import { ObjectId } from "mongodb"
+import BaseModel from "api_utility/src/domain/base_model"
 
-import BaseBasicModel from "../../../core/domain/base.model"
 import { DataTaxDetails } from "../../shared.domain/invoice/invoice.extra"
 
-class Invoice extends BaseBasicModel {
+class Invoice extends BaseModel {
     @AutoMap()
     public departure: string
 

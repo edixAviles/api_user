@@ -1,17 +1,13 @@
 import { ObjectId } from "mongodb"
+import ServiceException from "api_utility/src/exception/service_exception"
+import TransactionSession from "api_utility/src/database/transaction_session"
+import EntityFields from "api_utility/src/domain/entity_fields"
 
-import ServiceException from "../../shared/service.exception"
-import TransactionSession from "../../../core/database/transactionSession"
 import LocalizeError from "../../shared/localize_error"
-
 import Rating from "./rating.entity"
 import RatingRepository from "./rating.repository"
 import RatingErrorCodes from "../../shared.domain/rating/rating.error.codes"
 import IRatingInsert from "../../contracts/rating/rating.insert"
-
-import {
-    EntityFields
-} from "../../shared/shared.consts"
 
 class RatingManager {
     private ratingRepository: RatingRepository
@@ -30,9 +26,9 @@ class RatingManager {
         return ratings
     }
 
-    async getRatingByUserAndTrip(userId: ObjectId, tripId: ObjectId): Promise<Rating> {
-        const ratings = await this.ratingRepository.getRatingByUserAndTrip(userId, tripId)
-        return ratings
+    async getRatingByUserAndTrip(userId: ObjectId, tripId: ObjectId): Promise<Rating | null> {
+        const rating = await this.ratingRepository.getRatingByUserAndTrip(userId, tripId)
+        return rating
     }
 
     async insert(ratingInsert: IRatingInsert): Promise<Rating> {
@@ -59,7 +55,7 @@ class RatingManager {
     private foundEntity = async (id: ObjectId): Promise<Rating> => {
         const rating = await this.ratingRepository.get(id)
         if (!rating) {
-            const errorParams = { [EntityFields.id]: id }
+            const errorParams = new Map<string, string>([[EntityFields.id, id.toString()]])
             const error = LocalizeError.getErrorByCode(RatingErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }

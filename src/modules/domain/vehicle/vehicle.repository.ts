@@ -1,14 +1,12 @@
 import { ObjectId } from "mongodb"
+import Repository from "api_utility/src/domain/repository"
+import IRepository from "api_utility/src/domain/i_repository"
 
 import Vehicle from "./vehicle.entity"
 import VehicleModel from "./vehicle.model"
-import {
-    Repository,
-    IRepository
-} from "../../../core/domain/repository"
 
 class VehicleRepository extends Repository<Vehicle> implements IRepository<Vehicle> {
-    async get(id: ObjectId): Promise<Vehicle> {
+    async get(id: ObjectId): Promise<Vehicle | null> {
         const document = await VehicleModel.findOne(Repository.filterToGetById(id))
 
         const entity = new Vehicle({ ...document })

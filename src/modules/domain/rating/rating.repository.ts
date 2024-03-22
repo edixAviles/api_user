@@ -1,14 +1,12 @@
 import { ObjectId } from "mongodb"
+import Repository from "api_utility/src/domain/repository"
+import IRepository from "api_utility/src/domain/i_repository"
 
 import Rating from "./rating.entity"
 import RatingModel from "./rating.model"
-import {
-    Repository,
-    IRepository
-} from "../../../core/domain/repository"
 
 class RatingRepository extends Repository<Rating> implements IRepository<Rating> {
-    async get(id: ObjectId): Promise<Rating> {
+    async get(id: ObjectId): Promise<Rating | null> {
         const document = await RatingModel.findOne(Repository.filterToGetById(id))
 
         const entity = new Rating({ ...document })
@@ -32,14 +30,14 @@ class RatingRepository extends Repository<Rating> implements IRepository<Rating>
         return entities
     }
 
-    async getRatingByUserAndTrip(userId: ObjectId, tripId: ObjectId): Promise<Rating> {
+    async getRatingByUserAndTrip(userId: ObjectId, tripId: ObjectId): Promise<Rating | null> {
         const filter = {
             ...Repository.filterToGetActive(),
             userId,
             tripId
         }
         const document = await RatingModel.findOne(filter)
-        
+
         const entity = new Rating({ ...document })
         return document ? entity : null
     }

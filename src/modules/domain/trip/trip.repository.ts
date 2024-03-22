@@ -1,15 +1,13 @@
 import { ObjectId } from "mongodb"
+import Repository from "api_utility/src/domain/repository"
+import IRepository from "api_utility/src/domain/i_repository"
 
-import {
-    Repository,
-    IRepository
-} from "../../../core/domain/repository"
 import Trip from "./trip.entity"
 import TripModel from "./trip.model"
 import { TripState } from "../../shared.domain/trip/trip.extra"
 
 class TripRepository extends Repository<Trip> implements IRepository<Trip> {
-    async get(id: ObjectId): Promise<Trip> {
+    async get(id: ObjectId): Promise<Trip | null> {
         const document = await TripModel.findOne(Repository.filterToGetById(id))
         const entity = new Trip({ ...document })
         return document ? entity : null
@@ -47,7 +45,7 @@ class TripRepository extends Repository<Trip> implements IRepository<Trip> {
             ...Repository.filterToGetActive(),
             "departure.city": departureRegex,
             "arrival.city": arrivalRegex,
-            availableSeats: { $gte : requestedSeats },
+            availableSeats: { $gte: requestedSeats },
             tripState: {
                 $elemMatch: {
                     state: TripState.Available,

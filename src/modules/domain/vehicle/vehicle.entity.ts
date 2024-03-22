@@ -1,9 +1,9 @@
 import { AutoMap } from "@automapper/classes"
 import { ObjectId } from "mongodb"
 
-import BaseBasicModel from "../../../core/domain/base.model"
+import BaseModel from "api_utility/src/domain/base_model"
 
-class Vehicle extends BaseBasicModel {
+class Vehicle extends BaseModel {
     @AutoMap()
     public brand: string
 

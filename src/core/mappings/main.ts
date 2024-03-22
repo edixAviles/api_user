@@ -3,6 +3,7 @@ import {
     forMember,
     mapFrom
 } from "@automapper/core"
+import MediaTypeNames from "api_utility/src/consts/media_type_names"
 
 import User from "../../modules/domain/user/user.entity"
 import Vehicle from "../../modules/domain/vehicle/vehicle.entity"
@@ -11,7 +12,6 @@ import TripUser from "../../modules/domain/trip/tripUser.entity"
 import Rating from "../../modules/domain/rating/rating.entity"
 
 import { mapper } from "./mapper"
-import { TypeMime } from "../../modules/shared/shared.consts"
 
 import {
     UserDto
@@ -39,7 +39,7 @@ const runMappers = () => {
         mapper,
         DataBufferApproved,
         DataBufferApprovedDto,
-        forMember(member => member.data, mapFrom(s => s.data?.toString(TypeMime.base64))),
+        forMember(member => member.data, mapFrom(s => s.data?.toString(MediaTypeNames.Text.base64))),
         forMember(member => member.isApproved, mapFrom(s => s.isApproved))
     )
 
@@ -47,7 +47,7 @@ const runMappers = () => {
     createMap(mapper,
         Vehicle,
         VehicleDto,
-        forMember(member => member.licencePlatePhoto, mapFrom(s => s.licencePlatePhoto.toString(TypeMime.base64)))
+        forMember(member => member.licencePlatePhoto, mapFrom(s => s.licencePlatePhoto.toString(MediaTypeNames.Text.base64)))
     )
     createMap(mapper, Vehicle, VehicleLiteDto)
     createMap(mapper, Trip, TripDto)

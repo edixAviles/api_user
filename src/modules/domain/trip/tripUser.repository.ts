@@ -1,15 +1,13 @@
 import { ObjectId } from "mongodb"
+import Repository from "api_utility/src/domain/repository"
+import IRepository from "api_utility/src/domain/i_repository"
 
-import {
-    Repository,
-    IRepository
-} from "../../../core/domain/repository"
 import TripUser from "./tripUser.entity"
 import TripUserModel from "./tripUser.model"
 import { TripUserState } from "../../shared.domain/trip/tripUser.extra"
 
 class TripUserRepository extends Repository<TripUser> implements IRepository<TripUser> {
-    async get(id: ObjectId): Promise<TripUser> {
+    async get(id: ObjectId): Promise<TripUser | null> {
         const document = await TripUserModel.findOne(Repository.filterToGetById(id))
 
         const entity = new TripUser({ ...document })

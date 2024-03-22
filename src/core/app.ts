@@ -1,13 +1,14 @@
+import DatabaseConnection from "api_utility/src/database/database_connection"
+
 import listenRequests from "./api/router"
 import runMappers from "./mappings/main"
-import DatabaseConnection from "./database/databaseConnection"
-
 import {
     username,
     password,
     cluster,
     database
-} from "../core/database/credentials"
+} from "./credentials"
+
 const app = () => {
     listenRequests()
     runMappers()

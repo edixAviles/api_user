@@ -1,14 +1,11 @@
 import { ObjectId } from "mongodb"
+import ServiceException from "api_utility/src/exception/service_exception"
+import TransactionSession from "api_utility/src/database/transaction_session"
+import EntityFields from "api_utility/src/domain/entity_fields"
 
-import ServiceException from "../../shared/service.exception"
-import TransactionSession from "../../../core/database/transactionSession"
 import LocalizeError from "../../shared/localize_error"
 import Trip from "./trip.entity"
 import ITripInsert from "../../contracts/trip/trip.insert"
-
-import {
-    EntityFields
-} from "../../shared/shared.consts"
 import { TripState } from "../../shared.domain/trip/trip.extra"
 import TripErrorCodes from "../../shared.domain/trip/trip.error.codes"
 import { ITripCancel } from "../../contracts/trip/trip.update"
@@ -49,7 +46,7 @@ class TripManager {
 
         trip.offeredSeats = tripInsert.offeredSeats
         trip.availableSeats = tripInsert.offeredSeats
-        trip.passengersToPickUp = null
+        trip.passengersToPickUp = undefined
         trip.description = tripInsert.description
         trip.features = tripInsert.features
         trip.vehicleId = tripInsert.vehicleId
@@ -111,13 +108,13 @@ class TripManager {
         const tripFound = await this.validateTrip(tripId, [TripState.Available])
 
         if (numberOfSeats == 0) {
-            const errorParams = { [EntityFields.id]: tripId }
+            const errorParams = new Map<string, string>([[EntityFields.id, tripId.toString()]])
             const error = LocalizeError.getErrorByCode(TripErrorCodes.EmptySeats, errorParams)
             throw new ServiceException(error)
         }
 
         if (numberOfSeats > tripFound.availableSeats) {
-            const errorParams = { [EntityFields.id]: tripId }
+            const errorParams = new Map<string, string>([[EntityFields.id, tripId.toString()]])
             const error = LocalizeError.getErrorByCode(TripErrorCodes.ExceededSeats, errorParams)
             throw new ServiceException(error)
         }
@@ -138,7 +135,7 @@ class TripManager {
 
         const trip = new Trip()
         trip._id = id
-        trip.passengersToPickUp = tripFound.passengersToPickUp - 1
+        trip.passengersToPickUp = (tripFound.passengersToPickUp || 0) - 1
 
         await this.tripRepository.update(trip)
     }
@@ -156,7 +153,7 @@ class TripManager {
 
         const isAvailable = entity.tripState.some(element => element.isCurrent && states.includes(element.state))
         if (!isAvailable) {
-            const errorParams = { [EntityFields.id]: id }
+            const errorParams = new Map<string, string>([[EntityFields.id, id.toString()]])
             const error = LocalizeError.getErrorByCode(TripErrorCodes.NotAvailable, errorParams)
             throw new ServiceException(error)
         }
@@ -186,7 +183,7 @@ class TripManager {
     private foundEntity = async (id: ObjectId): Promise<Trip> => {
         const entity = await this.tripRepository.get(id)
         if (!entity) {
-            const errorParams = { [EntityFields.id]: id }
+            const errorParams = new Map<string, string>([[EntityFields.id, id.toString()]])
             const error = LocalizeError.getErrorByCode(TripErrorCodes.EntityNotFound, errorParams)
             throw new ServiceException(error)
         }

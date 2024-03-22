@@ -1,21 +1,19 @@
 import { ObjectId } from "mongodb"
+import Repository from "api_utility/src/domain/repository"
+import IRepository from "api_utility/src/domain/i_repository"
 
 import Invoice from "./invoice.entity"
 import InvoiceModel from "./invoice.model"
-import {
-    Repository,
-    IRepository
-} from "../../../core/domain/repository"
 
 class InvoiceRepository extends Repository<Invoice> implements IRepository<Invoice> {
-    async get(id: ObjectId): Promise<Invoice> {
+    async get(id: ObjectId): Promise<Invoice | null> {
         const document = await InvoiceModel.findOne(Repository.filterToGetById(id))
 
         const entity = new Invoice({ ...document })
         return document ? entity : null
     }
 
-    async getInvoiceByTripUser(tripUserId: ObjectId): Promise<Invoice> {
+    async getInvoiceByTripUser(tripUserId: ObjectId): Promise<Invoice | null> {
         const filter = {
             ...Repository.filterToGetActive(),
             tripUserId

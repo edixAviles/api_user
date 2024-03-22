@@ -1,9 +1,10 @@
 import { ObjectId } from "mongodb"
+import ApplicationService from "api_utility/src/application/application_service"
+import Response from "api_utility/src/response/response"
+import ResponseManager from "api_utility/src/response/response_manager"
+import ServiceException from "api_utility/src/exception/service_exception"
+import ServiceError from "api_utility/src/error/service_error"
 
-import ServiceException from "../../shared/service.exception"
-import ApplicationService from "../../../core/application/applicationService"
-import Response from "../../../core/response/response"
-import ResponseManager from "../../../core/response/response.manager"
 import LocalizeError from "../../shared/localize_error"
 import Vehicle from "../../domain/vehicle/vehicle.entity"
 import VehicleManager from "../../domain/vehicle/vehicle.manager"
@@ -19,7 +20,6 @@ import {
 import {
     IVehicleUpdate
 } from "../../contracts/vehicle/vehicle.update"
-import { EntityFields } from "../../shared/shared.consts"
 
 class VehicleAppService extends ApplicationService {
     private vehicleManager: VehicleManager
